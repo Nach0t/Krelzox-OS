@@ -17,6 +17,7 @@ import dev.nexium.launcher.safety.SafeModeView
 import dev.nexium.launcher.ui.AppLauncher
 import dev.nexium.launcher.ui.home.HomeScreen
 import dev.nexium.launcher.ui.home.HomeViewModel
+import dev.nexium.launcher.ui.performance.SystemSources
 import dev.nexium.launcher.ui.shell.ShellCallbacks
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -93,6 +94,7 @@ class MainActivity : ComponentActivity() {
                     artLoader = container.artLoader,
                     homeResets = homeResets,
                     callbacks = callbacks,
+                    system = remember { SystemSources(container.systemMetrics, container.networkDetails) },
                 )
             }
         }

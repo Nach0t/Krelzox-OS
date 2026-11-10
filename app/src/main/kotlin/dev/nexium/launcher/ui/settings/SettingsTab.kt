@@ -22,6 +22,15 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.nexium.launcher.core.data.metrics.MetricId
+import dev.nexium.launcher.core.data.metrics.SystemMetrics
+import dev.nexium.launcher.core.designsystem.NexiumSparkline
+import dev.nexium.launcher.ui.performance.PerformanceFormat
+import kotlinx.coroutines.flow.Flow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -49,6 +58,7 @@ import dev.nexium.launcher.core.designsystem.NexiumSpacing
 private val TileShape = RoundedCornerShape(NexiumDimens.CardCorner)
 
 data class SettingsActions(
+    val onPerformance: () -> Unit,
     val onNetwork: () -> Unit,
     val onDisplaySound: () -> Unit,
     val onHomeApp: () -> Unit,
@@ -57,7 +67,7 @@ data class SettingsActions(
 )
 
 @Composable
-fun SettingsTab(actions: SettingsActions) {
+fun SettingsTab(actions: SettingsActions, metrics: Flow<SystemMetrics>, performanceTile: FocusRequester) {
     Column(Modifier.fillMaxSize().padding(top = NexiumSpacing.Small)) {
         Text(
             stringResource(R.string.tab_settings),
@@ -70,25 +80,110 @@ fun SettingsTab(actions: SettingsActions) {
             color = NexiumColors.OnSurfaceMuted,
         )
         Spacer(Modifier.height(NexiumSpacing.Large))
-        // Same 5-column grid as Biblioteca and the rows on Inicio.
+        // Same 5-column grid as Biblioteca and the rows on Inicio. "Sistema y rendimiento"
+        // spans two columns: it is the richest destination and shows live values.
         BoxWithConstraints(Modifier.fillMaxWidth()) {
             val tile = NexiumGrid.columnWidth(maxWidth, NexiumGrid.APP_COLUMNS)
-            Row(horizontalArrangement = Arrangement.spacedBy(NexiumGrid.Gap)) {
-                SettingsTile(tile, NexiumIcons.Wifi, R.string.settings_network, R.string.settings_network_desc, actions.onNetwork)
-                SettingsTile(tile, NexiumIcons.Media, R.string.settings_display_sound, R.string.settings_display_sound_desc, actions.onDisplaySound)
-                SettingsTile(tile, NexiumIcons.Home, R.string.settings_home_app, R.string.settings_home_app_desc, actions.onHomeApp)
-                SettingsTile(tile, NexiumIcons.Settings, R.string.settings_system, R.string.settings_system_desc, actions.onSystemSettings)
-                SettingsTile(tile, NexiumIcons.Info, R.string.settings_about, R.string.settings_about_desc, actions.onAbout)
+            Column(verticalArrangement = Arrangement.spacedBy(NexiumGrid.Gap)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(NexiumGrid.Gap)) {
+                    PerformanceTile(tile * 2 + NexiumGrid.Gap, metrics, actions.onPerformance, Modifier.focusRequester(performanceTile))
+                    SettingsTile(tile, NexiumIcons.Wifi, R.string.settings_network, R.string.settings_network_desc, actions.onNetwork)
+                    SettingsTile(tile, NexiumIcons.Media, R.string.settings_display_sound, R.string.settings_display_sound_desc, actions.onDisplaySound)
+                    SettingsTile(tile, NexiumIcons.Home, R.string.settings_home_app, R.string.settings_home_app_desc, actions.onHomeApp)
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(NexiumGrid.Gap)) {
+                    SettingsTile(tile, NexiumIcons.Settings, R.string.settings_android, R.string.settings_system_desc, actions.onSystemSettings)
+                    SettingsTile(tile, NexiumIcons.Info, R.string.settings_about, R.string.settings_about_desc, actions.onAbout)
+                }
             }
         }
     }
 }
 
+/** Wide entry to the performance center with live CPU / RAM / temperature and a CPU sparkline. */
+@Composable
+private fun PerformanceTile(width: Dp, metrics: Flow<SystemMetrics>, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val current by metrics.collectAsStateWithLifecycle(initialValue = null)
+    val locale = LocalConfiguration.current.locales[0]
+    val s = current?.snapshot
+    val na = stringResource(R.string.not_available_short)
+    val pending = "\u2026"
+    SettingsSurface(width, onClick, modifier) {
+        Column(Modifier.fillMaxSize().padding(NexiumSpacing.Medium)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(NexiumIcons.Pulse, contentDescription = null, tint = NexiumColors.Cyan, modifier = Modifier.size(26.dp))
+                Spacer(Modifier.weight(1f))
+                MiniValue(
+                    stringResource(R.string.perf_cpu),
+                    when {
+                        s == null -> pending
+                        !s.isAvailable(MetricId.Cpu) -> na
+                        else -> s.cpuPercent?.let { PerformanceFormat.percent(it, locale) } ?: pending
+                    },
+                )
+                Spacer(Modifier.width(NexiumSpacing.Medium))
+                MiniValue(stringResource(R.string.perf_ram), s?.let { PerformanceFormat.percent(it.ramPercent, locale) } ?: pending)
+                Spacer(Modifier.width(NexiumSpacing.Medium))
+                MiniValue(
+                    stringResource(R.string.perf_temp_short),
+                    when {
+                        s == null -> pending
+                        !s.isAvailable(MetricId.Temperature) -> na
+                        else -> s.temperatureC?.let { PerformanceFormat.temperatureShort(it, locale) } ?: pending
+                    },
+                )
+            }
+            NexiumSparkline(
+                values = current?.cpuHistory.orEmpty(),
+                yMin = 0f,
+                yMax = 100f,
+                capacity = current?.historyCapacity ?: 2,
+                color = NexiumColors.Cyan,
+                modifier = Modifier.fillMaxWidth().weight(1f).padding(vertical = 6.dp),
+            )
+            Text(stringResource(R.string.perf_tile_title), style = MaterialTheme.typography.labelLarge, maxLines = 1)
+            Text(
+                stringResource(R.string.perf_tile_desc),
+                style = MaterialTheme.typography.labelMedium,
+                color = NexiumColors.OnSurfaceMuted,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
+private fun MiniValue(label: String, value: String) {
+    Column(horizontalAlignment = Alignment.End) {
+        Text(value, style = MaterialTheme.typography.labelLarge, color = NexiumColors.OnBackground)
+        Text(label.uppercase(), style = MaterialTheme.typography.labelSmall, color = NexiumColors.OnSurfaceSubtle)
+    }
+}
+
 @Composable
 private fun SettingsTile(width: Dp, icon: ImageVector, title: Int, subtitle: Int, onClick: () -> Unit) {
+    SettingsSurface(width, onClick) {
+        Column(Modifier.fillMaxSize().padding(NexiumSpacing.Medium)) {
+            Icon(icon, contentDescription = null, tint = NexiumColors.Cyan, modifier = Modifier.size(26.dp))
+            Spacer(Modifier.weight(1f))
+            Text(stringResource(title), style = MaterialTheme.typography.labelLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(
+                stringResource(subtitle),
+                style = MaterialTheme.typography.labelMedium,
+                color = NexiumColors.OnSurfaceMuted,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SettingsSurface(width: Dp, onClick: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Surface(
         onClick = onClick,
-        modifier = Modifier.width(width).height(138.dp),
+        modifier = modifier.width(width).height(138.dp),
         shape = ClickableSurfaceDefaults.shape(TileShape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = NexiumColors.Surface,
@@ -103,20 +198,7 @@ private fun SettingsTile(width: Dp, icon: ImageVector, title: Int, subtitle: Int
         glow = ClickableSurfaceDefaults.glow(
             focusedGlow = Glow(NexiumColors.Electric.copy(alpha = 0.45f), NexiumDimens.FocusGlow),
         ),
-    ) {
-        Column(Modifier.fillMaxSize().padding(NexiumSpacing.Medium)) {
-            Icon(icon, contentDescription = null, tint = NexiumColors.Cyan, modifier = Modifier.size(26.dp))
-            Spacer(Modifier.weight(1f))
-            Text(stringResource(title), style = MaterialTheme.typography.labelLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            Text(
-                stringResource(subtitle),
-                style = MaterialTheme.typography.labelMedium,
-                color = NexiumColors.OnSurfaceMuted,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
+    ) { content() }
 }
 
 @Composable

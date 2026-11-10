@@ -41,12 +41,15 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import dev.nexium.launcher.R
 import dev.nexium.launcher.core.data.NetworkStatus
+import dev.nexium.launcher.core.data.metrics.SystemMetrics
 import dev.nexium.launcher.core.designsystem.Inter
 import dev.nexium.launcher.core.designsystem.NexiumColors
 import dev.nexium.launcher.core.designsystem.NexiumDimens
 import dev.nexium.launcher.core.designsystem.NexiumIcons
 import dev.nexium.launcher.core.designsystem.NexiumSpacing
+import dev.nexium.launcher.ui.performance.PerformancePill
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Date
@@ -61,25 +64,28 @@ enum class NexiumTab(val label: Int, val icon: ImageVector) {
 private val PillShape = RoundedCornerShape(NexiumDimens.PillCorner)
 
 /**
- * Three-zone bar: brand mark (start), main navigation (centered on screen) and
- * status (end). Each zone is placed independently, so the navigation stays centered
- * whatever the width of the clock or the brand.
+ * Brand + navigation (start) and system status (end): performance panel, network and
+ * clock. Inactive tabs show only their icon and the active one adds its label, which
+ * keeps the bar calm and leaves room for the always-on performance panel.
  */
 @Composable
 fun TopBar(
     selected: NexiumTab,
     tabRequesters: Map<NexiumTab, FocusRequester>,
     network: NetworkStatus,
+    metrics: Flow<SystemMetrics>,
+    onOpenPerformance: () -> Unit,
     onSelect: (NexiumTab) -> Unit,
     onEnterTab: (NexiumTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier.fillMaxWidth().height(NexiumDimens.TopBarHeight)) {
-        Logo(Modifier.align(Alignment.CenterStart))
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(NexiumSpacing.Small),
-            modifier = Modifier.align(Alignment.Center),
-        ) {
+    Row(
+        modifier.fillMaxWidth().height(NexiumDimens.TopBarHeight),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Logo()
+        Spacer(Modifier.width(NexiumSpacing.Large + 4.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             NexiumTab.entries.forEach { tab ->
                 NavPill(
                     tab = tab,
@@ -90,14 +96,12 @@ fun TopBar(
                 )
             }
         }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.align(Alignment.CenterEnd),
-        ) {
-            NetworkIndicator(network)
-            Spacer(Modifier.width(NexiumSpacing.Medium + 2.dp))
-            Clock()
-        }
+        Spacer(Modifier.weight(1f))
+        PerformancePill(metrics = metrics, onOpen = onOpenPerformance)
+        Spacer(Modifier.width(NexiumSpacing.Medium - 2.dp))
+        NetworkIndicator(network)
+        Spacer(Modifier.width(NexiumSpacing.Medium - 2.dp))
+        Clock()
     }
 }
 
@@ -151,17 +155,19 @@ private fun NavPill(
         ),
     ) {
         Row(
-            Modifier.padding(horizontal = NexiumSpacing.Medium, vertical = NexiumSpacing.Small),
+            Modifier.padding(horizontal = if (selected) NexiumSpacing.Medium else 13.dp, vertical = NexiumSpacing.Small + 2.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 tab.icon,
-                contentDescription = null,
+                contentDescription = if (selected) null else stringResource(tab.label),
                 tint = if (selected) NexiumColors.Cyan else NexiumColors.OnSurfaceMuted,
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(20.dp),
             )
-            Spacer(Modifier.width(NexiumSpacing.Small))
-            Text(stringResource(tab.label), style = MaterialTheme.typography.labelLarge)
+            if (selected) {
+                Spacer(Modifier.width(NexiumSpacing.Small))
+                Text(stringResource(tab.label), style = MaterialTheme.typography.labelLarge)
+            }
         }
     }
 }
@@ -198,7 +204,7 @@ private fun Clock() {
     val time = DateFormat.getTimeFormat(context).format(Date(now))
     val date = LocalDate.now().format(DateTimeFormatter.ofPattern("EEE d MMM", locale))
     Column(horizontalAlignment = Alignment.End) {
-        Text(time, style = MaterialTheme.typography.titleLarge, color = NexiumColors.OnBackground)
+        Text(time, style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp), color = NexiumColors.OnBackground)
         Text(
             date.replaceFirstChar { it.titlecase(locale) },
             style = MaterialTheme.typography.labelMedium,

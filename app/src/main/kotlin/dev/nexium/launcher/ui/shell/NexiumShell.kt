@@ -45,11 +45,17 @@ import dev.nexium.launcher.ui.home.InteractionClock
 import dev.nexium.launcher.ui.home.HomeTab
 import dev.nexium.launcher.ui.home.HomeUiState
 import dev.nexium.launcher.ui.library.AppGridTab
+import dev.nexium.launcher.ui.performance.PerformanceCenter
+import dev.nexium.launcher.ui.performance.PerformanceSheet
+import dev.nexium.launcher.ui.performance.SystemSources
 import dev.nexium.launcher.ui.settings.AboutDialog
 import dev.nexium.launcher.ui.settings.SettingsActions
 import dev.nexium.launcher.ui.settings.SettingsTab
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+
+/** Pages inside the Ajustes tab. */
+enum class SettingsPage { Overview, Performance }
 
 /** Everything the shell can ask the outside world to do. */
 data class ShellCallbacks(
@@ -70,6 +76,7 @@ fun NexiumShell(
     artLoader: AppArtLoader,
     homeResets: Flow<Unit>,
     callbacks: ShellCallbacks,
+    system: SystemSources,
 ) {
     var selected by rememberSaveable { mutableStateOf(NexiumTab.Home) }
     val tabRequesters = remember { NexiumTab.entries.associateWith { FocusRequester() } }
@@ -89,7 +96,10 @@ fun NexiumShell(
     var movingKey by remember { mutableStateOf<String?>(null) }
     var heroIndex by remember { mutableIntStateOf(0) }
     val interaction = remember { InteractionClock() }
-    val dialogOpen = actionsFor != null || aboutOpen || pickerOpen
+    var perfSheetOpen by remember { mutableStateOf(false) }
+    var settingsPage by rememberSaveable { mutableStateOf(SettingsPage.Overview) }
+    val performanceTile = remember { FocusRequester() }
+    val dialogOpen = actionsFor != null || aboutOpen || pickerOpen || perfSheetOpen
 
     fun focusHero() {
         scope.launch {
@@ -127,6 +137,8 @@ fun NexiumShell(
             actionsFor = null
             aboutOpen = false
             pickerOpen = false
+            perfSheetOpen = false
+            settingsPage = SettingsPage.Overview
             movingKey = null
             focusedCardKey = null
             heroKey = null
@@ -141,10 +153,26 @@ fun NexiumShell(
     BackHandler(enabled = !dialogOpen && !atRoot) {
         when {
             movingKey != null -> movingKey = null
+            selected == NexiumTab.Settings && settingsPage == SettingsPage.Performance && !topBarFocused -> {
+                // Park focus on the Ajustes tab (present on both pages) BEFORE swapping the page:
+                // otherwise the focused rail item disappears, Compose gives focus to the first
+                // focusable (the Inicio tab) and select-on-focus would switch tabs.
+                runCatching { tabRequesters.getValue(NexiumTab.Settings).requestFocus() }
+                settingsPage = SettingsPage.Overview
+                scope.launch {
+                    withFrameNanos { }
+                    runCatching { performanceTile.requestFocus() }
+                }
+            }
             selected != NexiumTab.Home && !topBarFocused -> focusTab(selected)
             selected != NexiumTab.Home -> goHome()
             else -> focusHero()
         }
+    }
+
+    // The performance center is a sub-page of Ajustes: leaving the tab returns to its overview.
+    LaunchedEffect(selected) {
+        if (selected != NexiumTab.Settings) settingsPage = SettingsPage.Overview
     }
 
     // Free cached art of uninstalled apps.
@@ -199,6 +227,8 @@ fun NexiumShell(
                 selected = selected,
                 tabRequesters = tabRequesters,
                 network = network,
+                metrics = system.metrics,
+                onOpenPerformance = { perfSheetOpen = true },
                 onSelect = { selected = it },
                 onEnterTab = { tab ->
                     selected = tab
@@ -254,15 +284,25 @@ fun NexiumShell(
                             focusTab(NexiumTab.Library)
                         },
                     )
-                    NexiumTab.Settings -> SettingsTab(
-                        SettingsActions(
-                            onNetwork = callbacks.onNetworkSettings,
-                            onDisplaySound = callbacks.onDisplaySoundSettings,
-                            onHomeApp = callbacks.onHomeAppSettings,
-                            onSystemSettings = callbacks.onSystemSettings,
-                            onAbout = { aboutOpen = true },
-                        ),
-                    )
+                    NexiumTab.Settings -> when (settingsPage) {
+                        SettingsPage.Overview -> SettingsTab(
+                            actions = SettingsActions(
+                                onPerformance = { settingsPage = SettingsPage.Performance },
+                                onNetwork = callbacks.onNetworkSettings,
+                                onDisplaySound = callbacks.onDisplaySoundSettings,
+                                onHomeApp = callbacks.onHomeAppSettings,
+                                onSystemSettings = callbacks.onSystemSettings,
+                                onAbout = { aboutOpen = true },
+                            ),
+                            metrics = system.metrics,
+                            performanceTile = performanceTile,
+                        )
+                        SettingsPage.Performance -> PerformanceCenter(
+                            metrics = system.metrics,
+                            network = system.network,
+                            appCount = state.apps.size,
+                        )
+                    }
                 }
             }
         }
@@ -288,6 +328,17 @@ fun NexiumShell(
     }
     if (aboutOpen) {
         AboutDialog(appCount = state.apps.size, onDismiss = { aboutOpen = false })
+    }
+    if (perfSheetOpen) {
+        PerformanceSheet(
+            metrics = system.metrics,
+            onOpenCenter = {
+                perfSheetOpen = false
+                selected = NexiumTab.Settings
+                settingsPage = SettingsPage.Performance
+            },
+            onDismiss = { perfSheetOpen = false },
+        )
     }
     if (pickerOpen) {
         FavoritesPickerDialog(

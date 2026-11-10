@@ -127,6 +127,62 @@ object NexiumIcons {
         }
     }
 
+    /** Processor: a chip with pins. */
+    val Cpu: ImageVector by lazy {
+        lineIcon("Cpu") {
+            rect(7f, 7f, 10f, 10f)
+            rect(10f, 10f, 4f, 4f)
+            moveTo(10f, 4f); lineTo(10f, 7f); moveTo(14f, 4f); lineTo(14f, 7f)
+            moveTo(10f, 17f); lineTo(10f, 20f); moveTo(14f, 17f); lineTo(14f, 20f)
+            moveTo(4f, 10f); lineTo(7f, 10f); moveTo(4f, 14f); lineTo(7f, 14f)
+            moveTo(17f, 10f); lineTo(20f, 10f); moveTo(17f, 14f); lineTo(20f, 14f)
+        }
+    }
+
+    /** Memory: a RAM module. */
+    val Memory: ImageVector by lazy {
+        lineIcon("Memory") {
+            rect(3f, 7f, 18f, 9f)
+            rect(6f, 10f, 3f, 3f); rect(10.5f, 10f, 3f, 3f); rect(15f, 10f, 3f, 3f)
+            moveTo(6f, 16f); lineTo(6f, 19f); moveTo(10f, 16f); lineTo(10f, 19f)
+            moveTo(14f, 16f); lineTo(14f, 19f); moveTo(18f, 16f); lineTo(18f, 19f)
+        }
+    }
+
+    /** Storage: a drive. */
+    val Storage: ImageVector by lazy {
+        lineIcon("Storage") {
+            rect(3f, 13f, 18f, 6f)
+            moveTo(3f, 13f); lineTo(6f, 5f); lineTo(18f, 5f); lineTo(21f, 13f)
+            moveTo(16.5f, 16f); lineTo(16.51f, 16f)
+        }
+    }
+
+    val Thermometer: ImageVector by lazy {
+        lineIcon("Thermometer") {
+            moveTo(10f, 14.5f); lineTo(10f, 5f)
+            arcTo(2f, 2f, 0f, false, true, 14f, 5f)
+            lineTo(14f, 14.5f)
+            arcTo(4f, 4f, 0f, true, true, 10f, 14.5f)
+            close()
+            moveTo(12f, 10f); lineTo(12f, 17f)
+        }
+    }
+
+    /** Performance: a pulse line. */
+    val Pulse: ImageVector by lazy {
+        lineIcon("Pulse") {
+            moveTo(3f, 12f); lineTo(7f, 12f); lineTo(10f, 5f); lineTo(14f, 19f); lineTo(17f, 12f); lineTo(21f, 12f)
+        }
+    }
+
+    val Clock: ImageVector by lazy {
+        lineIcon("Clock") {
+            circle(12f, 12f, 9f)
+            moveTo(12f, 7f); lineTo(12f, 12f); lineTo(15.5f, 14f)
+        }
+    }
+
     val Info: ImageVector by lazy {
         lineIcon("Info") {
             circle(12f, 12f, 9f)

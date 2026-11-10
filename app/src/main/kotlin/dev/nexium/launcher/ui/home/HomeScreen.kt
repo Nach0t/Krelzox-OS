@@ -25,6 +25,7 @@ import dev.nexium.launcher.core.designsystem.NexiumButtonDefaults
 import dev.nexium.launcher.core.designsystem.NexiumColors
 import dev.nexium.launcher.core.designsystem.NexiumSpacing
 import dev.nexium.launcher.ui.AppArtLoader
+import dev.nexium.launcher.ui.performance.SystemSources
 import dev.nexium.launcher.ui.shell.NexiumShell
 import dev.nexium.launcher.ui.shell.ShellCallbacks
 import kotlinx.coroutines.flow.Flow
@@ -40,6 +41,7 @@ fun HomeScreen(
     artLoader: AppArtLoader,
     homeResets: Flow<Unit>,
     callbacks: ShellCallbacks,
+    system: SystemSources,
 ) {
     when (state) {
         HomeUiState.Loading -> Message(stringResource(R.string.home_loading))
@@ -48,7 +50,7 @@ fun HomeScreen(
             if (state.apps.isEmpty()) {
                 MessageWithSettings(stringResource(R.string.home_empty), callbacks.onSystemSettings)
             } else {
-                NexiumShell(state, network, artLoader, homeResets, callbacks)
+                NexiumShell(state, network, artLoader, homeResets, callbacks, system)
             }
     }
 }
