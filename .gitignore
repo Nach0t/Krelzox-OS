@@ -1,0 +1,81 @@
+# =====================================================================
+# Nexium-OS · .gitignore
+# Patrones acotados a propósito: nada genérico tipo "*token*" que pueda
+# ocultar código fuente legítimo (p. ej. DesignTokens.kt).
+# =====================================================================
+
+# ===== Firma de APK (CRÍTICO: nunca publicar) =====
+*.jks
+*.keystore
+keystore.properties
+signing.properties
+
+# ===== Secretos y credenciales =====
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.ppk
+*.kdbx
+id_rsa*
+id_ed25519*
+secrets/
+google-services.json
+credentials.json
+credentials.properties
+wpa_supplicant.conf
+
+# ===== Android / Gradle =====
+local.properties
+.gradle/
+.kotlin/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+output-metadata.json
+# Nota: gradle/wrapper/gradle-wrapper.jar SÍ se versiona (no está ignorado).
+
+# ===== IDE =====
+.idea/
+*.iml
+.vscode/
+.fleet/
+
+# ===== Diagnóstico y logs (pueden contener IP, cuentas, datos del dispositivo) =====
+*.log
+logs/
+bugreport*.zip
+*.hprof
+*.trace
+*.perfetto-trace
+
+# ===== Imágenes de sistema y backups =====
+*.img
+*.img.xz
+*.iso
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.bak
+*.backup
+*.ab
+
+# ===== Temporales y SO =====
+tmp/
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Herramientas externas (se instalan aparte, no se versionan) =====
+platform-tools/
