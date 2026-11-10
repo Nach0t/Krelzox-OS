@@ -12,75 +12,87 @@ import androidx.core.graphics.scale
 import dev.nexium.launcher.core.data.AppEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
-/** Visual for an app: a TV banner when the app provides one, otherwise its icon. */
-sealed interface AppArt {
-    val image: ImageBitmap
-
-    /** ARGB accent derived once from the artwork; tints the hero without any blur. */
-    val accent: Int
-
-    data class Banner(override val image: ImageBitmap, override val accent: Int) : AppArt
-    data class Icon(override val image: ImageBitmap, override val accent: Int) : AppArt
-}
+import java.util.Collections
 
 /**
- * Loads banners/icons off the main thread and keeps them in a size-bounded memory cache.
- * Bitmaps are rasterized once at card resolution so drawing stays cheap on the V3D GPU.
+ * Uniform visual for an app tile: its launcher icon plus an accent color derived once
+ * from that icon (tints card plates and the hero, without any blur).
+ */
+data class AppArt(val icon: ImageBitmap, val accent: Int)
+
+/**
+ * Loads icons (always) and TV banners (on demand, only for the hero) off the main
+ * thread, each in its own size-bounded memory cache. Bitmaps are rasterized once at
+ * display resolution so drawing stays cheap on the V3D GPU.
  */
 class AppArtLoader(context: Context) {
 
     private val packageManager: PackageManager = context.applicationContext.packageManager
 
-    private val cache = object : LruCache<String, AppArt>(CACHE_BYTES) {
-        override fun sizeOf(key: String, value: AppArt): Int =
-            value.image.width * value.image.height * 4
+    private val icons = object : LruCache<String, AppArt>(ICON_CACHE_BYTES) {
+        override fun sizeOf(key: String, value: AppArt): Int = value.icon.width * value.icon.height * 4
     }
 
+    private val banners = object : LruCache<String, ImageBitmap>(BANNER_CACHE_BYTES) {
+        override fun sizeOf(key: String, value: ImageBitmap): Int = value.width * value.height * 4
+    }
+
+    /** Apps known to have no banner, so the lookup is not repeated. */
+    private val noBanner: MutableSet<String> = Collections.synchronizedSet(HashSet())
+
     /** Synchronous cache lookup, so already-loaded art renders on the first frame. */
-    fun peek(entry: AppEntry): AppArt? = cache.get(entry.key)
+    fun peek(entry: AppEntry): AppArt? = icons.get(entry.key)
 
     suspend fun load(entry: AppEntry): AppArt? {
-        cache.get(entry.key)?.let { return it }
-        val art = withContext(Dispatchers.IO) {
-            try {
-                loadUncached(entry)
-            } catch (e: PackageManager.NameNotFoundException) {
-                null
-            } catch (e: RuntimeException) {
-                Log.w(TAG, "Failed to load art for ${entry.key}", e)
-                null
-            }
+        icons.get(entry.key)?.let { return it }
+        val art = io(entry) {
+            val bitmap = packageManager.getActivityIcon(entry.component).toBitmap(ICON_PX, ICON_PX)
+            AppArt(bitmap.asImageBitmap(), AccentExtractor.accentOf(bitmap))
         }
-        art?.let { cache.put(entry.key, it) }
+        art?.let { icons.put(entry.key, it) }
         return art
+    }
+
+    fun peekBanner(entry: AppEntry): ImageBitmap? = banners.get(entry.key)
+
+    /** TV banner for the hero, or null if the app has none. */
+    suspend fun loadBanner(entry: AppEntry): ImageBitmap? {
+        banners.get(entry.key)?.let { return it }
+        if (entry.key in noBanner) return null
+        val banner = io(entry) {
+            val drawable = packageManager.getActivityBanner(entry.component)
+                ?: packageManager.getApplicationBanner(entry.packageName)
+            drawable?.toBitmap(BANNER_WIDTH_PX, BANNER_HEIGHT_PX)?.asImageBitmap()
+        }
+        if (banner != null) banners.put(entry.key, banner) else noBanner.add(entry.key)
+        return banner
     }
 
     /** Drops cached art of apps that are no longer installed. */
     fun retainOnly(keys: Set<String>) {
-        cache.snapshot().keys
-            .filterNot { it in keys }
-            .forEach { cache.remove(it) }
+        icons.snapshot().keys.filterNot { it in keys }.forEach { icons.remove(it) }
+        banners.snapshot().keys.filterNot { it in keys }.forEach { banners.remove(it) }
+        noBanner.retainAll(keys)
     }
 
-    private fun loadUncached(entry: AppEntry): AppArt {
-        val banner = packageManager.getActivityBanner(entry.component)
-            ?: packageManager.getApplicationBanner(entry.packageName)
-        if (banner != null) {
-            val bitmap = banner.toBitmap(BANNER_WIDTH_PX, BANNER_HEIGHT_PX)
-            return AppArt.Banner(bitmap.asImageBitmap(), AccentExtractor.accentOf(bitmap))
+    private suspend fun <T> io(entry: AppEntry, block: () -> T?): T? = withContext(Dispatchers.IO) {
+        try {
+            block()
+        } catch (e: PackageManager.NameNotFoundException) {
+            null
+        } catch (e: RuntimeException) {
+            Log.w(TAG, "Failed to load art for ${entry.key}", e)
+            null
         }
-        val icon = packageManager.getActivityIcon(entry.component)
-        val bitmap = icon.toBitmap(ICON_PX, ICON_PX)
-        return AppArt.Icon(bitmap.asImageBitmap(), AccentExtractor.accentOf(bitmap))
     }
 
     private companion object {
         const val TAG = "NexiumArt"
+        const val ICON_PX = 192
         const val BANNER_WIDTH_PX = 512
         const val BANNER_HEIGHT_PX = 288
-        const val ICON_PX = 192
-        const val CACHE_BYTES = 32 * 1024 * 1024
+        const val ICON_CACHE_BYTES = 16 * 1024 * 1024
+        const val BANNER_CACHE_BYTES = 8 * 1024 * 1024
     }
 }
 

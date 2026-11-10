@@ -4,6 +4,7 @@ import android.text.format.DateFormat
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +27,9 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -57,6 +60,11 @@ enum class NexiumTab(val label: Int, val icon: ImageVector) {
 
 private val PillShape = RoundedCornerShape(NexiumDimens.PillCorner)
 
+/**
+ * Three-zone bar: brand mark (start), main navigation (centered on screen) and
+ * status (end). Each zone is placed independently, so the navigation stays centered
+ * whatever the width of the clock or the brand.
+ */
 @Composable
 fun TopBar(
     selected: NexiumTab,
@@ -66,13 +74,12 @@ fun TopBar(
     onEnterTab: (NexiumTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier.fillMaxWidth().height(NexiumDimens.TopBarHeight),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Logo()
-        Spacer(Modifier.width(NexiumSpacing.XLarge + NexiumSpacing.Medium))
-        Row(horizontalArrangement = Arrangement.spacedBy(NexiumSpacing.Small)) {
+    Box(modifier.fillMaxWidth().height(NexiumDimens.TopBarHeight)) {
+        Logo(Modifier.align(Alignment.CenterStart))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(NexiumSpacing.Small),
+            modifier = Modifier.align(Alignment.Center),
+        ) {
             NexiumTab.entries.forEach { tab ->
                 NavPill(
                     tab = tab,
@@ -83,24 +90,36 @@ fun TopBar(
                 )
             }
         }
-        Spacer(Modifier.weight(1f))
-        NetworkIndicator(network)
-        Spacer(Modifier.width(NexiumSpacing.Large))
-        Clock()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.align(Alignment.CenterEnd),
+        ) {
+            NetworkIndicator(network)
+            Spacer(Modifier.width(NexiumSpacing.Medium + 2.dp))
+            Clock()
+        }
     }
 }
 
+/**
+ * Brand lockup: the "N" mark at cap-height × 1.5 and the spaced wordmark, optically
+ * centered on each other (line-height trimmed so the caps sit on the mark's center).
+ */
 @Composable
-private fun Logo() {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Image(rememberVectorPainter(NexiumIcons.LogoMark), contentDescription = null, modifier = Modifier.size(20.dp, 22.dp))
-        Spacer(Modifier.width(NexiumSpacing.Small + 2.dp))
+private fun Logo(modifier: Modifier = Modifier) {
+    Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+        Image(rememberVectorPainter(NexiumIcons.LogoMark), contentDescription = null, modifier = Modifier.size(24.dp, 26.dp))
+        Spacer(Modifier.width(12.dp))
         Text(
             text = "NEXIUM",
-            fontFamily = Inter,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 17.sp,
-            letterSpacing = 0.32.em,
+            style = TextStyle(
+                fontFamily = Inter,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 19.sp,
+                letterSpacing = 0.26.em,
+                lineHeight = 19.sp,
+                lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.Both),
+            ),
             color = NexiumColors.OnBackground,
         )
     }

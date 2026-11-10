@@ -6,7 +6,8 @@
 | 1 | Esqueleto Gradle (`:app`, `:core:designsystem`, `:core:data`), `NexiumTheme`, `MainActivity` con `HOME` + `LEANBACK_LAUNCHER`, lista de apps. Instalación por `adb install` **sin** asignar rol HOME | ✅ Hecho |
 | 2 | Cuadrícula con secciones Favoritos/Aplicaciones, favoritos (DataStore), diálogo de acciones, foco D-pad/teclado robusto, reacción a instalación/desinstalación | ✅ Hecho |
 | 3 | Asignación reversible del rol HOME; pruebas de reinicio, tecla Home, fallos y recuperación | ✅ Hecho. Pendiente: prueba de reinicio físico |
-| 4 | Diseño premium "Graphite & Ion": Inter, iconos propios, barra superior con navegación/hora/red, hero cinematográfico, filas, Biblioteca, Multimedia, Ajustes, reordenar favoritos | ✅ Hecho (en revisión) |
+| 4 | Diseño premium "Graphite & Ion": Inter, iconos propios, barra superior con navegación/hora/red, hero cinematográfico, filas, Biblioteca, Multimedia, Ajustes, reordenar favoritos | ✅ Hecho |
+| 4.1 | Refinamiento visual: logotipo, hero dinámico (carrusel), gestión de favoritos (selector + reordenar en directo), iconos unificados, rejilla común | ✅ Hecho (en revisión) |
 | 5 | Baseline Profile, R8, Macrobenchmark de arranque, pruebas de UI, CI en GitHub Actions | Pendiente |
 | 6 | Opcional: canales TvProvider, accesos a ajustes KonstaKANG, salvapantallas, temas | Pendiente |
 
@@ -36,3 +37,17 @@ desactiva optimizaciones de Compose y R8.
 
 Justo después de instalar, las cifras empeoran (≈ 1,4 % de jank) porque el
 código aún corre en JIT: lo resolverá el Baseline Profile de la etapa 5.
+
+### Etapa 4.1 (release, 2026-11-10, en estado estable)
+
+| Métrica | Objetivo | Resultado |
+|---|---|---|
+| Arranque en frío (relanzado por el sistema como HOME) | < 600 ms | 138–158 ms |
+| Jank navegando Inicio | < 1 % | 0,00–0,27 % (p90 8 ms, GPU p90 6 ms) |
+| Jank cambiando de pestaña | < 1 % | 1,23 % (mismo patrón que la etapa 4) |
+| CPU en reposo en Inicio con carrusel | — | 0,23 s de CPU en 30 s (≈ 0,8 % de un núcleo) |
+| PSS en reposo | < 120 MB | 44 MB |
+| APK release | < 10 MB | 2,5 MB |
+
+En reposo, cada cambio del carrusel produce ~1 frame lento (como al cambiar de
+pestaña): imperceptible, pendiente de la misma optimización de la etapa 5.

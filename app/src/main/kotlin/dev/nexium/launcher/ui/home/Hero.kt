@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,6 +33,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -59,11 +61,15 @@ import dev.nexium.launcher.ui.AppArtLoader
 private val HeroShape = RoundedCornerShape(24.dp)
 private val ArtWidth = 264.dp
 private val ArtShape = RoundedCornerShape(NexiumDimens.CardCorner)
+private val HeroIconSize = 72.dp
 
 /** What the hero is showing and why (drives the overline). */
 data class HeroContent(val entry: AppEntry, val overline: HeroOverline)
 
-enum class HeroOverline { Continue, Favorite, Featured, Category }
+enum class HeroOverline { Continue, Recent, Favorite, Featured, Category }
+
+/** Carousel position, shown as dots when the hero is rotating on its own. */
+data class HeroPage(val index: Int, val count: Int)
 
 /**
  * Cinematic feature area: graphite field tinted with the app's accent (no blur),
@@ -74,6 +80,7 @@ enum class HeroOverline { Continue, Favorite, Featured, Category }
 fun Hero(
     content: HeroContent,
     isFavorite: Boolean,
+    page: HeroPage?,
     artLoader: AppArtLoader,
     openRequester: FocusRequester,
     onOpen: (AppEntry) -> Unit,
@@ -84,6 +91,9 @@ fun Hero(
     val entry = content.entry
     val art by produceState(initialValue = artLoader.peek(entry), entry.key) {
         value = artLoader.peek(entry) ?: artLoader.load(entry)
+    }
+    val banner by produceState(initialValue = artLoader.peekBanner(entry), entry.key) {
+        value = artLoader.peekBanner(entry) ?: artLoader.loadBanner(entry)
     }
     val accent by animateColorAsState(
         targetValue = art?.accent?.let { Color(it) } ?: NexiumColors.Electric,
@@ -132,6 +142,7 @@ fun Hero(
                 Spacer(Modifier.height(NexiumSpacing.Medium - 2.dp))
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(NexiumSpacing.Medium),
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.onFocusChanged { onButtonsFocusChanged(it.hasFocus) },
                 ) {
                     HeroButton(
@@ -143,7 +154,7 @@ fun Hero(
                     )
                     HeroButton(
                         text = stringResource(if (isFavorite) R.string.hero_unfavorite else R.string.hero_favorite),
-                        icon = NexiumIcons.Star,
+                        icon = if (isFavorite) NexiumIcons.StarFilled else NexiumIcons.Star,
                         primary = false,
                         onClick = { onToggleFavorite(entry) },
                     )
@@ -151,13 +162,25 @@ fun Hero(
             }
             Spacer(Modifier.width(NexiumSpacing.XLarge))
             Crossfade(
-                targetState = art,
+                targetState = HeroArtState(art, banner),
                 animationSpec = tween(NexiumMotion.CROSSFADE_DURATION_MS),
                 label = "heroArt",
             ) { shown -> HeroArt(shown) }
         }
+        // Carousel position: fixed under the art, so it never shifts with button widths.
+        if (page != null && page.count > 1) {
+            Box(
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = NexiumSpacing.XLarge, bottom = 7.dp)
+                    .width(ArtWidth),
+                contentAlignment = Alignment.Center,
+            ) { PageDots(page) }
+        }
     }
 }
+
+private data class HeroArtState(val art: AppArt?, val banner: ImageBitmap?)
 
 @Composable
 private fun HeroText(content: HeroContent) {
@@ -186,29 +209,45 @@ private fun HeroText(content: HeroContent) {
     }
 }
 
+/** TV banner when the app has one; otherwise its icon on the same plate used by cards. */
 @Composable
-private fun HeroArt(art: AppArt?) {
+private fun HeroArt(state: HeroArtState) {
     Box(
         Modifier
             .width(ArtWidth)
             .height(ArtWidth * 9 / 16)
             .clip(ArtShape)
-            .background(NexiumColors.BackgroundDeep.copy(alpha = 0.55f)),
+            .iconPlate(state.art?.accent?.let { Color(it) }),
         contentAlignment = Alignment.Center,
     ) {
-        when (art) {
-            is AppArt.Banner -> Image(
-                bitmap = art.image,
+        when {
+            state.banner != null -> Image(
+                bitmap = state.banner,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
             )
-            is AppArt.Icon -> Image(
-                bitmap = art.image,
+            state.art != null -> Image(
+                bitmap = state.art.icon,
                 contentDescription = null,
-                modifier = Modifier.size(96.dp),
+                modifier = Modifier.size(HeroIconSize),
             )
-            null -> Unit
+        }
+    }
+}
+
+@Composable
+private fun PageDots(page: HeroPage) {
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        repeat(page.count) { i ->
+            Box(
+                Modifier
+                    .size(width = if (i == page.index) 18.dp else 6.dp, height = 6.dp)
+                    .background(
+                        if (i == page.index) NexiumColors.Cyan else NexiumColors.OnSurfaceSubtle.copy(alpha = 0.6f),
+                        CircleShape,
+                    ),
+            )
         }
     }
 }
@@ -248,6 +287,7 @@ private fun HeroButton(
 @Composable
 private fun overlineText(content: HeroContent): String = when (content.overline) {
     HeroOverline.Continue -> stringResource(R.string.hero_overline_continue)
+    HeroOverline.Recent -> stringResource(R.string.hero_overline_recent)
     HeroOverline.Favorite -> stringResource(R.string.hero_overline_favorite)
     HeroOverline.Featured -> stringResource(R.string.hero_overline_featured)
     HeroOverline.Category -> stringResource(R.string.category_app)

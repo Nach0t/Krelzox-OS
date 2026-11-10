@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.tv.material3.Border
@@ -39,12 +41,12 @@ import dev.nexium.launcher.R
 import dev.nexium.launcher.core.designsystem.NexiumButtonDefaults
 import dev.nexium.launcher.core.designsystem.NexiumColors
 import dev.nexium.launcher.core.designsystem.NexiumDimens
+import dev.nexium.launcher.core.designsystem.NexiumGrid
 import dev.nexium.launcher.core.designsystem.NexiumIcons
 import dev.nexium.launcher.core.designsystem.NexiumMotion
 import dev.nexium.launcher.core.designsystem.NexiumSpacing
 
 private val TileShape = RoundedCornerShape(NexiumDimens.CardCorner)
-private val TileWidth = 156.dp
 
 data class SettingsActions(
     val onNetwork: () -> Unit,
@@ -68,21 +70,25 @@ fun SettingsTab(actions: SettingsActions) {
             color = NexiumColors.OnSurfaceMuted,
         )
         Spacer(Modifier.height(NexiumSpacing.Large))
-        Row(horizontalArrangement = Arrangement.spacedBy(NexiumSpacing.Large - 4.dp)) {
-            SettingsTile(NexiumIcons.Wifi, R.string.settings_network, R.string.settings_network_desc, actions.onNetwork)
-            SettingsTile(NexiumIcons.Media, R.string.settings_display_sound, R.string.settings_display_sound_desc, actions.onDisplaySound)
-            SettingsTile(NexiumIcons.Home, R.string.settings_home_app, R.string.settings_home_app_desc, actions.onHomeApp)
-            SettingsTile(NexiumIcons.Settings, R.string.settings_system, R.string.settings_system_desc, actions.onSystemSettings)
-            SettingsTile(NexiumIcons.Info, R.string.settings_about, R.string.settings_about_desc, actions.onAbout)
+        // Same 5-column grid as Biblioteca and the rows on Inicio.
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
+            val tile = NexiumGrid.columnWidth(maxWidth, NexiumGrid.APP_COLUMNS)
+            Row(horizontalArrangement = Arrangement.spacedBy(NexiumGrid.Gap)) {
+                SettingsTile(tile, NexiumIcons.Wifi, R.string.settings_network, R.string.settings_network_desc, actions.onNetwork)
+                SettingsTile(tile, NexiumIcons.Media, R.string.settings_display_sound, R.string.settings_display_sound_desc, actions.onDisplaySound)
+                SettingsTile(tile, NexiumIcons.Home, R.string.settings_home_app, R.string.settings_home_app_desc, actions.onHomeApp)
+                SettingsTile(tile, NexiumIcons.Settings, R.string.settings_system, R.string.settings_system_desc, actions.onSystemSettings)
+                SettingsTile(tile, NexiumIcons.Info, R.string.settings_about, R.string.settings_about_desc, actions.onAbout)
+            }
         }
     }
 }
 
 @Composable
-private fun SettingsTile(icon: ImageVector, title: Int, subtitle: Int, onClick: () -> Unit) {
+private fun SettingsTile(width: Dp, icon: ImageVector, title: Int, subtitle: Int, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        modifier = Modifier.width(TileWidth).height(138.dp),
+        modifier = Modifier.width(width).height(138.dp),
         shape = ClickableSurfaceDefaults.shape(TileShape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = NexiumColors.Surface,

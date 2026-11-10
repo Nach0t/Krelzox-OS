@@ -1,10 +1,13 @@
 package dev.nexium.launcher.ui.library
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,12 +27,12 @@ import androidx.tv.material3.Text
 import dev.nexium.launcher.core.data.AppEntry
 import dev.nexium.launcher.core.designsystem.NexiumButtonDefaults
 import dev.nexium.launcher.core.designsystem.NexiumColors
+import dev.nexium.launcher.core.designsystem.NexiumGrid
 import dev.nexium.launcher.core.designsystem.NexiumSpacing
 import dev.nexium.launcher.ui.AppArtLoader
 import dev.nexium.launcher.ui.home.AppActions
 import dev.nexium.launcher.ui.home.AppCard
 
-private const val GRID_COLUMNS = 5
 
 /** Full-catalog grid used by Biblioteca and Multimedia. */
 @Composable
@@ -49,16 +52,21 @@ fun AppGridTab(
         EmptyState(emptyIcon, title, emptyText, emptyActionText, onEmptyAction)
         return
     }
+    // Widened by the focus inset on both sides so card edges align with the title,
+    // the top bar and the rows on Inicio (same 5-column grid).
+    BoxWithConstraints(Modifier.fillMaxSize()) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(GRID_COLUMNS),
+        columns = GridCells.Fixed(NexiumGrid.APP_COLUMNS),
         contentPadding = PaddingValues(
-            start = 14.dp,
-            end = 14.dp,
+            start = NexiumGrid.FocusInset,
+            end = NexiumGrid.FocusInset,
             bottom = NexiumSpacing.SafeVertical,
         ),
-        horizontalArrangement = Arrangement.spacedBy(NexiumSpacing.Large - 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(NexiumGrid.Gap),
         verticalArrangement = Arrangement.spacedBy(NexiumSpacing.Medium),
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .requiredWidth(maxWidth + NexiumGrid.FocusInset * 2)
+            .fillMaxHeight(),
     ) {
         item(key = "header", span = { GridItemSpan(maxLineSpan) }, contentType = "header") {
             Column(Modifier.padding(top = NexiumSpacing.Small, bottom = NexiumSpacing.XSmall)) {
@@ -76,6 +84,7 @@ fun AppGridTab(
                 modifier = Modifier.padding(top = NexiumSpacing.Small),
             )
         }
+    }
     }
 }
 

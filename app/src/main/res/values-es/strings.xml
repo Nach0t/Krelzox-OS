@@ -78,10 +78,18 @@
     <string name="action_open">Abrir</string>
     <string name="action_add_favorite">Añadir a favoritos</string>
     <string name="action_remove_favorite">Quitar de favoritos</string>
-    <string name="action_move_left">Mover a la izquierda</string>
-    <string name="action_move_right">Mover a la derecha</string>
     <string name="action_app_info">Información de la app</string>
     <string name="action_cancel">Cancelar</string>
+
+    <string name="hero_overline_recent">Usada recientemente</string>
+    <string name="favorites_add">Añadir</string>
+    <string name="favorites_empty_hint">Añade las apps que más usas</string>
+    <string name="favorites_picker_title">Favoritos</string>
+    <string name="favorites_picker_subtitle">OK añade o quita · %1$d seleccionadas</string>
+    <string name="action_done">Listo</string>
+    <string name="action_reorder">Reordenar</string>
+    <string name="action_manage_favorites">Gestionar favoritos</string>
+    <string name="move_hint">← → para mover · OK para terminar</string>
 
     <string name="safe_mode_title">Modo seguro de Nexium</string>
     <string name="safe_mode_message">Nexium se detuvo varias veces seguidas. Puedes elegir otro launcher o volver a intentarlo.</string>

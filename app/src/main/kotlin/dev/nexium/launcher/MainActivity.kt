@@ -62,6 +62,7 @@ class MainActivity : ComponentActivity() {
                         container.favoritesRepository,
                         container.recentsRepository,
                         container.networkRepository,
+                        heroExcludedPackages = remember { utilityPackages() },
                     ),
                 )
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -113,6 +114,16 @@ class MainActivity : ComponentActivity() {
             ),
         )
     }
+
+    /**
+     * Utility apps kept out of the hero carousel (they have their own tab): the package
+     * that handles system Settings. Resolved at runtime, so it works on any device.
+     */
+    private fun utilityPackages(): Set<String> = runCatching {
+        packageManager.resolveActivity(Intent(Settings.ACTION_SETTINGS), 0)
+            ?.activityInfo?.packageName
+            ?.let { setOf(it) }
+    }.getOrNull().orEmpty()
 
     private fun showLaunchError(label: String) {
         Toast.makeText(this, getString(R.string.launch_failed, label), Toast.LENGTH_SHORT).show()

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,6 +23,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -38,6 +40,8 @@ import dev.nexium.launcher.core.designsystem.NexiumSpacing
 import dev.nexium.launcher.ui.AppArtLoader
 import dev.nexium.launcher.ui.home.AppActions
 import dev.nexium.launcher.ui.home.AppActionsDialog
+import dev.nexium.launcher.ui.home.FavoritesPickerDialog
+import dev.nexium.launcher.ui.home.InteractionClock
 import dev.nexium.launcher.ui.home.HomeTab
 import dev.nexium.launcher.ui.home.HomeUiState
 import dev.nexium.launcher.ui.library.AppGridTab
@@ -79,8 +83,13 @@ fun NexiumShell(
     var topBarFocused by remember { mutableStateOf(false) }
     var rootHasFocus by remember { mutableStateOf(false) }
     var actionsFor by remember { mutableStateOf<AppEntry?>(null) }
+    var actionsFromFavorites by remember { mutableStateOf(false) }
     var aboutOpen by remember { mutableStateOf(false) }
-    val dialogOpen = actionsFor != null || aboutOpen
+    var pickerOpen by remember { mutableStateOf(false) }
+    var movingKey by remember { mutableStateOf<String?>(null) }
+    var heroIndex by remember { mutableIntStateOf(0) }
+    val interaction = remember { InteractionClock() }
+    val dialogOpen = actionsFor != null || aboutOpen || pickerOpen
 
     fun focusHero() {
         scope.launch {
@@ -117,17 +126,21 @@ fun NexiumShell(
         homeResets.collect {
             actionsFor = null
             aboutOpen = false
+            pickerOpen = false
+            movingKey = null
             focusedCardKey = null
             heroKey = null
+            heroIndex = 0
             goHome()
         }
     }
 
     // Back is hierarchical: content → its tab → Inicio → hero. On the hero it is not
     // consumed, so MainActivity applies its rule (no-op as HOME, exit as a normal app).
-    val atRoot = selected == NexiumTab.Home && heroButtonsFocused
+    val atRoot = selected == NexiumTab.Home && heroButtonsFocused && movingKey == null
     BackHandler(enabled = !dialogOpen && !atRoot) {
         when {
+            movingKey != null -> movingKey = null
             selected != NexiumTab.Home && !topBarFocused -> focusTab(selected)
             selected != NexiumTab.Home -> goHome()
             else -> focusHero()
@@ -139,11 +152,21 @@ fun NexiumShell(
         artLoader.retainOnly(state.apps.mapTo(HashSet()) { it.key })
     }
 
-    val appActions = remember(callbacks) {
+    // A reorder in progress ends if its favorite disappears (uninstalled, removed).
+    LaunchedEffect(state.favoriteKeys) {
+        if (movingKey != null && movingKey !in state.favoriteKeys) movingKey = null
+    }
+
+    val appActions = remember(callbacks, movingKey) {
         AppActions(
             onLaunch = callbacks.onLaunch,
-            onShowActions = { actionsFor = it },
+            onShowActions = { actionsFromFavorites = false; actionsFor = it },
+            onShowFavoriteActions = { actionsFromFavorites = true; actionsFor = it },
             onToggleFavorite = callbacks.onToggleFavorite,
+            onAddFavorites = { pickerOpen = true },
+            movingKey = movingKey,
+            onMoveFavorite = callbacks.onMoveFavorite,
+            onMoveDone = { movingKey = null },
         )
     }
 
@@ -163,7 +186,9 @@ fun NexiumShell(
                     center = Offset(0f, 0f),
                 )
             }
-            .onFocusChanged { rootHasFocus = it.hasFocus },
+            .onFocusChanged { rootHasFocus = it.hasFocus }
+            // Remote activity pauses the hero carousel. Observes only; never consumes keys.
+            .onPreviewKeyEvent { interaction.touch(); false },
     ) {
         Column(
             Modifier
@@ -193,6 +218,9 @@ fun NexiumShell(
                         onCardFocused = { focusedCardKey = it },
                         heroKey = heroKey,
                         onHeroKeyChange = { heroKey = it },
+                        heroIndex = heroIndex,
+                        onHeroIndexChange = { heroIndex = it },
+                        interaction = interaction,
                         onHeroButtonsFocusChanged = { heroButtonsFocused = it },
                         onOpenLibrary = {
                             selected = NexiumTab.Library
@@ -247,14 +275,28 @@ fun NexiumShell(
             isFavorite = index >= 0,
             onOpen = { callbacks.onLaunch(entry) },
             onToggleFavorite = { callbacks.onToggleFavorite(entry) },
-            onMoveLeft = if (index > 0) ({ callbacks.onMoveFavorite(entry, -1) }) else null,
-            onMoveRight = if (index in 0 until state.favorites.lastIndex) ({ callbacks.onMoveFavorite(entry, +1) }) else null,
+            // Live reorder needs the focus on the card in the favorites row.
+            onReorder = if (actionsFromFavorites && index >= 0 && state.favorites.size > 1) {
+                { movingKey = entry.key }
+            } else {
+                null
+            },
+            onManageFavorites = { pickerOpen = true },
             onAppInfo = { callbacks.onAppInfo(entry) },
             onDismiss = { actionsFor = null },
         )
     }
     if (aboutOpen) {
         AboutDialog(appCount = state.apps.size, onDismiss = { aboutOpen = false })
+    }
+    if (pickerOpen) {
+        FavoritesPickerDialog(
+            apps = state.apps,
+            favoriteKeys = state.favoriteKeys,
+            artLoader = artLoader,
+            onToggle = callbacks.onToggleFavorite,
+            onDismiss = { pickerOpen = false },
+        )
     }
 }
 

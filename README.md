@@ -1,8 +1,8 @@
 # Nexium-OS
 
-> **Estado:** etapa 4 — diseño premium "Graphite & Ion" funcionando como launcher principal en la Raspberry Pi 5.
+> **Estado:** etapa 4.1 — diseño "Graphite & Ion" refinado (hero dinámico, gestión de favoritos, rejilla común) funcionando como launcher principal en la Raspberry Pi 5.
 
-![Inicio de Nexium](docs/capturas/etapa4/01-inicio.png)
+![Inicio de Nexium](docs/capturas/refinamiento/01-inicio.png)
 
 Nexium-OS es una experiencia Android TV premium para Raspberry Pi 5. Su primer
 componente es **Nexium Launcher** (`dev.nexium.launcher`), un launcher propio en

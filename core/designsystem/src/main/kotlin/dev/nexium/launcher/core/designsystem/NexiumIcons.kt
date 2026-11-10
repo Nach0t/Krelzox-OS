@@ -91,6 +91,42 @@ object NexiumIcons {
         }
     }
 
+    /** Filled star (same outline as [Star]) for "is favorite" states. */
+    val StarFilled: ImageVector by lazy {
+        ImageVector.Builder(
+            name = "StarFilled",
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f,
+        ).apply {
+            path(
+                fill = SolidColor(Color.White),
+                stroke = SolidColor(Color.White),
+                strokeLineWidth = 1.8f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+            ) {
+                moveTo(12f, 3.5f); lineTo(14.6f, 9f); lineTo(20.5f, 9.6f); lineTo(16f, 13.6f)
+                lineTo(17.3f, 19.5f); lineTo(12f, 16.5f); lineTo(6.7f, 19.5f); lineTo(8f, 13.6f)
+                lineTo(3.5f, 9.6f); lineTo(9.4f, 9f); close()
+            }
+        }.build()
+    }
+
+    val Plus: ImageVector by lazy {
+        lineIcon("Plus") { moveTo(12f, 5f); lineTo(12f, 19f); moveTo(5f, 12f); lineTo(19f, 12f) }
+    }
+
+    /** Horizontal reorder (↔). */
+    val Reorder: ImageVector by lazy {
+        lineIcon("Reorder") {
+            moveTo(4f, 12f); lineTo(20f, 12f)
+            moveTo(8f, 8f); lineTo(4f, 12f); lineTo(8f, 16f)
+            moveTo(16f, 8f); lineTo(20f, 12f); lineTo(16f, 16f)
+        }
+    }
+
     val Info: ImageVector by lazy {
         lineIcon("Info") {
             circle(12f, 12f, 9f)

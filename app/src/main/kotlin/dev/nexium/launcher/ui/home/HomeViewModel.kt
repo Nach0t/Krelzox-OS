@@ -21,7 +21,13 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 /** Why the hero shows a given app when nothing is focused. */
-enum class FeaturedReason { Recent, Favorite, Suggested }
+enum class FeaturedReason { Continue, Recent, Favorite, Suggested }
+
+/** Maximum number of apps the hero carousel rotates through. */
+internal const val MAX_HERO_CANDIDATES = 5
+
+/** The carousel is topped up with suggested apps until it has at least this many entries. */
+internal const val MIN_HERO_CANDIDATES = 3
 
 data class Featured(val entry: AppEntry, val reason: FeaturedReason)
 
@@ -37,9 +43,15 @@ sealed interface HomeUiState {
         val favoriteKeys: Set<String>,
         /** Apps declaring a video, audio or image category. */
         val media: List<AppEntry>,
-        /** Default hero content. Null only when there are no apps. */
-        val featured: Featured?,
-    ) : HomeUiState
+        /**
+         * Hero carousel, most relevant first: last used app, other recent apps,
+         * favorites. Empty only when there are no apps.
+         */
+        val heroCandidates: List<Featured>,
+    ) : HomeUiState {
+        /** Default hero content (first candidate). */
+        val featured: Featured? get() = heroCandidates.firstOrNull()
+    }
 
     data object Error : HomeUiState
 }
@@ -49,19 +61,44 @@ internal fun buildReadyState(
     apps: List<AppEntry>,
     favoriteKeys: List<String>,
     recentKeys: List<String> = emptyList(),
+    heroExcludedPackages: Set<String> = emptySet(),
 ): HomeUiState.Ready {
     val byKey = apps.associateBy { it.key }
     val installedFavorites = favoriteKeys.mapNotNull { byKey[it] }
-    val featured = recentKeys.firstNotNullOfOrNull { byKey[it] }?.let { Featured(it, FeaturedReason.Recent) }
-        ?: installedFavorites.firstOrNull()?.let { Featured(it, FeaturedReason.Favorite) }
-        ?: apps.firstOrNull()?.let { Featured(it, FeaturedReason.Suggested) }
     return HomeUiState.Ready(
         favorites = installedFavorites,
         apps = apps,
         favoriteKeys = installedFavorites.mapTo(LinkedHashSet()) { it.key },
         media = apps.filter { it.category.isMedia },
-        featured = featured,
+        heroCandidates = buildHeroCandidates(apps, byKey, installedFavorites, recentKeys, heroExcludedPackages),
     )
+}
+
+/**
+ * Hero carousel: recent apps (the most recent one is "Continue"), then favorites, then
+ * suggested apps from the catalog until there are [MIN_HERO_CANDIDATES], so the hero
+ * stays dynamic even with few apps. Utility apps such as system Settings are excluded
+ * (they have their own tab), unless nothing else is installed.
+ */
+private fun buildHeroCandidates(
+    apps: List<AppEntry>,
+    byKey: Map<String, AppEntry>,
+    favorites: List<AppEntry>,
+    recentKeys: List<String>,
+    excluded: Set<String>,
+): List<Featured> {
+    val eligible = { e: AppEntry -> e.packageName !in excluded }
+    val out = LinkedHashMap<String, Featured>()
+    recentKeys.mapNotNull(byKey::get).filter(eligible).forEachIndexed { i, e ->
+        out.putIfAbsent(e.key, Featured(e, if (i == 0) FeaturedReason.Continue else FeaturedReason.Recent))
+    }
+    favorites.filter(eligible).forEach { out.putIfAbsent(it.key, Featured(it, FeaturedReason.Favorite)) }
+    val pool = apps.filter(eligible).ifEmpty { if (out.isEmpty()) apps else emptyList() }
+    for (app in pool) {
+        if (out.size >= MIN_HERO_CANDIDATES) break
+        out.putIfAbsent(app.key, Featured(app, FeaturedReason.Suggested))
+    }
+    return out.values.take(MAX_HERO_CANDIDATES)
 }
 
 class HomeViewModel(
@@ -69,6 +106,7 @@ class HomeViewModel(
     private val favoritesRepository: FavoritesRepository,
     private val recentsRepository: RecentsRepository,
     networkRepository: NetworkRepository,
+    heroExcludedPackages: Set<String> = emptySet(),
 ) : ViewModel() {
 
     val uiState: StateFlow<HomeUiState> =
@@ -77,7 +115,7 @@ class HomeViewModel(
             favoritesRepository.favorites,
             recentsRepository.recents,
         ) { apps, favorites, recents ->
-            buildReadyState(apps, favorites, recents) as HomeUiState
+            buildReadyState(apps, favorites, recents, heroExcludedPackages) as HomeUiState
         }
             .catch { e ->
                 Log.e(TAG, "Failed to load apps", e)
@@ -123,8 +161,11 @@ class HomeViewModel(
             favoritesRepository: FavoritesRepository,
             recentsRepository: RecentsRepository,
             networkRepository: NetworkRepository,
+            heroExcludedPackages: Set<String>,
         ): ViewModelProvider.Factory = viewModelFactory {
-            initializer { HomeViewModel(appRepository, favoritesRepository, recentsRepository, networkRepository) }
+            initializer {
+                HomeViewModel(appRepository, favoritesRepository, recentsRepository, networkRepository, heroExcludedPackages)
+            }
         }
     }
 }

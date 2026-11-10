@@ -40,7 +40,7 @@ private val DialogShape = RoundedCornerShape(20.dp)
 
 /**
  * Per-app actions, reachable with long-press OK or the Menu key. Back closes it.
- * Move actions are shown only for favorites that can move in that direction.
+ * "Reorder" (live ←/→ move mode) is shown only for favorites when there are at least two.
  */
 @Composable
 fun AppActionsDialog(
@@ -48,8 +48,8 @@ fun AppActionsDialog(
     isFavorite: Boolean,
     onOpen: () -> Unit,
     onToggleFavorite: () -> Unit,
-    onMoveLeft: (() -> Unit)?,
-    onMoveRight: (() -> Unit)?,
+    onReorder: (() -> Unit)?,
+    onManageFavorites: () -> Unit,
     onAppInfo: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -83,20 +83,18 @@ fun AppActionsDialog(
                 icon = NexiumIcons.Star,
                 onClick = { onDismiss(); onToggleFavorite() },
             )
-            if (onMoveLeft != null) {
+            if (onReorder != null) {
                 ActionButton(
-                    text = stringResource(R.string.action_move_left),
-                    icon = NexiumIcons.ArrowLeft,
-                    onClick = { onDismiss(); onMoveLeft() },
+                    text = stringResource(R.string.action_reorder),
+                    icon = NexiumIcons.Reorder,
+                    onClick = { onDismiss(); onReorder() },
                 )
             }
-            if (onMoveRight != null) {
-                ActionButton(
-                    text = stringResource(R.string.action_move_right),
-                    icon = NexiumIcons.ArrowRight,
-                    onClick = { onDismiss(); onMoveRight() },
-                )
-            }
+            ActionButton(
+                text = stringResource(R.string.action_manage_favorites),
+                icon = NexiumIcons.Plus,
+                onClick = { onDismiss(); onManageFavorites() },
+            )
             ActionButton(
                 text = stringResource(R.string.action_app_info),
                 icon = NexiumIcons.Info,

@@ -78,10 +78,18 @@
     <string name="action_open">Open</string>
     <string name="action_add_favorite">Add to favorites</string>
     <string name="action_remove_favorite">Remove from favorites</string>
-    <string name="action_move_left">Move left</string>
-    <string name="action_move_right">Move right</string>
     <string name="action_app_info">App info</string>
     <string name="action_cancel">Cancel</string>
+
+    <string name="hero_overline_recent">Recently used</string>
+    <string name="favorites_add">Add</string>
+    <string name="favorites_empty_hint">Add the apps you use most</string>
+    <string name="favorites_picker_title">Favorites</string>
+    <string name="favorites_picker_subtitle">OK adds or removes · %1$d selected</string>
+    <string name="action_done">Done</string>
+    <string name="action_reorder">Reorder</string>
+    <string name="action_manage_favorites">Manage favorites</string>
+    <string name="move_hint">← → to move · OK to finish</string>
 
     <string name="safe_mode_title">Nexium safe mode</string>
     <string name="safe_mode_message">Nexium stopped several times in a row. You can pick another launcher or try again.</string>

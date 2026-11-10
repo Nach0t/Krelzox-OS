@@ -1,10 +1,11 @@
 package dev.nexium.launcher.ui.home
 
+import android.os.SystemClock
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -23,11 +25,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
@@ -37,6 +42,9 @@ import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Icon
@@ -45,7 +53,7 @@ import androidx.tv.material3.Text
 import dev.nexium.launcher.R
 import dev.nexium.launcher.core.data.AppEntry
 import dev.nexium.launcher.core.designsystem.NexiumColors
-import dev.nexium.launcher.core.designsystem.NexiumDimens
+import dev.nexium.launcher.core.designsystem.NexiumGrid
 import dev.nexium.launcher.core.designsystem.NexiumIcons
 import dev.nexium.launcher.core.designsystem.NexiumMotion
 import dev.nexium.launcher.core.designsystem.NexiumSpacing
@@ -55,26 +63,29 @@ import kotlinx.coroutines.delay
 private const val HOME_ROW_LIMIT = 12
 private const val ROW_SHIFT_DURATION_MS = 260
 
-/** Horizontal inset so focus scale and glow of edge cards are never clipped by the row. */
-private val RowEdgeInset = 14.dp
-
 /** Callbacks shared by every tab that shows app cards. */
 data class AppActions(
     val onLaunch: (AppEntry) -> Unit,
     val onShowActions: (AppEntry) -> Unit,
     val onToggleFavorite: (AppEntry) -> Unit,
+    /** Actions opened from the favorites row (offers live reorder). */
+    val onShowFavoriteActions: (AppEntry) -> Unit = onShowActions,
+    val onAddFavorites: () -> Unit = {},
+    /** Favorite currently in reorder mode, if any. */
+    val movingKey: String? = null,
+    val onMoveFavorite: (AppEntry, Int) -> Unit = { _, _ -> },
+    val onMoveDone: () -> Unit = {},
 )
 
-/** Data for one horizontal row on Inicio. */
-private data class HomeRow(
-    val key: String,
-    val title: String,
-    val entries: List<AppEntry>,
-    val cardWidth: Dp,
-    val iconSize: Dp,
-    val hint: String?,
-    val showSeeAll: Boolean,
-)
+/** Time of the last key press, read by the hero carousel (plain field: never recomposes). */
+class InteractionClock {
+    @Volatile
+    var lastKeyAt: Long = 0L
+
+    fun touch() {
+        lastKeyAt = SystemClock.uptimeMillis()
+    }
+}
 
 @Composable
 fun HomeTab(
@@ -86,10 +97,14 @@ fun HomeTab(
     onCardFocused: (String) -> Unit,
     heroKey: String?,
     onHeroKeyChange: (String?) -> Unit,
+    heroIndex: Int,
+    onHeroIndexChange: (Int) -> Unit,
+    interaction: InteractionClock,
     onHeroButtonsFocusChanged: (Boolean) -> Unit,
     onOpenLibrary: () -> Unit,
 ) {
     val byKey = remember(state.apps) { state.apps.associateBy { it.key } }
+    var rowsHaveFocus by remember { mutableStateOf(false) }
 
     // The hero follows the focused card after a short delay, so fast scrolling
     // does not thrash the cross-fade or art loading.
@@ -100,36 +115,50 @@ fun HomeTab(
         }
     }
 
-    val featured = state.featured ?: return
-    val heroEntry = heroKey?.let(byKey::get)
-    val heroContent = when {
-        heroEntry == null || heroEntry.key == featured.entry.key -> HeroContent(
+    // Carousel: while Nexium is in front, no row is focused and the remote is idle,
+    // the hero advances through the relevant apps. Any key press pauses it.
+    val candidates = state.heroCandidates
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    // Read the latest values inside the long-running loop (not the ones captured at launch).
+    val currentIndex by rememberUpdatedState(heroIndex)
+    val currentHeroKey by rememberUpdatedState(heroKey)
+    LaunchedEffect(candidates, rowsHaveFocus) {
+        if (rowsHaveFocus || candidates.isEmpty()) return@LaunchedEffect
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            var lastAdvance = SystemClock.uptimeMillis()
+            while (true) {
+                delay(1_000)
+                val now = SystemClock.uptimeMillis()
+                val idle = now - interaction.lastKeyAt >= NexiumMotion.HERO_ROTATE_MS
+                if (idle && now - lastAdvance >= NexiumMotion.HERO_ROTATE_MS && (candidates.size > 1 || currentHeroKey != null)) {
+                    // Leaving a followed card resumes the carousel where it was; otherwise advance.
+                    if (currentHeroKey != null) {
+                        onHeroKeyChange(null)
+                    } else {
+                        onHeroIndexChange((currentIndex + 1) % candidates.size)
+                    }
+                    lastAdvance = now
+                }
+            }
+        }
+    }
+
+    if (candidates.isEmpty()) return
+    val followed = heroKey?.let(byKey::get)
+    val carouselIndex = heroIndex.coerceIn(0, candidates.lastIndex)
+    val heroContent = if (followed != null) {
+        HeroContent(followed, if (followed.key in state.favoriteKeys) HeroOverline.Favorite else HeroOverline.Category)
+    } else {
+        val featured = candidates[carouselIndex]
+        HeroContent(
             entry = featured.entry,
             overline = when (featured.reason) {
-                FeaturedReason.Recent -> HeroOverline.Continue
+                FeaturedReason.Continue -> HeroOverline.Continue
+                FeaturedReason.Recent -> HeroOverline.Recent
                 FeaturedReason.Favorite -> HeroOverline.Favorite
                 FeaturedReason.Suggested -> HeroOverline.Featured
             },
         )
-        heroEntry.key in state.favoriteKeys -> HeroContent(heroEntry, HeroOverline.Favorite)
-        else -> HeroContent(heroEntry, HeroOverline.Category)
-    }
-
-    val hint = stringResource(R.string.home_hint)
-    val favoritesTitle = stringResource(R.string.section_favorites)
-    val appsTitle = stringResource(R.string.section_apps)
-    val rows = remember(state.favorites, state.apps, hint, favoritesTitle, appsTitle) {
-        buildList {
-            if (state.favorites.isNotEmpty()) {
-                add(HomeRow("fav", favoritesTitle, state.favorites, NexiumDimens.FavoriteCardWidth, NexiumDimens.AppIconLarge, hint, showSeeAll = false))
-            }
-            add(
-                HomeRow(
-                    "app", appsTitle, state.apps.take(HOME_ROW_LIMIT), NexiumDimens.AppCardWidth, NexiumDimens.AppIcon,
-                    hint = if (state.favorites.isEmpty()) hint else null, showSeeAll = true,
-                ),
-            )
-        }
     }
 
     // Row-level "pivot" scrolling: the focused row is aligned to the top of the area.
@@ -144,6 +173,7 @@ fun HomeTab(
         Hero(
             content = heroContent,
             isFavorite = heroContent.entry.key in state.favoriteKeys,
+            page = if (followed == null) HeroPage(carouselIndex, candidates.size) else null,
             artLoader = artLoader,
             openRequester = heroOpenRequester,
             onOpen = actions.onLaunch,
@@ -153,94 +183,156 @@ fun HomeTab(
                 onHeroButtonsFocusChanged(focused)
             },
         )
-        Box(
+        BoxWithConstraints(
             Modifier
                 .fillMaxSize()
-                .clipToBounds(),
+                .clipVerticalOnly(),
         ) {
+            val favoriteWidth = NexiumGrid.columnWidth(maxWidth, NexiumGrid.FAVORITE_COLUMNS)
+            val appWidth = NexiumGrid.columnWidth(maxWidth, NexiumGrid.APP_COLUMNS)
+            val contentWidth = maxWidth
             Column(
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(align = Alignment.Top, unbounded = true)
                     .graphicsLayer { translationY = -shift }
+                    .onFocusChanged { rowsHaveFocus = it.hasFocus }
                     .padding(top = NexiumSpacing.Small),
                 verticalArrangement = Arrangement.spacedBy(NexiumSpacing.XSmall),
             ) {
-                rows.forEachIndexed { index, row ->
-                    AppRow(
-                        row = row,
-                        favoriteKeys = state.favoriteKeys,
-                        artLoader = artLoader,
-                        actions = actions,
-                        onCardFocused = onCardFocused,
-                        seeAllCount = state.apps.size,
-                        onOpenLibrary = onOpenLibrary,
-                        modifier = Modifier
-                            .onGloballyPositioned { coords ->
-                                val top = coords.positionInParent().y
-                                if (rowTops[index] != top) rowTops[index] = top
-                            }
-                            .onFocusChanged { if (it.hasFocus) focusedRow = index },
-                    )
+                RowShell(
+                    index = 0,
+                    title = stringResource(R.string.section_favorites),
+                    hint = stringResource(
+                        when {
+                            actions.movingKey != null -> R.string.move_hint
+                            state.favorites.isEmpty() -> R.string.favorites_empty_hint
+                            else -> R.string.home_hint
+                        },
+                    ),
+                    contentWidth = contentWidth,
+                    rowTops = rowTops,
+                    onFocused = { focusedRow = 0 },
+                ) {
+                    items(state.favorites, key = { "fav/${it.key}" }, contentType = { "card" }) { entry ->
+                        AppCard(
+                            entry = entry,
+                            isFavorite = true,
+                            artLoader = artLoader,
+                            onClick = { actions.onLaunch(entry) },
+                            onShowActions = { actions.onShowFavoriteActions(entry) },
+                            moveControls = if (entry.key == actions.movingKey) {
+                                MoveControls(onMove = { actions.onMoveFavorite(entry, it) }, onDone = actions.onMoveDone)
+                            } else {
+                                null
+                            },
+                            modifier = Modifier
+                                .width(favoriteWidth)
+                                .onFocusChanged { if (it.hasFocus) onCardFocused(entry.key) },
+                        )
+                    }
+                    item(key = "fav/add", contentType = "action") {
+                        ActionCard(
+                            icon = NexiumIcons.Plus,
+                            label = stringResource(R.string.favorites_add),
+                            width = favoriteWidth,
+                            onClick = actions.onAddFavorites,
+                        )
+                    }
+                }
+                RowShell(
+                    index = 1,
+                    title = stringResource(R.string.section_apps),
+                    hint = null,
+                    contentWidth = contentWidth,
+                    rowTops = rowTops,
+                    onFocused = { focusedRow = 1 },
+                ) {
+                    items(state.apps.take(HOME_ROW_LIMIT), key = { "app/${it.key}" }, contentType = { "card" }) { entry ->
+                        AppCard(
+                            entry = entry,
+                            isFavorite = entry.key in state.favoriteKeys,
+                            artLoader = artLoader,
+                            onClick = { actions.onLaunch(entry) },
+                            onShowActions = { actions.onShowActions(entry) },
+                            modifier = Modifier
+                                .width(appWidth)
+                                .onFocusChanged { if (it.hasFocus) onCardFocused(entry.key) },
+                        )
+                    }
+                    item(key = "app/see-all", contentType = "action") {
+                        ActionCard(
+                            icon = NexiumIcons.Library,
+                            label = stringResource(R.string.see_library, state.apps.size),
+                            width = appWidth,
+                            onClick = onOpenLibrary,
+                        )
+                    }
                 }
             }
         }
     }
 }
 
+/**
+ * Clips content that scrolls under the hero (vertical) but leaves horizontal room, so
+ * the focus scale and glow of edge cards are never cut at the content edges.
+ */
+private fun Modifier.clipVerticalOnly(): Modifier = drawWithContent {
+    val room = NexiumGrid.FocusInset.toPx() * 2
+    clipRect(left = -room, top = 0f, right = size.width + room, bottom = size.height) {
+        this@drawWithContent.drawContent()
+    }
+}
+
+/**
+ * A titled horizontal row. The list is widened by [NexiumGrid.FocusInset] on both sides
+ * (room for focus scale/glow) so card edges still align with the title and the hero.
+ */
 @Composable
-private fun AppRow(
-    row: HomeRow,
-    favoriteKeys: Set<String>,
-    artLoader: AppArtLoader,
-    actions: AppActions,
-    onCardFocused: (String) -> Unit,
-    seeAllCount: Int,
-    onOpenLibrary: () -> Unit,
-    modifier: Modifier = Modifier,
+private fun RowShell(
+    index: Int,
+    title: String,
+    hint: String?,
+    contentWidth: Dp,
+    rowTops: MutableMap<Int, Float>,
+    onFocused: () -> Unit,
+    content: androidx.compose.foundation.lazy.LazyListScope.() -> Unit,
 ) {
-    Column(modifier.fillMaxWidth()) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .onGloballyPositioned { coords ->
+                val top = coords.positionInParent().y
+                if (rowTops[index] != top) rowTops[index] = top
+            }
+            .onFocusChanged { if (it.hasFocus) onFocused() },
+    ) {
         Row(
-            Modifier.fillMaxWidth().padding(start = RowEdgeInset, end = RowEdgeInset, top = NexiumSpacing.Small),
+            Modifier.fillMaxWidth().padding(top = NexiumSpacing.Small),
             verticalAlignment = Alignment.Bottom,
         ) {
-            Text(row.title, style = MaterialTheme.typography.titleMedium, color = NexiumColors.OnBackground)
-            if (row.hint != null) {
+            Text(title, style = MaterialTheme.typography.titleMedium, color = NexiumColors.OnBackground)
+            if (hint != null) {
                 Spacer(Modifier.weight(1f))
-                Text(row.hint, style = MaterialTheme.typography.labelMedium, color = NexiumColors.OnSurfaceSubtle)
+                Text(hint, style = MaterialTheme.typography.labelMedium, color = NexiumColors.OnSurfaceSubtle)
             }
         }
         LazyRow(
-            // Padding leaves room for focus scale and glow so they are never clipped.
-            contentPadding = PaddingValues(horizontal = RowEdgeInset, vertical = NexiumSpacing.Medium),
-            horizontalArrangement = Arrangement.spacedBy(NexiumSpacing.Large - 4.dp),
+            contentPadding = PaddingValues(horizontal = NexiumGrid.FocusInset, vertical = NexiumSpacing.Medium),
+            horizontalArrangement = Arrangement.spacedBy(NexiumGrid.Gap),
             // Re-entering the row restores the last focused card instead of the nearest one.
-            modifier = Modifier.focusRestorer(),
-        ) {
-            items(row.entries, key = { "${row.key}/${it.key}" }, contentType = { "card" }) { entry ->
-                AppCard(
-                    entry = entry,
-                    isFavorite = entry.key in favoriteKeys,
-                    artLoader = artLoader,
-                    onClick = { actions.onLaunch(entry) },
-                    onShowActions = { actions.onShowActions(entry) },
-                    iconSize = row.iconSize,
-                    modifier = Modifier
-                        .width(row.cardWidth)
-                        .onFocusChanged { if (it.hasFocus) onCardFocused(entry.key) },
-                )
-            }
-            if (row.showSeeAll) {
-                item(key = "${row.key}/see-all", contentType = "trailing") {
-                    SeeAllCard(count = seeAllCount, width = row.cardWidth, onClick = onOpenLibrary)
-                }
-            }
-        }
+            modifier = Modifier
+                .requiredWidth(contentWidth + NexiumGrid.FocusInset * 2)
+                .focusRestorer(),
+            content = content,
+        )
     }
 }
 
+/** Utility tile in a row ("+ Add", "See all"): same size and focus treatment as an app card. */
 @Composable
-private fun SeeAllCard(count: Int, width: Dp, onClick: () -> Unit) {
+internal fun ActionCard(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, width: Dp, onClick: () -> Unit) {
     Column(Modifier.width(width)) {
         Card(
             onClick = onClick,
@@ -259,20 +351,17 @@ private fun SeeAllCard(count: Int, width: Dp, onClick: () -> Unit) {
             Box(
                 Modifier
                     .fillMaxSize()
-                    .background(NexiumColors.Electric.copy(alpha = 0.08f)),
+                    .iconPlate(null),
                 contentAlignment = Alignment.Center,
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(NexiumIcons.Library, contentDescription = null, tint = NexiumColors.Cyan, modifier = Modifier.size(22.dp))
-                    Spacer(Modifier.width(NexiumSpacing.Small))
-                    Icon(NexiumIcons.ArrowRight, contentDescription = null, tint = NexiumColors.OnSurfaceMuted, modifier = Modifier.size(18.dp))
-                }
+                Icon(icon, contentDescription = null, tint = NexiumColors.Cyan, modifier = Modifier.size(28.dp))
             }
         }
         Text(
-            text = stringResource(R.string.see_library, count),
+            text = label,
             style = MaterialTheme.typography.labelLarge,
             color = NexiumColors.OnSurfaceMuted,
+            maxLines = 1,
             modifier = Modifier.padding(top = NexiumSpacing.Small + 2.dp, start = 2.dp),
         )
     }

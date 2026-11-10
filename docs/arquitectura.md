@@ -59,9 +59,20 @@ Las dependencias solo apuntan hacia abajo: `:app` → `:core:*`. Los módulos
 | Multimedia | Apps con categoría video, audio o imagen (estado vacío con acceso a Biblioteca) |
 | Ajustes | Accesos a Red, Pantalla y sonido, App de inicio, Sistema y "Acerca de Nexium" |
 
-App destacada del hero: la última abierta (*Continuar*), si no el primer
-favorito, si no la primera app. Al recorrer las filas, el hero muestra la app
-enfocada.
+Hero (carrusel de hasta 5 apps, `buildReadyState`):
+1. Apps abiertas recientemente (la más reciente: *Continuar*; el resto:
+   *Usada recientemente*).
+2. Favoritos.
+3. Apps del catálogo (*Destacado*) hasta completar al menos 3.
+
+Las apps utilitarias quedan fuera del hero: el paquete que resuelve
+`Settings.ACTION_SETTINGS` se detecta en tiempo de ejecución (tiene su propia
+pestaña). Solo se usa si no hay ninguna otra app. Al recorrer las filas, el hero
+muestra la app enfocada; tras 9 s sin interacción vuelve al carrusel.
+
+El carrusel corre en un `LaunchedEffect` con `repeatOnLifecycle(RESUMED)`: con
+otra app delante no hace nada. Las pulsaciones del mando se registran en un
+`InteractionClock` (campo simple, sin estado de Compose: no recompone).
 
 Rendimiento de la UI:
 - Las filas de Inicio están en un `Column` sin desplazamiento propio; un
@@ -89,8 +100,10 @@ Rendimiento de la UI:
 | D-pad / flechas | Mover el foco: pestañas ↔ hero ↔ filas; dentro de cada fila o cuadrícula |
 | Foco en una pestaña | La selecciona (convención TV); OK entra en su contenido |
 | OK / Enter | Abrir la app |
-| OK mantenido o tecla Menú | Diálogo: Abrir · Añadir/Quitar favorito · Mover izquierda/derecha (favoritos) · Información de la app · Cancelar |
-| Back | Jerárquico: contenido → su pestaña → Inicio → botón *Abrir* del hero. Ahí no se consume: como HOME no hace nada; como app normal, sale |
+| OK mantenido o tecla Menú | Diálogo: Abrir · Añadir/Quitar favorito · Reordenar (desde la fila de Favoritos) · Gestionar favoritos · Información de la app · Cancelar |
+| Tarjeta "+ Añadir" | Selector de favoritos: todas las apps con estrella; OK añade o quita sin cerrar |
+| Modo reordenar | ←/→ mueve la tarjeta en directo · ↑/↓ bloqueados · OK o Back termina |
+| Back | Termina el modo reordenar si está activo. Después, jerárquico: contenido → su pestaña → Inicio → botón *Abrir* del hero. Ahí no se consume: como HOME no hace nada; como app normal, sale |
 | HOME con Nexium delante | Cierra diálogos, vuelve a Inicio y enfoca *Abrir* del hero |
 
 Reglas de foco:

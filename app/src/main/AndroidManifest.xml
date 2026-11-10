@@ -5,7 +5,13 @@
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
-    <!-- Package visibility <queries> is declared in :core:data and merged here. -->
+    <!-- Package visibility <queries> for launchable apps is declared in :core:data and
+         merged here. Settings is resolved to keep it out of the hero carousel. -->
+    <queries>
+        <intent>
+            <action android:name="android.settings.SETTINGS" />
+        </intent>
+    </queries>
 
     <application
         android:name=".NexiumApp"
