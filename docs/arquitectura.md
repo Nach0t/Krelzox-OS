@@ -44,6 +44,39 @@ Las dependencias solo apuntan hacia abajo: `:app` → `:core:*`. Los módulos
 - Para cada app se prefiere `android:banner` (320×180 dp); si no hay, se
   compone una tarjeta con icono y nombre.
 
+## Favoritos
+
+- Se guardan en Preferences DataStore (`nexium_preferences`) como lista
+  ordenada de claves `paquete/actividad`.
+- Un archivo corrupto se reemplaza por preferencias vacías: nunca bloquea el
+  arranque.
+- **No se purgan** los favoritos de apps desinstaladas: durante una
+  actualización el paquete desaparece unos instantes y se perdería el favorito.
+  La UI simplemente oculta los que no tienen app instalada; si la app vuelve,
+  reaparece en su posición.
+- Backup en la nube y transferencia entre dispositivos desactivados
+  (`data_extraction_rules.xml`).
+
+## Navegación e interacción
+
+| Entrada | Acción |
+|---|---|
+| D-pad / flechas | Mover el foco por la cuadrícula (secciones Favoritos y Aplicaciones) |
+| OK / Enter | Abrir la app |
+| OK mantenido o tecla Menú | Diálogo: Abrir · Añadir/Quitar favorito · Información de la app · Cancelar |
+| Back | Cierra el diálogo; como app normal, sale; como HOME, no hace nada |
+| HOME con Nexium delante | Vuelve arriba y enfoca la primera tarjeta |
+
+Reglas de foco:
+- Al mostrarse, el foco va a la primera tarjeta (primer favorito o primera app).
+- Si la tarjeta enfocada desaparece (app desinstalada, favorito quitado), el
+  foco vuelve automáticamente a la primera tarjeta: nunca queda la pantalla sin
+  foco.
+- Al volver de otra app o de un diálogo, se conserva la tarjeta enfocada.
+
+"Información de la app" abre la pantalla del sistema (forzar cierre,
+almacenamiento, desinstalar): Nexium no necesita `REQUEST_DELETE_PACKAGES`.
+
 ## Permisos
 
 Ninguno privilegiado y, de inicio, ningún permiso peligroso. No hace falta

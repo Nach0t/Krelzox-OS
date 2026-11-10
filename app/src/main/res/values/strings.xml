@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Nexium</string>
-    <string name="home_title">Apps</string>
+    <string name="home_hint">Hold OK or press Menu for options</string>
     <string name="home_loading">Loading apps…</string>
     <string name="home_empty">No apps found.</string>
     <string name="home_error">Couldn\'t load apps.</string>
     <string name="open_settings">Open settings</string>
     <string name="launch_failed">Couldn\'t open %1$s</string>
+
+    <string name="section_favorites">Favorites</string>
+    <string name="section_apps">Apps</string>
+    <string name="card_description_favorite">%1$s, favorite</string>
+
+    <string name="action_open">Open</string>
+    <string name="action_add_favorite">Add to favorites</string>
+    <string name="action_remove_favorite">Remove from favorites</string>
+    <string name="action_app_info">App info</string>
+    <string name="action_cancel">Cancel</string>
 </resources>

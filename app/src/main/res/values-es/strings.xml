@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home_title">Aplicaciones</string>
+    <string name="home_hint">Mantén OK o pulsa Menú para ver opciones</string>
     <string name="home_loading">Cargando aplicaciones…</string>
     <string name="home_empty">No se encontraron aplicaciones.</string>
     <string name="home_error">No se pudieron cargar las aplicaciones.</string>
     <string name="open_settings">Abrir ajustes</string>
     <string name="launch_failed">No se pudo abrir %1$s</string>
+
+    <string name="section_favorites">Favoritos</string>
+    <string name="section_apps">Aplicaciones</string>
+    <string name="card_description_favorite">%1$s, favorito</string>
+
+    <string name="action_open">Abrir</string>
+    <string name="action_add_favorite">Añadir a favoritos</string>
+    <string name="action_remove_favorite">Quitar de favoritos</string>
+    <string name="action_app_info">Información de la app</string>
+    <string name="action_cancel">Cancelar</string>
 </resources>

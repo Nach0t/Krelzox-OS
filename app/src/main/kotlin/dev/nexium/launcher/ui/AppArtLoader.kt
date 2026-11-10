@@ -48,6 +48,13 @@ class AppArtLoader(context: Context) {
         return art
     }
 
+    /** Drops cached art of apps that are no longer installed. */
+    fun retainOnly(keys: Set<String>) {
+        cache.snapshot().keys
+            .filterNot { it in keys }
+            .forEach { cache.remove(it) }
+    }
+
     private fun loadUncached(entry: AppEntry): AppArt {
         val banner = packageManager.getActivityBanner(entry.component)
             ?: packageManager.getApplicationBanner(entry.packageName)
