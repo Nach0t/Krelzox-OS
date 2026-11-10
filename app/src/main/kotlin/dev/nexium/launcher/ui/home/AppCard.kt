@@ -3,6 +3,8 @@ package dev.nexium.launcher.ui.home
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -15,8 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -27,10 +31,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
+import androidx.tv.material3.Glow
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import dev.nexium.launcher.R
@@ -42,8 +48,23 @@ import dev.nexium.launcher.core.designsystem.NexiumSpacing
 import dev.nexium.launcher.ui.AppArt
 import dev.nexium.launcher.ui.AppArtLoader
 
-private val CardShape = RoundedCornerShape(NexiumDimens.CardCorner)
+internal val CardShape = RoundedCornerShape(NexiumDimens.CardCorner)
 private val FavoriteDotSize = 8.dp
+private val IconFieldBrush = Brush.verticalGradient(listOf(NexiumColors.SurfaceRaised, NexiumColors.Surface))
+
+/** Shared Nexium focus treatment for 16:9 tiles: scale, Ion border and a moderate blue glow. */
+@Composable
+internal fun nexiumCardBorder() = CardDefaults.border(
+    focusedBorder = Border(
+        border = BorderStroke(NexiumDimens.FocusBorder, NexiumColors.IonBrush),
+        shape = CardShape,
+    ),
+)
+
+@Composable
+internal fun nexiumCardGlow() = CardDefaults.glow(
+    focusedGlow = Glow(elevationColor = NexiumColors.Electric.copy(alpha = 0.45f), elevation = NexiumDimens.FocusGlow),
+)
 
 /**
  * App tile. OK launches; long-press OK or the Menu key opens the actions dialog.
@@ -56,20 +77,24 @@ fun AppCard(
     onClick: () -> Unit,
     onShowActions: () -> Unit,
     modifier: Modifier = Modifier,
+    iconSize: Dp = NexiumDimens.AppIcon,
 ) {
-    val art by produceState<AppArt?>(initialValue = null, entry.key) {
-        value = artLoader.load(entry)
+    val art by produceState(initialValue = artLoader.peek(entry), entry.key) {
+        if (value == null) value = artLoader.load(entry)
     }
     val description = if (isFavorite) {
         stringResource(R.string.card_description_favorite, entry.label)
     } else {
         entry.label
     }
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
 
     Column(modifier) {
         Card(
             onClick = onClick,
             onLongClick = onShowActions,
+            interactionSource = interaction,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(16f / 9f)
@@ -85,12 +110,8 @@ fun AppCard(
                 focusedContainerColor = NexiumColors.SurfaceRaised,
             ),
             scale = CardDefaults.scale(focusedScale = NexiumMotion.FOCUS_SCALE),
-            border = CardDefaults.border(
-                focusedBorder = Border(
-                    border = BorderStroke(NexiumDimens.FocusBorder, NexiumColors.IonBrush),
-                    shape = CardShape,
-                ),
-            ),
+            border = nexiumCardBorder(),
+            glow = nexiumCardGlow(),
         ) {
             Box(Modifier.fillMaxSize()) {
                 when (val current = art) {
@@ -100,33 +121,38 @@ fun AppCard(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize(),
                     )
-                    is AppArt.Icon -> Image(
-                        bitmap = current.image,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .size(NexiumDimens.AppIcon),
-                    )
+                    is AppArt.Icon -> Box(
+                        Modifier
+                            .fillMaxSize()
+                            .background(IconFieldBrush),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Image(
+                            bitmap = current.image,
+                            contentDescription = null,
+                            modifier = Modifier.size(iconSize),
+                        )
+                    }
                     null -> Unit
                 }
                 if (isFavorite) {
                     Box(
                         Modifier
                             .align(Alignment.TopEnd)
-                            .padding(NexiumSpacing.Small)
+                            .padding(NexiumSpacing.Small + 2.dp)
                             .size(FavoriteDotSize)
-                            .background(NexiumColors.Champagne, CircleShape),
+                            .background(NexiumColors.Cyan, CircleShape),
                     )
                 }
             }
         }
         Text(
             text = entry.label,
-            style = MaterialTheme.typography.labelMedium,
-            color = NexiumColors.OnSurfaceMuted,
+            style = MaterialTheme.typography.labelLarge,
+            color = if (focused) NexiumColors.OnBackground else NexiumColors.OnSurfaceMuted,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(top = NexiumSpacing.Small),
+            modifier = Modifier.padding(top = NexiumSpacing.Small + 2.dp, start = 2.dp),
         )
     }
 }

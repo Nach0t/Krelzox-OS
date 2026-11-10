@@ -1,6 +1,8 @@
 # Nexium-OS
 
-> **Estado:** etapa 3 — Nexium funciona como launcher principal (rol HOME) con modo seguro y recuperación verificada.
+> **Estado:** etapa 4 — diseño premium "Graphite & Ion" funcionando como launcher principal en la Raspberry Pi 5.
+
+![Inicio de Nexium](docs/capturas/etapa4/01-inicio.png)
 
 Nexium-OS es una experiencia Android TV premium para Raspberry Pi 5. Su primer
 componente es **Nexium Launcher** (`dev.nexium.launcher`), un launcher propio en
@@ -47,3 +49,6 @@ revisa siempre `git status` antes de un commit.
 ## Licencia
 
 Apache License 2.0. Ver [LICENSE](LICENSE).
+
+Incluye la tipografía **Inter** © The Inter Project Authors, bajo SIL Open
+Font License 1.1 ([third_party/inter/OFL.txt](third_party/inter/OFL.txt)).

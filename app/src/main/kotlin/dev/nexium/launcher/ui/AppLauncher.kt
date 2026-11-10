@@ -29,6 +29,10 @@ object AppLauncher {
     fun openHomeSettings(context: Context): Boolean =
         start(context, Intent(Settings.ACTION_HOME_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 
+    /** Opens a system settings screen by action (e.g. Settings.ACTION_WIFI_SETTINGS), falling back to Settings. */
+    fun openSystemScreen(context: Context, action: String): Boolean =
+        start(context, Intent(action).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) || openSettings(context)
+
     /** System app-details screen (force stop, storage, uninstall). No extra permission needed. */
     fun openAppInfo(context: Context, packageName: String): Boolean =
         start(

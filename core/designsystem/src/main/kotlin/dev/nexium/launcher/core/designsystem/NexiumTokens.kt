@@ -15,14 +15,30 @@ object NexiumSpacing {
 
 /** Shape and size tokens. */
 object NexiumDimens {
-    val CardCorner = 12.dp
+    val CardCorner = 16.dp
+    val ButtonCorner = 12.dp
+    val PillCorner = 50.dp
     val FocusBorder = 2.dp
+    val FocusGlow = 14.dp
     val AppIcon = 56.dp
+    val AppIconLarge = 72.dp
+
+    /** Large favorite cards (16:9). */
+    val FavoriteCardWidth = 212.dp
+
+    /** Catalog / row cards (16:9). */
+    val AppCardWidth = 180.dp
+
+    val TopBarHeight = 56.dp
+    val HeroHeight = 188.dp
 }
 
-/** Motion tokens. Focus is the brand signature: subtle scale + Ion border. */
+/** Motion tokens. Focus is the brand signature: subtle scale + Ion border + soft glow. */
 object NexiumMotion {
-    const val FOCUS_SCALE = 1.08f
-    const val FOCUS_DURATION_MS = 180
-    const val CROSSFADE_DURATION_MS = 300
+    const val FOCUS_SCALE = 1.06f
+    const val FOCUS_DURATION_MS = 160
+    const val CROSSFADE_DURATION_MS = 280
+
+    /** Delay before the hero follows focus, so fast D-pad scrolling does not thrash it. */
+    const val HERO_FOLLOW_DELAY_MS = 140L
 }

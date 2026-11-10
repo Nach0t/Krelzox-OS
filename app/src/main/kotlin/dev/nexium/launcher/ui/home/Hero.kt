@@ -1,0 +1,278 @@
+package dev.nexium.launcher.ui.home
+
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.tv.material3.Border
+import androidx.tv.material3.Button
+import androidx.tv.material3.ButtonDefaults
+import androidx.tv.material3.Glow
+import androidx.tv.material3.Icon
+import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.Text
+import dev.nexium.launcher.R
+import dev.nexium.launcher.core.data.AppCategory
+import dev.nexium.launcher.core.data.AppEntry
+import dev.nexium.launcher.core.designsystem.NexiumColors
+import dev.nexium.launcher.core.designsystem.NexiumDimens
+import dev.nexium.launcher.core.designsystem.NexiumIcons
+import dev.nexium.launcher.core.designsystem.NexiumMotion
+import dev.nexium.launcher.core.designsystem.NexiumSpacing
+import dev.nexium.launcher.ui.AppArt
+import dev.nexium.launcher.ui.AppArtLoader
+
+private val HeroShape = RoundedCornerShape(24.dp)
+private val ArtWidth = 264.dp
+private val ArtShape = RoundedCornerShape(NexiumDimens.CardCorner)
+
+/** What the hero is showing and why (drives the overline). */
+data class HeroContent(val entry: AppEntry, val overline: HeroOverline)
+
+enum class HeroOverline { Continue, Favorite, Featured, Category }
+
+/**
+ * Cinematic feature area: graphite field tinted with the app's accent (no blur),
+ * title + description, and quick actions. Text and art cross-fade; the buttons
+ * stay in place so D-pad focus is never torn down by a content change.
+ */
+@Composable
+fun Hero(
+    content: HeroContent,
+    isFavorite: Boolean,
+    artLoader: AppArtLoader,
+    openRequester: FocusRequester,
+    onOpen: (AppEntry) -> Unit,
+    onToggleFavorite: (AppEntry) -> Unit,
+    onButtonsFocusChanged: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val entry = content.entry
+    val art by produceState(initialValue = artLoader.peek(entry), entry.key) {
+        value = artLoader.peek(entry) ?: artLoader.load(entry)
+    }
+    val accent by animateColorAsState(
+        targetValue = art?.accent?.let { Color(it) } ?: NexiumColors.Electric,
+        animationSpec = tween(NexiumMotion.CROSSFADE_DURATION_MS),
+        label = "heroAccent",
+    )
+
+    Box(
+        modifier
+            .fillMaxWidth()
+            .height(NexiumDimens.HeroHeight)
+            .clip(HeroShape)
+            // Draw-phase only: accent animation never recomposes the hero.
+            .drawBehind {
+                drawRect(NexiumColors.Surface)
+                drawRect(
+                    Brush.horizontalGradient(
+                        0f to NexiumColors.Surface,
+                        0.42f to NexiumColors.Surface,
+                        1f to lerp(NexiumColors.Surface, accent, 0.30f),
+                    ),
+                )
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(accent.copy(alpha = 0.32f), Color.Transparent),
+                        center = Offset(size.width * 0.80f, size.height * 0.5f),
+                        radius = size.height * 1.15f,
+                    ),
+                    radius = size.height * 1.15f,
+                    center = Offset(size.width * 0.80f, size.height * 0.5f),
+                )
+            },
+    ) {
+        Row(
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = NexiumSpacing.XLarge, vertical = NexiumSpacing.Large - 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(Modifier.weight(1f).fillMaxHeight(), verticalArrangement = Arrangement.Center) {
+                Crossfade(
+                    targetState = content,
+                    animationSpec = tween(NexiumMotion.CROSSFADE_DURATION_MS),
+                    label = "heroText",
+                ) { shown -> HeroText(shown) }
+                Spacer(Modifier.height(NexiumSpacing.Medium - 2.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(NexiumSpacing.Medium),
+                    modifier = Modifier.onFocusChanged { onButtonsFocusChanged(it.hasFocus) },
+                ) {
+                    HeroButton(
+                        text = stringResource(R.string.hero_open),
+                        icon = NexiumIcons.Play,
+                        primary = true,
+                        onClick = { onOpen(entry) },
+                        modifier = Modifier.focusRequester(openRequester),
+                    )
+                    HeroButton(
+                        text = stringResource(if (isFavorite) R.string.hero_unfavorite else R.string.hero_favorite),
+                        icon = NexiumIcons.Star,
+                        primary = false,
+                        onClick = { onToggleFavorite(entry) },
+                    )
+                }
+            }
+            Spacer(Modifier.width(NexiumSpacing.XLarge))
+            Crossfade(
+                targetState = art,
+                animationSpec = tween(NexiumMotion.CROSSFADE_DURATION_MS),
+                label = "heroArt",
+            ) { shown -> HeroArt(shown) }
+        }
+    }
+}
+
+@Composable
+private fun HeroText(content: HeroContent) {
+    Column {
+        Text(
+            text = overlineText(content).uppercase(),
+            style = MaterialTheme.typography.labelSmall,
+            color = NexiumColors.Cyan,
+        )
+        Spacer(Modifier.height(NexiumSpacing.XSmall + 2.dp))
+        Text(
+            text = content.entry.label,
+            style = MaterialTheme.typography.displaySmall,
+            color = NexiumColors.OnBackground,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Spacer(Modifier.height(NexiumSpacing.XSmall))
+        Text(
+            text = descriptionText(content.entry),
+            style = MaterialTheme.typography.bodyLarge,
+            color = NexiumColors.OnSurfaceMuted,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Composable
+private fun HeroArt(art: AppArt?) {
+    Box(
+        Modifier
+            .width(ArtWidth)
+            .height(ArtWidth * 9 / 16)
+            .clip(ArtShape)
+            .background(NexiumColors.BackgroundDeep.copy(alpha = 0.55f)),
+        contentAlignment = Alignment.Center,
+    ) {
+        when (art) {
+            is AppArt.Banner -> Image(
+                bitmap = art.image,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+            )
+            is AppArt.Icon -> Image(
+                bitmap = art.image,
+                contentDescription = null,
+                modifier = Modifier.size(96.dp),
+            )
+            null -> Unit
+        }
+    }
+}
+
+@Composable
+private fun HeroButton(
+    text: String,
+    icon: ImageVector,
+    primary: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        shape = ButtonDefaults.shape(RoundedCornerShape(NexiumDimens.ButtonCorner)),
+        colors = ButtonDefaults.colors(
+            containerColor = if (primary) NexiumColors.Electric.copy(alpha = 0.22f) else NexiumColors.SurfaceRaised,
+            contentColor = NexiumColors.OnBackground,
+            focusedContainerColor = NexiumColors.Electric,
+            focusedContentColor = NexiumColors.OnBackground,
+        ),
+        border = ButtonDefaults.border(
+            focusedBorder = Border(BorderStroke(NexiumDimens.FocusBorder, NexiumColors.Cyan)),
+        ),
+        glow = ButtonDefaults.glow(
+            focusedGlow = Glow(NexiumColors.Electric.copy(alpha = 0.5f), 12.dp),
+        ),
+        scale = ButtonDefaults.scale(focusedScale = 1.04f),
+    ) {
+        Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(NexiumSpacing.Small))
+        Text(text, style = MaterialTheme.typography.labelLarge)
+    }
+}
+
+@Composable
+private fun overlineText(content: HeroContent): String = when (content.overline) {
+    HeroOverline.Continue -> stringResource(R.string.hero_overline_continue)
+    HeroOverline.Favorite -> stringResource(R.string.hero_overline_favorite)
+    HeroOverline.Featured -> stringResource(R.string.hero_overline_featured)
+    HeroOverline.Category -> stringResource(R.string.category_app)
+}
+
+@Composable
+internal fun categoryLabel(category: AppCategory): String = stringResource(
+    when (category) {
+        AppCategory.Video -> R.string.category_video
+        AppCategory.Audio -> R.string.category_audio
+        AppCategory.Image -> R.string.category_image
+        AppCategory.Game -> R.string.category_game
+        AppCategory.News -> R.string.category_news
+        AppCategory.Maps -> R.string.category_maps
+        AppCategory.Productivity -> R.string.category_productivity
+        AppCategory.Social -> R.string.category_social
+        AppCategory.Accessibility -> R.string.category_accessibility
+        AppCategory.Other -> R.string.category_app
+    },
+)
+
+@Composable
+private fun descriptionText(entry: AppEntry): String = entry.description
+    ?: if (entry.isSystem) {
+        stringResource(R.string.hero_description_system, categoryLabel(entry.category))
+    } else {
+        stringResource(R.string.hero_description_installed, categoryLabel(entry.category))
+    }

@@ -3,17 +3,18 @@
 ## Visión general
 
 ```
-┌──────────────────────────── :app ────────────────────────────┐
-│  MainActivity (HOME + LEANBACK_LAUNCHER)                     │
-│  Navegación · ViewModels · pantallas (home, todas las apps)  │
-└───────────────┬───────────────────────────────┬──────────────┘
-                │                               │
-┌───────── :core:designsystem ────────┐  ┌───── :core:data ──────────────┐
-│ Tokens (color, tipo, espacio,        │  │ AppRepository (LauncherApps,  │
-│ movimiento) · NexiumTheme ·          │  │ PackageManager, callbacks)    │
-│ componentes de foco reutilizables    │  │ PreferencesRepository         │
-│ Sin dependencias de datos            │  │ (DataStore: favoritos, orden) │
-└──────────────────────────────────────┘  └───────────────────────────────┘
+┌────────────────────────────── :app ────────────────────────────────┐
+│ MainActivity (HOME + LEANBACK_LAUNCHER) · safety/ (CrashGuard,      │
+│ SafeModeView) · HomeViewModel · ui/shell (NexiumShell, TopBar)      │
+│ ui/home (Hero, HomeTab, AppCard, diálogos) · ui/library · ui/settings│
+└───────────────┬────────────────────────────────────┬────────────────┘
+                │                                    │
+┌──────── :core:designsystem ─────────┐  ┌──────── :core:data ─────────────┐
+│ Tokens (color, tipo, espacio,        │  │ AppRepository (PackageManager,  │
+│ movimiento) · NexiumTheme (Inter) ·  │  │ LauncherApps callbacks)         │
+│ NexiumIcons · NexiumButtonDefaults   │  │ Favorites/RecentsRepository     │
+│ Sin dependencias de datos            │  │ (DataStore) · NetworkRepository │
+└──────────────────────────────────────┘  └─────────────────────────────────┘
 ```
 
 Las dependencias solo apuntan hacia abajo: `:app` → `:core:*`. Los módulos
@@ -44,6 +45,30 @@ Las dependencias solo apuntan hacia abajo: `:app` → `:core:*`. Los módulos
 - Para cada app se prefiere `android:banner` (320×180 dp); si no hay, se
   compone una tarjeta con icono y nombre.
 
+## Estructura de la interfaz (etapa 4)
+
+`HomeScreen` decide el estado: cargando / error / vacío (pantalla mínima con
+"Abrir ajustes") o catálogo listo → `NexiumShell`.
+
+`NexiumShell` contiene la barra superior y cuatro pestañas:
+
+| Pestaña | Contenido |
+|---|---|
+| Inicio | Hero (app destacada o enfocada) + filas Favoritos y Aplicaciones (12 + "Ver todas") |
+| Biblioteca | Catálogo completo en cuadrícula de 5 columnas |
+| Multimedia | Apps con categoría video, audio o imagen (estado vacío con acceso a Biblioteca) |
+| Ajustes | Accesos a Red, Pantalla y sonido, App de inicio, Sistema y "Acerca de Nexium" |
+
+App destacada del hero: la última abierta (*Continuar*), si no el primer
+favorito, si no la primera app. Al recorrer las filas, el hero muestra la app
+enfocada.
+
+Rendimiento de la UI:
+- Las filas de Inicio están en un `Column` sin desplazamiento propio; un
+  `translationY` animado (fase de dibujo) alinea la fila enfocada arriba.
+- El tinte del hero (color de acento animado) se dibuja en `drawBehind`.
+- Reloj: un solo `produceState` alineado al minuto; red: `NetworkCallback`.
+
 ## Favoritos
 
 - Se guardan en Preferences DataStore (`nexium_preferences`) como lista
@@ -61,27 +86,32 @@ Las dependencias solo apuntan hacia abajo: `:app` → `:core:*`. Los módulos
 
 | Entrada | Acción |
 |---|---|
-| D-pad / flechas | Mover el foco por la cuadrícula (secciones Favoritos y Aplicaciones) |
+| D-pad / flechas | Mover el foco: pestañas ↔ hero ↔ filas; dentro de cada fila o cuadrícula |
+| Foco en una pestaña | La selecciona (convención TV); OK entra en su contenido |
 | OK / Enter | Abrir la app |
-| OK mantenido o tecla Menú | Diálogo: Abrir · Añadir/Quitar favorito · Información de la app · Cancelar |
-| Back | Cierra el diálogo; como app normal, sale; como HOME, no hace nada |
-| HOME con Nexium delante | Vuelve arriba y enfoca la primera tarjeta |
+| OK mantenido o tecla Menú | Diálogo: Abrir · Añadir/Quitar favorito · Mover izquierda/derecha (favoritos) · Información de la app · Cancelar |
+| Back | Jerárquico: contenido → su pestaña → Inicio → botón *Abrir* del hero. Ahí no se consume: como HOME no hace nada; como app normal, sale |
+| HOME con Nexium delante | Cierra diálogos, vuelve a Inicio y enfoca *Abrir* del hero |
 
 Reglas de foco:
-- Al mostrarse, el foco va a la primera tarjeta (primer favorito o primera app).
-- Si la tarjeta enfocada desaparece (app desinstalada, favorito quitado), el
-  foco vuelve automáticamente a la primera tarjeta: nunca queda la pantalla sin
-  foco.
-- Al volver de otra app o de un diálogo, se conserva la tarjeta enfocada.
+- Al mostrarse, el foco va a *Abrir* del hero.
+- Si el elemento enfocado desaparece (app desinstalada, favorito quitado), el
+  foco vuelve al hero o, si no existe, a la pestaña activa: nunca queda la
+  pantalla sin foco.
+- Al volver de otra app o de un diálogo, se conserva el elemento enfocado.
+- Cada fila recuerda su última tarjeta enfocada (`focusRestorer`).
+- Reordenar favoritos cuenta solo los **visibles**: las claves ocultas (apps no
+  instaladas) conservan su lugar y nunca se "intercambian" en silencio.
 
 "Información de la app" abre la pantalla del sistema (forzar cierre,
 almacenamiento, desinstalar): Nexium no necesita `REQUEST_DELETE_PACKAGES`.
 
 ## Permisos
 
-Ninguno privilegiado y, de inicio, ningún permiso peligroso. No hace falta
-`RECEIVE_BOOT_COMPLETED`: el sistema lanza HOME por sí mismo. Cualquier permiso
-nuevo requiere un ADR.
+Ninguno privilegiado ni peligroso. Único permiso: `ACCESS_NETWORK_STATE`
+(normal, para el indicador de red; [ADR-003](decisiones/ADR-003-red-y-tipografia.md)).
+No hace falta `RECEIVE_BOOT_COMPLETED`: el sistema lanza HOME por sí mismo.
+Cualquier permiso nuevo requiere un ADR.
 
 ## Rendimiento (presupuesto)
 
@@ -95,7 +125,7 @@ nuevo requiere un ADR.
 Reglas para la GPU V3D:
 - Prohibido `RenderEffect`/blur a pantalla completa en tiempo real.
 - Animaciones de foco solo con `graphicsLayer` (escala, alfa, traslación).
-- Fondos y "vidrio" como imágenes o degradados precalculados.
+- Profundidad con degradados dibujados y sombras moderadas solo en el foco.
 - Listas perezosas con `key` estable; estado con `@Immutable`/`@Stable`.
 
 ## Robustez

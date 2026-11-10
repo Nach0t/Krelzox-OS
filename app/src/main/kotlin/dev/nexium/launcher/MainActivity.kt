@@ -3,11 +3,13 @@ package dev.nexium.launcher
 import android.app.role.RoleManager
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.nexium.launcher.core.designsystem.NexiumTheme
@@ -15,6 +17,7 @@ import dev.nexium.launcher.safety.SafeModeView
 import dev.nexium.launcher.ui.AppLauncher
 import dev.nexium.launcher.ui.home.HomeScreen
 import dev.nexium.launcher.ui.home.HomeViewModel
+import dev.nexium.launcher.ui.shell.ShellCallbacks
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -54,21 +57,41 @@ class MainActivity : ComponentActivity() {
         setContent {
             NexiumTheme {
                 val viewModel: HomeViewModel = viewModel(
-                    factory = HomeViewModel.factory(container.appRepository, container.favoritesRepository),
+                    factory = HomeViewModel.factory(
+                        container.appRepository,
+                        container.favoritesRepository,
+                        container.recentsRepository,
+                        container.networkRepository,
+                    ),
                 )
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
+                val network by viewModel.networkStatus.collectAsStateWithLifecycle()
+                val callbacks = remember(viewModel) {
+                    ShellCallbacks(
+                        onLaunch = { entry ->
+                            if (AppLauncher.launch(this, entry)) {
+                                viewModel.recordLaunch(entry)
+                            } else {
+                                showLaunchError(entry.label)
+                            }
+                        },
+                        onToggleFavorite = viewModel::toggleFavorite,
+                        onMoveFavorite = viewModel::moveFavorite,
+                        onAppInfo = { entry ->
+                            if (!AppLauncher.openAppInfo(this, entry.packageName)) showLaunchError(entry.label)
+                        },
+                        onNetworkSettings = { AppLauncher.openSystemScreen(this, Settings.ACTION_WIFI_SETTINGS) },
+                        onDisplaySoundSettings = { AppLauncher.openSystemScreen(this, Settings.ACTION_SOUND_SETTINGS) },
+                        onHomeAppSettings = { AppLauncher.openSystemScreen(this, Settings.ACTION_HOME_SETTINGS) },
+                        onSystemSettings = { AppLauncher.openSettings(this) },
+                    )
+                }
                 HomeScreen(
                     state = state,
+                    network = network,
                     artLoader = container.artLoader,
                     homeResets = homeResets,
-                    onLaunch = { entry ->
-                        if (!AppLauncher.launch(this, entry)) showLaunchError(entry.label)
-                    },
-                    onToggleFavorite = viewModel::toggleFavorite,
-                    onAppInfo = { entry ->
-                        if (!AppLauncher.openAppInfo(this, entry.packageName)) showLaunchError(entry.label)
-                    },
-                    onOpenSettings = { AppLauncher.openSettings(this) },
+                    callbacks = callbacks,
                 )
             }
         }

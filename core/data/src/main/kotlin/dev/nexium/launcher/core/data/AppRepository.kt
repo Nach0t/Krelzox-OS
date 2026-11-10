@@ -2,6 +2,7 @@ package dev.nexium.launcher.core.data
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
@@ -69,11 +70,18 @@ class PackageManagerAppRepository(
         return results.mapNotNull { info ->
             val activity = info.activityInfo ?: return@mapNotNull null
             if (!activity.exported || !activity.enabled) return@mapNotNull null
+            val appInfo = activity.applicationInfo
+            @Suppress("DEPRECATION")
+            val isGameFlag = appInfo.flags and ApplicationInfo.FLAG_IS_GAME != 0
             AppEntry(
                 packageName = activity.packageName,
                 activityName = activity.name,
                 label = info.loadLabel(packageManager).toString().trim().ifEmpty { activity.packageName },
                 isTvNative = isTvNative,
+                category = AppCategory.fromPlatform(appInfo.category, isGameFlag),
+                description = runCatching { appInfo.loadDescription(packageManager)?.toString() }
+                    .getOrNull()?.trim()?.takeIf { it.isNotEmpty() },
+                isSystem = appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0,
             )
         }
     }

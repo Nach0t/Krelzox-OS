@@ -7,13 +7,79 @@
     <string name="open_settings">Abrir ajustes</string>
     <string name="launch_failed">No se pudo abrir %1$s</string>
 
+    <!-- Navegación -->
+    <string name="tab_home">Inicio</string>
+    <string name="tab_library">Biblioteca</string>
+    <string name="tab_media">Multimedia</string>
+    <string name="tab_settings">Ajustes</string>
+
+    <!-- Estado -->
+    <string name="network_wifi">Conectado por Wi-Fi</string>
+    <string name="network_ethernet">Conectado por Ethernet</string>
+    <string name="network_connected">Conectado</string>
+    <string name="network_offline">Sin conexión</string>
+
+    <!-- Hero -->
+    <string name="hero_open">Abrir</string>
+    <string name="hero_favorite">Añadir a favoritos</string>
+    <string name="hero_unfavorite">En favoritos</string>
+    <string name="hero_overline_continue">Continuar</string>
+    <string name="hero_overline_favorite">Favorito</string>
+    <string name="hero_overline_featured">Destacado</string>
+    <string name="hero_description_system">%1$s · Incluida en el sistema</string>
+    <string name="hero_description_installed">%1$s · Aplicación instalada</string>
+
+    <!-- Categorías -->
+    <string name="category_app">Aplicación</string>
+    <string name="category_video">Video</string>
+    <string name="category_audio">Música y audio</string>
+    <string name="category_image">Fotos</string>
+    <string name="category_game">Juego</string>
+    <string name="category_news">Noticias</string>
+    <string name="category_maps">Mapas</string>
+    <string name="category_productivity">Productividad</string>
+    <string name="category_social">Social</string>
+    <string name="category_accessibility">Accesibilidad</string>
+
+    <!-- Secciones -->
     <string name="section_favorites">Favoritos</string>
     <string name="section_apps">Aplicaciones</string>
     <string name="card_description_favorite">%1$s, favorito</string>
+    <string name="see_library">Ver todas (%1$d)</string>
+    <string name="see_library_short">Ir a Biblioteca</string>
+    <plurals name="apps_count">
+        <item quantity="one">%1$d aplicación instalada</item>
+        <item quantity="many">%1$d aplicaciones instaladas</item>
+        <item quantity="other">%1$d aplicaciones instaladas</item>
+    </plurals>
+    <string name="media_subtitle">Apps de video, música y fotos</string>
+    <string name="media_empty">Todavía no hay apps de video, música o fotos instaladas.</string>
 
+    <!-- Ajustes -->
+    <string name="settings_subtitle">Acceso rápido al sistema y a Nexium</string>
+    <string name="settings_network">Red</string>
+    <string name="settings_network_desc">Wi-Fi y Ethernet</string>
+    <string name="settings_display_sound">Pantalla y sonido</string>
+    <string name="settings_display_sound_desc">Imagen y audio</string>
+    <string name="settings_home_app">App de inicio</string>
+    <string name="settings_home_app_desc">Nexium o Catapult</string>
+    <string name="settings_system">Sistema</string>
+    <string name="settings_system_desc">Todos los ajustes</string>
+    <string name="settings_about">Acerca de Nexium</string>
+    <string name="settings_about_desc">Versión y equipo</string>
+    <string name="about_version">Versión</string>
+    <string name="about_android">Sistema</string>
+    <string name="about_device">Dispositivo</string>
+    <string name="about_apps">Aplicaciones</string>
+    <string name="about_font_license">Tipografía Inter © The Inter Project Authors · SIL Open Font License 1.1</string>
+    <string name="action_close">Cerrar</string>
+
+    <!-- Acciones -->
     <string name="action_open">Abrir</string>
     <string name="action_add_favorite">Añadir a favoritos</string>
     <string name="action_remove_favorite">Quitar de favoritos</string>
+    <string name="action_move_left">Mover a la izquierda</string>
+    <string name="action_move_right">Mover a la derecha</string>
     <string name="action_app_info">Información de la app</string>
     <string name="action_cancel">Cancelar</string>
 
