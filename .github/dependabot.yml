@@ -1,0 +1,24 @@
+# Weekly update proposals, grouped so they arrive as few pull requests.
+# Every update must still pass CI and be checked on the Raspberry Pi before merging.
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      androidx:
+        patterns: [ "androidx.*" ]
+      kotlin-and-gradle-plugins:
+        patterns: [ "org.jetbrains.kotlin*", "com.android*", "org.jetbrains.kotlinx*" ]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: [ "*" ]

@@ -1,54 +1,142 @@
-# Nexium-OS
+# Nexium OS
 
-> **Estado:** etapa 4.1 — diseño "Graphite & Ion" refinado (hero dinámico, gestión de favoritos, rejilla común) funcionando como launcher principal en la Raspberry Pi 5.
+[![Android CI](https://github.com/Nach0t/Nexium-OS/actions/workflows/android.yml/badge.svg)](https://github.com/Nach0t/Nexium-OS/actions/workflows/android.yml)
+![Platform](https://img.shields.io/badge/platform-Android%20TV%2017-3DDC84)
+![Kotlin](https://img.shields.io/badge/Kotlin-Jetpack%20Compose%20for%20TV-7F52FF)
+![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 
-![Inicio de Nexium](docs/capturas/refinamiento/01-inicio.png)
+**English** · [Español](README.es.md)
 
-Nexium-OS es una experiencia Android TV premium para Raspberry Pi 5. Su primer
-componente es **Nexium Launcher** (`dev.nexium.launcher`), un launcher propio en
-Kotlin y Jetpack Compose for TV que se instala como aplicación normal, sin
-modificar la ROM ni requerir root.
+A premium Android TV experience for the Raspberry Pi 5. Its first component is
+**Nexium Launcher** (`dev.nexium.launcher`): a home screen written in Kotlin and
+Jetpack Compose for TV that installs as a regular app — no root, no ROM changes,
+and the stock launcher always kept as a safety net.
 
-## Plataforma objetivo
+![Nexium home screen with the performance panel](docs/capturas/etapa5/01-inicio-panel.png)
+
+## Features
+
+**Home screen**
+- Dynamic hero carousel: the app you were using (*Continue*), recent apps,
+  favorites and suggestions.
+- Favorites row with live reordering, plus an apps row; **Library** (all apps)
+  and **Media** (video, audio and image apps) tabs.
+- Built for the remote: every screen works with the D-pad, focus is never lost,
+  and Back is hierarchical.
+
+**Performance monitor**
+- Always-on top-bar panel: CPU, RAM, temperature and free storage.
+- Expanded view with live charts of the last 4 minutes (current, max, average).
+- **System & performance** center in Settings: processor (usage, temperature,
+  frequency, load, fan), memory, storage, system and network.
+- Real values only, with their source on screen. If the system blocks a source,
+  the metric says *Not available* — it is never estimated.
+
+| Expanded panel | Performance center |
+|---|---|
+| ![Expanded performance panel](docs/capturas/etapa5/02-panel-ampliado.png) | ![Processor details](docs/capturas/etapa5/04-procesador.png) |
+
+**Reliability**
+- Runs as the HOME app, with **safe mode**: after 3 crashes in 2 minutes it
+  opens a minimal screen to pick another launcher or open Settings.
+- The stock launcher (Catapult) is never disabled; a
+  [recovery guide](docs/recuperacion.md) covers every way back.
+
+**Performance and privacy**
+- Baseline Profile + R8: 2.8 MB release APK; D-pad navigation with < 1 % janky
+  frames even right after install; cold start well under 600 ms.
+- A single, normal permission (`ACCESS_NETWORK_STATE`). No root, no telemetry,
+  no ads.
+
+## Target platform
 
 | | |
 |---|---|
 | Hardware | Raspberry Pi 5 Model B Rev 1.1, 16 GB RAM |
-| Sistema | LineageOS 24.0 (Android TV 17, SDK 37) — build KonstaKANG `rpi5_tv` |
-| Pantalla | 1920×1080 @ 60 Hz, densidad 320 (xhdpi) |
+| System | LineageOS 24.0 (Android TV 17, SDK 37), KonstaKANG `rpi5_tv` build |
+| Display | 1920×1080 @ 60 Hz, 320 dpi (960×540 dp) |
 | GPU | Broadcom V3D (Mesa GLES 3.1 / Vulkan 1.4) |
 
-Detalles en [docs/dispositivo.md](docs/dispositivo.md).
+The device has no Google Mobile Services. Nexium runs on other Android TV
+devices with SDK 31+, but it is designed and measured on this one.
 
-## Principios
+## Getting started
 
-1. **Estabilidad:** el launcher del sistema (Catapult) nunca se deshabilita; es la red de seguridad.
-2. **Rendimiento:** 60 fps sostenidos en la GPU V3D; sin efectos costosos en tiempo real.
-3. **Seguridad:** sin root, sin permisos privilegiados, sin telemetría, sin anuncios.
+Requirements: JDK 21, Android SDK (platform 37) and ADB access to the device.
 
-## Documentación
+```sh
+./gradlew assembleRelease          # app/build/outputs/apk/release/app-release-unsigned.apk
+```
 
-- [Arquitectura](docs/arquitectura.md)
-- [Identidad visual](docs/identidad-visual.md)
-- [Entorno de desarrollo](docs/entorno.md)
-- [Recuperación del dispositivo](docs/recuperacion.md)
-- [Hoja de ruta](docs/hoja-de-ruta.md)
-- Decisiones técnicas (ADR): [docs/decisiones/](docs/decisiones/)
+Sign the APK (for development, the local debug key is enough) and install it:
 
-## Convenciones
+```sh
+apksigner sign --ks ~/.android/debug.keystore --ks-pass pass:android \
+  --ks-key-alias androiddebugkey --out nexium.apk \
+  app/build/outputs/apk/release/app-release-unsigned.apk
+adb install -r nexium.apk
+```
 
-- Código, identificadores y mensajes de commit: **inglés**.
-- Documentación: **español**.
+Make it the home app (fully reversible — see the [recovery guide](docs/recuperacion.md)):
 
-## Seguridad
+```sh
+adb shell cmd role add-role-holder android.app.role.HOME dev.nexium.launcher
+```
 
-No subas claves de firma (`*.jks`, `*.keystore`), contraseñas, tokens,
-`local.properties` ni logs del dispositivo. El `.gitignore` los excluye, pero
-revisa siempre `git status` antes de un commit.
+Windows equivalents are in [docs/entorno.md](docs/entorno.md) (Spanish).
 
-## Licencia
+## Development
 
-Apache License 2.0. Ver [LICENSE](LICENSE).
+| Command | What it does | Where |
+|---|---|---|
+| `./gradlew testDebugUnitTest lintDebug` | Unit tests and lint | CI + local |
+| `./gradlew assembleRelease` | Release build (R8 + Baseline Profile) | CI + local |
+| `./gradlew :app:connectedDebugAndroidTest` | D-pad focus UI tests | Device |
+| `./gradlew :app:generateBaselineProfile` | Regenerates the Baseline Profile | Device |
+| `./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest` | Cold-start Macrobenchmark | Device |
 
-Incluye la tipografía **Inter** © The Inter Project Authors, bajo SIL Open
+Debug builds use the package `dev.nexium.launcher.debug`, so tests never replace
+or uninstall the launcher in use. Device procedures and results:
+[docs/rendimiento.md](docs/rendimiento.md).
+
+CI (GitHub Actions) runs unit tests, lint, the release build and compiles the
+device tests on every push and pull request, and posts a summary (tests, lint,
+APK size, Baseline Profile). Dependabot proposes weekly dependency updates.
+
+## Project structure
+
+```
+app/                 Launcher: activity, shell, Home / Library / Media / Settings, performance UI
+core/designsystem/   Tokens, theme (Inter), icons, charts — no data dependencies
+core/data/           Apps, favorites, recents, network, system metrics
+baselineprofile/     Baseline Profile generator and startup benchmarks (runs on the device)
+docs/                Architecture, visual identity, roadmap, ADRs (in Spanish)
+```
+
+## Documentation
+
+Detailed documentation is written in **Spanish**:
+
+- [Architecture](docs/arquitectura.md) · [Visual identity](docs/identidad-visual.md) · [Roadmap](docs/hoja-de-ruta.md)
+- [Development environment](docs/entorno.md) · [Performance and device tests](docs/rendimiento.md)
+- [Device recovery](docs/recuperacion.md) · [Reference device](docs/dispositivo.md)
+- Architecture decision records: [docs/decisiones/](docs/decisiones/)
+
+## Conventions
+
+- Code, identifiers and commit messages: **English**.
+- README: English and Spanish. Detailed documentation (`docs/`): **Spanish**.
+
+## Security
+
+Never commit signing keys (`*.jks`, `*.keystore`), passwords, tokens,
+`local.properties` or device logs. `.gitignore` excludes them, but always check
+`git status` before committing. Screenshots of the network screen show the
+device's IP addresses and must not be published.
+
+## License
+
+Apache License 2.0 — see [LICENSE](LICENSE).
+
+Includes the **Inter** typeface © The Inter Project Authors, under the SIL Open
 Font License 1.1 ([third_party/inter/OFL.txt](third_party/inter/OFL.txt)).
