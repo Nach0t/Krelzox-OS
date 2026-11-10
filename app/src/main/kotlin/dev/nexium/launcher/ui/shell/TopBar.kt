@@ -20,6 +20,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -78,6 +79,7 @@ fun TopBar(
     onSelect: (NexiumTab) -> Unit,
     onEnterTab: (NexiumTab) -> Unit,
     modifier: Modifier = Modifier,
+    contentEntry: FocusRequester? = null,
 ) {
     Row(
         modifier.fillMaxWidth().height(NexiumDimens.TopBarHeight),
@@ -92,7 +94,17 @@ fun TopBar(
                     selected = tab == selected,
                     onFocused = { onSelect(tab) },
                     onClick = { onEnterTab(tab) },
-                    modifier = Modifier.focusRequester(tabRequesters.getValue(tab)),
+                    modifier = Modifier
+                        .focusRequester(tabRequesters.getValue(tab))
+                        // ↓ from the selected tab lands on its content's first element, not on
+                        // whatever sits geometrically below the tab.
+                        .then(
+                            if (tab == selected && contentEntry != null) {
+                                Modifier.focusProperties { down = contentEntry }
+                            } else {
+                                Modifier
+                            },
+                        ),
                 )
             }
         }

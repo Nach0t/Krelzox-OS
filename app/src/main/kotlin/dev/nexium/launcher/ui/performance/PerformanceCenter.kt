@@ -172,7 +172,7 @@ private fun ProcessorDetail(m: SystemMetrics?, locale: Locale) {
     val na = stringResource(R.string.not_available)
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            StatTile(stringResource(R.string.cpu_usage), PerfMetric.Cpu.valueText(m, locale, na), stringResource(R.string.cpu_cores, s?.cpuCores ?: 0))
+            StatTile(stringResource(R.string.cpu_usage), PerfMetric.Cpu.valueText(m, locale, na), stringResource(R.string.cpu_cores, s?.cpuCores ?: 0), weight = 0.85f)
             StatTile(stringResource(R.string.perf_temp), PerfMetric.Temperature.valueText(m, locale, na), fanText(m, locale))
             StatTile(
                 stringResource(R.string.cpu_freq),
@@ -190,7 +190,9 @@ private fun ProcessorDetail(m: SystemMetrics?, locale: Locale) {
                     !s.isAvailable(MetricId.Load) -> na
                     else -> s.load?.firstOrNull()?.let { PerformanceFormat.decimal(it, 2, locale) } ?: "…"
                 },
-                s?.load?.let { stringResource(R.string.cpu_load_detail, PerformanceFormat.load(it, locale)) },
+                // The big value is the 1-minute average; the detail carries the 5- and 15-minute ones.
+                s?.load?.drop(1)?.takeIf { it.isNotEmpty() }?.let { stringResource(R.string.cpu_load_detail, PerformanceFormat.load(it, locale)) },
+                weight = 1.15f,
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -222,7 +224,7 @@ private fun MemoryDetail(m: SystemMetrics?, locale: Locale) {
                 s?.let { stringResource(if (it.lowMemory) R.string.ram_low_yes else R.string.ram_low_no) },
             )
         }
-        MetricChartCard(PerfMetric.Ram, m, locale, chartHeight = 150.dp)
+        MetricChartCard(PerfMetric.Ram, m, locale, chartHeight = 118.dp)
         SourceNote(stringResource(R.string.source_memory))
     }
 }
@@ -292,7 +294,7 @@ private fun SystemDetail(m: SystemMetrics?, net: NetworkDetails?, appCount: Int)
             InfoLine(stringResource(R.string.sys_nexium), version ?: na)
             InfoLine(stringResource(R.string.sys_model), Build.MODEL)
             InfoLine(stringResource(R.string.sys_manufacturer), Build.MANUFACTURER)
-            InfoLine(stringResource(R.string.sys_build), Build.ID)
+            InfoLine(stringResource(R.string.sys_build), Build.ID.replace(".", ".​"))
         }
         InfoCard(stringResource(R.string.sys_services), Modifier.weight(1f)) {
             ServiceLine(stringResource(R.string.svc_home), stringResource(if (isHome) R.string.status_yes else R.string.status_no), ok = isHome)
@@ -376,10 +378,13 @@ private fun NetworkDetail(m: SystemMetrics?, net: NetworkDetails?, locale: Local
                 yMax = top,
                 capacity = m?.historyCapacity ?: 2,
                 yLabel = { PerformanceFormat.rate(it.toLong(), locale).replace(" ", "") },
-                modifier = Modifier.fillMaxWidth().height(128.dp),
+                modifier = Modifier.fillMaxWidth().height(116.dp),
             )
         }
-        SourceNote(stringResource(R.string.source_network, net?.ipv6 ?: na))
+        Column {
+            SourceNote(stringResource(R.string.net_ipv6, net?.ipv6 ?: na))
+            SourceNote(stringResource(R.string.source_network))
+        }
     }
 }
 

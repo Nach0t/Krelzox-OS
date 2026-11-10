@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -13,9 +14,16 @@ android {
         targetSdk = 37
         versionCode = 2
         versionName = "0.1.1"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            // Separate package: connected tests install AND uninstall the app under test,
+            // which must never touch the installed Nexium (it may be the HOME app).
+            applicationIdSuffix = ".debug"
+        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -36,6 +44,13 @@ android {
     }
 }
 
+baselineProfile {
+    // Generated on the Raspberry Pi on demand (./gradlew :app:generateBaselineProfile),
+    // never during a normal build; the result is versioned in src/main/generated.
+    automaticGenerationDuringBuild = false
+    mergeIntoMain = true
+}
+
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:data"))
@@ -50,5 +65,15 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
+    // Installs the Baseline Profile on devices without Play Store (no cloud profiles here).
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(project(":baselineprofile"))
+
     testImplementation(libs.junit)
+
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

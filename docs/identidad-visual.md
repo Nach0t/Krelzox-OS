@@ -4,8 +4,11 @@ Concepto: un espacio grafito, profundo y silencioso, donde la luz eléctrica
 (azul → cian) marca exclusivamente lo que importa: la marca, el foco y la
 selección. Premium por contención, cinematográfico sin efectos costosos.
 
-Capturas del dispositivo: [capturas/refinamiento/](capturas/refinamiento/)
-(versión actual) y [capturas/etapa4/](capturas/etapa4/) (primera versión).
+Capturas del dispositivo: [capturas/etapa5/](capturas/etapa5/) (versión
+actual, con el monitor de rendimiento), [capturas/refinamiento/](capturas/refinamiento/)
+(etapa 4.1) y [capturas/etapa4/](capturas/etapa4/) (primera versión).
+La categoría Red del centro de rendimiento no tiene captura publicada: muestra
+la IP local y la IPv6 del dispositivo.
 
 ## Color
 
@@ -22,6 +25,11 @@ Capturas del dispositivo: [capturas/refinamiento/](capturas/refinamiento/)
 | `Electric` | `#2F6BFF` | Identidad, botón enfocado |
 | `Cyan` | `#22D3EE` | Identidad, iconos activos, sobretítulos, marca de favorito |
 | `IonBrush` | `Electric → Cyan` | **Solo** foco, selección y marca |
+| `Error` | `#FF6B7A` | Valores en aviso del monitor (CPU ≥ 85 %, temperatura ≥ 75 °C, disco ≥ 95 %) |
+
+En los gráficos de rendimiento, cada métrica conserva su color en todas las
+vistas: CPU en `Cyan`, RAM en `Electric` y temperatura en azul cielo
+(`#7DD3FC`); en Red, bajada en `Cyan` y subida en `Electric`.
 
 Contraste mínimo WCAG AA (4,5:1) para todo texto sobre su fondo.
 
@@ -49,7 +57,8 @@ mayúsculas queden ópticamente centradas sobre la marca.
 Familia propia `NexiumIcons` (vector, 24×24, trazo 1,8, extremos y uniones
 redondeados): Inicio, Biblioteca, Multimedia, Ajustes, Wi-Fi, Ethernet, Sin
 conexión, Reproducir, Estrella (contorno y rellena), Más, Reordenar,
-Información, flechas. Sin dependencia de `material-icons-extended`.
+Información, flechas; y para el monitor: Pulso, Procesador, Memoria,
+Almacenamiento, Termómetro, Reloj. Sin dependencia de `material-icons-extended`.
 
 **Iconos de apps unificados:** todas las tarjetas muestran el icono de la app
 sobre la misma placa grafito, teñida un 20 % con el color de acento de la app,
@@ -64,6 +73,22 @@ y el icono ocupa siempre el 46 % de la altura de la tarjeta. Los banners de TV
 | Píldora de navegación | Transparente (seleccionada: `Surface` + borde `Outline`, icono cian) | `SurfaceRaised` · borde Ion · escala 1,04 |
 | Botón | `Surface` | `Electric` · borde cian · brillo |
 | Mosaico de ajustes | `Surface`, icono cian | Igual que tarjeta |
+| Panel de rendimiento (barra superior) | Píldora `Surface` con borde `Outline`: CPU · RAM (% y MB) · TEMP · LIBRE, valor arriba y rótulo en mayúsculas debajo, separadores finos | `SurfaceRaised` · borde Ion 1,5 dp · escala 1,04; OK abre la vista ampliada |
+| Vista ampliada | Panel bajo la barra, a la derecha (donde vive la píldora): tres métricas con sparkline, gráfico grande y botón al centro | La métrica enfocada se selecciona: fondo `Electric` 22 % y borde Ion 2 dp (seleccionada sin foco: `Electric` 16 % y borde `Electric` 1 dp) |
+| Carril del centro de rendimiento | Categoría con icono, nombre y valor actual | Fondo `Electric` 28 %, borde cian 1,5 dp, escala 1,02; la seleccionada lleva una barra cian a la izquierda |
+
+### Gráficos (`NexiumChart`)
+
+- Línea de 2,5 dp con extremos redondeados, relleno degradado (28 % → 0 %) y un
+  punto en el valor más reciente.
+- Escalas fijas para que la forma sea comparable: porcentajes 0–100 %,
+  temperatura 30–90 °C (la Pi 5 limita la frecuencia a 85 °C); el tráfico de red
+  se escala a su máximo reciente.
+- Eje temporal «−4 min … ahora»; rótulos de 12 sp en `OnSurfaceSubtle`, con el
+  margen izquierdo ajustado al rótulo más ancho.
+- Cada gráfico muestra **actual** y **máximo** (y **media** cuando hay sitio).
+- Toda vista del monitor termina con una nota «Fuente: …» que dice de dónde sale
+  el dato.
 
 ### Rejilla (`NexiumGrid`)
 
@@ -81,9 +106,11 @@ títulos y la barra superior. Hero: 188 dp de alto.
 
 ## Disposición (960×540 dp)
 
-1. **Barra superior** en tres zonas independientes: logotipo (inicio),
-   navegación **centrada en pantalla** (Inicio, Biblioteca, Multimedia, Ajustes)
-   y estado (red, hora y fecha) al final.
+1. **Barra superior**: logotipo y navegación al inicio (Inicio, Biblioteca,
+   Multimedia, Ajustes; las pestañas inactivas muestran solo el icono y la
+   activa añade su nombre), y estado al final: panel de rendimiento, red, hora
+   y fecha. Hasta la etapa 4.1 la navegación iba centrada; se movió para dejar
+   sitio al panel permanente.
 2. **Hero** dinámico: carrusel de apps relevantes con indicador de posición fijo
    bajo el arte; sobretítulo, título, descripción, acciones *Abrir* y
    *Favorito*. El fondo se tiñe con el color de acento de la app.
@@ -104,6 +131,8 @@ Sin anuncios ni contenido patrocinado.
 - Cambio de fila en Inicio: desplazamiento de 260 ms que alinea la fila
   enfocada arriba (nunca filas cortadas).
 - Pestañas: cambio instantáneo, sin transición.
+- Monitor de rendimiento: los valores cambian cada 2 s sin animación (cifras
+  estables, sin parpadeo); los gráficos avanzan una muestra cada vez.
 
 ## Reglas de rendimiento visual
 

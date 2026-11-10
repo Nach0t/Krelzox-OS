@@ -25,3 +25,4 @@ rootProject.name = "Nexium-OS"
 include(":app")
 include(":core:designsystem")
 include(":core:data")
+include(":baselineprofile")

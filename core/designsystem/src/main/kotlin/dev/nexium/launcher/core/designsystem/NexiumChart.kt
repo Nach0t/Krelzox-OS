@@ -45,11 +45,18 @@ fun NexiumLineChart(
     val measurer = rememberTextMeasurer()
     val labelStyle = remember(labelColor) { TextStyle(color = labelColor, fontSize = 12.sp, fontFamily = Inter) }
     Canvas(modifier) {
-        val labelWidth = if (yLabel != null) 40.dp.toPx() else 0f
+        val range = (yMax - yMin).takeIf { it > 0f } ?: 1f
+        // Gutter sized to the widest label (at least 40 dp, so charts side by side align).
+        val labels = if (yLabel != null) {
+            (0..gridLines).map { i -> measurer.measure(yLabel(yMax - range * (i / gridLines.toFloat())), labelStyle) }
+        } else {
+            emptyList()
+        }
+        val gap = 8.dp.toPx()
+        val labelWidth = if (yLabel != null) maxOf(40.dp.toPx(), (labels.maxOfOrNull { it.size.width } ?: 0) + gap) else 0f
         val left = labelWidth
         val width = size.width - left
         val height = size.height
-        val range = (yMax - yMin).takeIf { it > 0f } ?: 1f
 
         // Grid and labels.
         for (i in 0..gridLines) {
@@ -62,12 +69,11 @@ fun NexiumLineChart(
                 strokeWidth = 1.dp.toPx(),
             )
             if (yLabel != null) {
-                val text = yLabel(yMax - range * fraction)
-                val layout = measurer.measure(text, labelStyle)
+                val layout = labels[i]
                 drawText(
                     layout,
                     topLeft = Offset(
-                        labelWidth - layout.size.width - 8.dp.toPx(),
+                        labelWidth - layout.size.width - gap,
                         (y - layout.size.height / 2f).coerceIn(0f, height - layout.size.height),
                     ),
                 )

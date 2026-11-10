@@ -110,7 +110,7 @@
     <string name="perf_center_title">Sistema y rendimiento</string>
     <string name="perf_center_subtitle">Valores reales informados por el sistema, actualizados cada 2 segundos</string>
     <string name="perf_tile_title">Sistema y rendimiento</string>
-    <string name="perf_tile_desc">CPU, memoria, temperatura, almacenamiento y red</string>
+    <string name="perf_tile_desc">CPU, RAM, temperatura, disco y red</string>
     <string name="cat_processor">Procesador</string>
     <string name="cat_memory">Memoria</string>
     <string name="cat_storage">Almacenamiento</string>
@@ -120,8 +120,8 @@
     <string name="cpu_cores">%1$d núcleos</string>
     <string name="cpu_freq">Frecuencia</string>
     <string name="cpu_freq_max">máx. %1$s</string>
-    <string name="cpu_load">Carga</string>
-    <string name="cpu_load_detail">1·5·15 m: %1$s</string>
+    <string name="cpu_load">Carga (1 min)</string>
+    <string name="cpu_load_detail">5/15 min: %1$s</string>
     <string name="cpu_fan">Vent. %1$s RPM</string>
     <string name="ram_total">Total</string>
     <string name="ram_used">Usada</string>
@@ -171,7 +171,8 @@
     <string name="source_processor">Fuente: kernel Linux (/proc/stat, /proc/loadavg, zona térmica, cpufreq).</string>
     <string name="source_memory">Fuente: ActivityManager de Android.</string>
     <string name="source_storage">Fuente: StatFs de Android sobre la partición de datos.</string>
-    <string name="source_network">IPv6: %1$s · Tráfico medido con TrafficStats de Android; sin pruebas de velocidad.</string>
+    <string name="net_ipv6">IPv6: %1$s</string>
+    <string name="source_network">Fuente: TrafficStats de Android (tráfico real, sin pruebas de velocidad).</string>
     <string name="settings_android">Ajustes de Android</string>
 
     <string name="safe_mode_title">Modo seguro de Nexium</string>

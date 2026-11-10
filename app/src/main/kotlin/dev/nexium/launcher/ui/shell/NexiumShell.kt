@@ -121,6 +121,15 @@ fun NexiumShell(
         }
     }
 
+    // Opening the center removes the focused tile. Park focus on the Ajustes tab (present on
+    // both pages) BEFORE swapping the page, or Compose hands focus to the first focusable (the
+    // Inicio tab) and select-on-focus switches tabs. PerformanceCenter then focuses its rail.
+    fun openPerformanceCenter() {
+        runCatching { tabRequesters.getValue(NexiumTab.Settings).requestFocus() }
+        selected = NexiumTab.Settings
+        settingsPage = SettingsPage.Performance
+    }
+
     // Focus must never be lost: on first display, or when the focused element disappears
     // (uninstalled app, removed favorite), go to the hero, else to the selected tab.
     LaunchedEffect(rootHasFocus, dialogOpen) {
@@ -235,6 +244,9 @@ fun NexiumShell(
                     if (tab == NexiumTab.Home) focusHero() else focusManager.moveFocus(FocusDirection.Down)
                 },
                 modifier = Modifier.onFocusChanged { topBarFocused = it.hasFocus },
+                // In the Ajustes grid, ↓ (or OK) from the tab goes to "Sistema y rendimiento":
+                // otherwise the tile under the tab (Red) gets focus and OK opens Android settings.
+                contentEntry = if (selected == NexiumTab.Settings && settingsPage == SettingsPage.Overview) performanceTile else null,
             )
             Spacer(Modifier.height(NexiumSpacing.Medium))
             Box(Modifier.fillMaxWidth().weight(1f)) {
@@ -287,7 +299,7 @@ fun NexiumShell(
                     NexiumTab.Settings -> when (settingsPage) {
                         SettingsPage.Overview -> SettingsTab(
                             actions = SettingsActions(
-                                onPerformance = { settingsPage = SettingsPage.Performance },
+                                onPerformance = { openPerformanceCenter() },
                                 onNetwork = callbacks.onNetworkSettings,
                                 onDisplaySound = callbacks.onDisplaySoundSettings,
                                 onHomeApp = callbacks.onHomeAppSettings,
