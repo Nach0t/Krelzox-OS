@@ -25,6 +25,34 @@ $env:JAVA_HOME = "$env:LOCALAPPDATA\Programs\Java\jdk-21.0.13+9"
 & "$env:LOCALAPPDATA\Android\Sdk\cmdline-tools\latest\bin\android.exe" --no-metrics sdk install platforms/android-37.0
 ```
 
+AGP instala por su cuenta `build-tools/36.0.0` (su versión por defecto) la
+primera vez que compila.
+
+## Compilar, probar e instalar
+
+Versiones fijadas en `gradle/libs.versions.toml` (AGP 9.5.1, Kotlin 2.4.21,
+Gradle 9.9.0 vía wrapper con checksum SHA-256).
+
+```powershell
+$env:JAVA_HOME = "$env:LOCALAPPDATA\Programs\Java\jdk-21.0.13+9"
+.\gradlew assembleDebug           # APK: app\build\outputs\apk\debug\app-debug.apk
+.\gradlew testDebugUnitTest       # tests unitarios
+.\gradlew lintDebug               # análisis estático
+```
+
+`local.properties` (no versionado) debe contener la ruta del SDK:
+
+```properties
+sdk.dir=C\:\\Users\\<usuario>\\AppData\\Local\\Android\\Sdk
+```
+
+Instalar en la Pi **sin** cambiar el launcher y abrirlo como app normal:
+
+```cmd
+platform-tools\adb install -r app\build\outputs\apk\debug\app-debug.apk
+platform-tools\adb shell am start -n dev.nexium.launcher/.MainActivity
+```
+
 ## Conexión con la Raspberry Pi
 
 Usar siempre el ADB local del repositorio:

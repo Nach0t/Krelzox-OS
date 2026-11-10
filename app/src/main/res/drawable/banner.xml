@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TV banner (320x180 dp): obsidian field, centered Ion "N", thin Ion baseline.
+     VectorRaster ignored: it only matters for minSdk < 24 (ours is 31) and the banner
+     size is mandated by Android TV. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="VectorRaster"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <path
+        android:fillColor="@color/nexium_background"
+        android:pathData="M0,0 H320 V180 H0 Z" />
+    <path android:pathData="M140,62 h9 l23,30 V62 h8 v44 h-9 L148,76 v30 h-8 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="140" android:startY="62"
+                android:endX="180" android:endY="106"
+                android:startColor="@color/nexium_ion_start"
+                android:endColor="@color/nexium_ion_end" />
+        </aapt:attr>
+    </path>
+    <path android:pathData="M120,128 H200 V130 H120 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="120" android:startY="129"
+                android:endX="200" android:endY="129"
+                android:startColor="@color/nexium_ion_start"
+                android:endColor="@color/nexium_ion_end" />
+        </aapt:attr>
+    </path>
+</vector>

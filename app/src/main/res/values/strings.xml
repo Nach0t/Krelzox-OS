@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Nexium</string>
+    <string name="home_title">Apps</string>
+    <string name="home_loading">Loading apps…</string>
+    <string name="home_empty">No apps found.</string>
+    <string name="home_error">Couldn\'t load apps.</string>
+    <string name="open_settings">Open settings</string>
+    <string name="launch_failed">Couldn\'t open %1$s</string>
+</resources>

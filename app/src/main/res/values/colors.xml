@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="nexium_background">#FF07080C</color>
+    <color name="nexium_ion_start">#FF5B8CFF</color>
+    <color name="nexium_ion_end">#FF8A6BFF</color>
+</resources>
