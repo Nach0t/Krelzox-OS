@@ -10,7 +10,8 @@
 | 4.1 | Refinamiento visual: logotipo, hero dinámico (carrusel), gestión de favoritos (selector + reordenar en directo), iconos unificados, rejilla común | ✅ Hecho (en revisión) |
 | 5 | Monitor de rendimiento: panel permanente en la barra superior (CPU, RAM, temperatura, almacenamiento), vista ampliada con gráficos en tiempo real y centro «Sistema y rendimiento» en Ajustes (procesador, memoria, almacenamiento, sistema, red). [ADR-004](decisiones/ADR-004-metricas-del-sistema.md) | ✅ Hecho |
 | 6 | Baseline Profile (`profileinstaller`), Macrobenchmark de arranque, pruebas de UI de foco con D-pad, CI en GitHub Actions (tests, lint, release, compilación de pruebas de dispositivo). R8 ya activo desde la etapa 1. Procedimiento y resultados: [rendimiento.md](rendimiento.md) | ✅ Hecho |
-| 7 | Opcional: canales TvProvider, accesos a ajustes KonstaKANG, salvapantallas, temas | Pendiente |
+| 7 | Ajustes › Apariencia: 4 temas (Ion, Aurora, Ámbar, Jade) aplicados al instante en todo Nexium; salvapantallas propio (`DreamService`) con protección contra marcado; mosaico Raspberry Pi con guía a los ajustes de KonstaKANG. Sin permisos nuevos. [ADR-005](decisiones/ADR-005-apariencia-salvapantallas-ajustes.md) | ✅ Hecho |
+| 8 | Opcional: canales TvProvider y «Seguir viendo» (requiere `READ_EPG_DATA`; hoy ninguna app de la Pi publica canales) | Pendiente |
 
 Cada etapa requiere autorización explícita antes de empezar.
 
@@ -86,3 +87,11 @@ Detalle y procedimiento en [rendimiento.md](rendimiento.md).
 El perfil resuelve el jank tras instalar que quedó pendiente en las etapas 4 y
 4.1. No acelera el arranque en esta Pi (el Macrobenchmark indica incluso ~80 ms
 más; `am start -W` no lo confirma).
+
+### Etapa 7 (release, 2026-11-10)
+
+| Métrica | Resultado |
+|---|---|
+| Pruebas de UI en el dispositivo | 7/7 (las 4 anteriores + Apariencia, cambio de tema y diálogo de Raspberry Pi) |
+| Salvapantallas en reposo (65 s, con un cambio de posición) | 0,2 s de CPU; 123 frames, todos durante el fundido; 0 % de jank; GPU p90 3 ms |
+| Cambio de tema | Inmediato en todas las pantallas, sin reiniciar; persiste tras reinstalar |

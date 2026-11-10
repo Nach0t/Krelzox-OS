@@ -1,6 +1,7 @@
 package dev.nexium.launcher.core.designsystem
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -13,18 +14,18 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Typography
 import androidx.tv.material3.darkColorScheme
 
-private val NexiumColorScheme = darkColorScheme(
-    primary = NexiumColors.Electric,
+private fun nexiumColorScheme(accent: NexiumAccent) = darkColorScheme(
+    primary = accent.primary,
     onPrimary = NexiumColors.OnBackground,
-    secondary = NexiumColors.Cyan,
-    tertiary = NexiumColors.Cyan,
+    secondary = accent.secondary,
+    tertiary = accent.secondary,
     background = NexiumColors.Background,
     onBackground = NexiumColors.OnBackground,
     surface = NexiumColors.Surface,
     onSurface = NexiumColors.OnBackground,
     surfaceVariant = NexiumColors.SurfaceRaised,
     onSurfaceVariant = NexiumColors.OnSurfaceMuted,
-    border = NexiumColors.Electric,
+    border = accent.primary,
     error = NexiumColors.Error,
 )
 
@@ -95,8 +96,9 @@ private val NexiumTypography = Typography(
 
 @Composable
 fun NexiumTheme(content: @Composable () -> Unit) {
+    val accent = NexiumColors.accent
     MaterialTheme(
-        colorScheme = NexiumColorScheme,
+        colorScheme = remember(accent) { nexiumColorScheme(accent) },
         typography = NexiumTypography,
         content = content,
     )

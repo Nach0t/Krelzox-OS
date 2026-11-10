@@ -15,6 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.nexium.launcher.core.designsystem.NexiumTheme
 import dev.nexium.launcher.safety.SafeModeView
 import dev.nexium.launcher.ui.AppLauncher
+import dev.nexium.launcher.ui.appearance.DeviceSettings
 import dev.nexium.launcher.ui.home.HomeScreen
 import dev.nexium.launcher.ui.home.HomeViewModel
 import dev.nexium.launcher.ui.performance.SystemSources
@@ -86,6 +87,8 @@ class MainActivity : ComponentActivity() {
                         onDisplaySoundSettings = { AppLauncher.openSystemScreen(this, Settings.ACTION_SOUND_SETTINGS) },
                         onHomeAppSettings = { AppLauncher.openSystemScreen(this, Settings.ACTION_HOME_SETTINGS) },
                         onSystemSettings = { AppLauncher.openSettings(this) },
+                        onSelectAccent = { (application as NexiumApp).appearance.select(it) },
+                        showRaspberrySettings = DeviceSettings.hasRaspberrySettings(this),
                     )
                 }
                 HomeScreen(

@@ -16,12 +16,16 @@ import dev.nexium.launcher.core.data.NetworkDetails
 import dev.nexium.launcher.core.data.NetworkStatus
 import dev.nexium.launcher.core.data.metrics.SystemMetrics
 import dev.nexium.launcher.core.data.metrics.SystemSnapshot
+import dev.nexium.launcher.core.designsystem.NexiumAccent
+import dev.nexium.launcher.core.designsystem.NexiumColors
 import dev.nexium.launcher.core.designsystem.NexiumTheme
 import dev.nexium.launcher.ui.AppArtLoader
 import dev.nexium.launcher.ui.home.buildReadyState
 import dev.nexium.launcher.ui.performance.SystemSources
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
+import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -47,6 +51,7 @@ class NexiumShellFocusTest {
 
     @Before
     fun showShell() {
+        NexiumColors.accent = NexiumAccent.Ion
         val apps = (1..6).map { i ->
             AppEntry(packageName = "test.app$i", activityName = "test.app$i.Main", label = "App $i", isTvNative = true)
         }
@@ -61,6 +66,9 @@ class NexiumShellFocusTest {
                     callbacks = ShellCallbacks(
                         onLaunch = {}, onToggleFavorite = {}, onMoveFavorite = { _, _ -> }, onAppInfo = {},
                         onNetworkSettings = {}, onDisplaySoundSettings = {}, onHomeAppSettings = {}, onSystemSettings = {},
+                        // Same effect as the real store, without persisting anything.
+                        onSelectAccent = { NexiumColors.accent = it },
+                        showRaspberrySettings = true,
                     ),
                     system = SystemSources(flowOf(FakeMetrics), flowOf(FakeNetwork)),
                 )
@@ -101,6 +109,51 @@ class NexiumShellFocusTest {
 
         press(KeyEvent.KEYCODE_DPAD_CENTER)
         assertFocused(R.string.cat_processor)
+    }
+
+    @Test
+    fun appearanceOpensOnThemeInUseAndBackReturnsToTile() {
+        goToSettingsTab()
+        press(KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_DOWN)
+        assertFocused(R.string.settings_appearance)
+
+        press(KeyEvent.KEYCODE_DPAD_CENTER)
+        assertFocused(R.string.theme_ion)
+
+        press(KeyEvent.KEYCODE_BACK)
+        assertFocused(R.string.settings_appearance)
+    }
+
+    @Test
+    fun okOnThemeAppliesIt() {
+        goToSettingsTab()
+        press(KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_CENTER)
+        assertFocused(R.string.theme_ion)
+
+        press(KeyEvent.KEYCODE_DPAD_RIGHT)
+        assertFocused(R.string.theme_aurora)
+        press(KeyEvent.KEYCODE_DPAD_CENTER)
+        rule.runOnIdle { assertEquals(NexiumAccent.Aurora, NexiumColors.accent) }
+        assertFocused(R.string.theme_aurora)
+    }
+
+    @Test
+    fun raspberryTileExplainsWhereSettingsAre() {
+        goToSettingsTab()
+        // Row 2: Apariencia (two columns) → Raspberry Pi.
+        press(KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT)
+        assertFocused(R.string.settings_raspberry)
+
+        press(KeyEvent.KEYCODE_DPAD_CENTER)
+        assertFocused(R.string.action_open_settings)
+
+        press(KeyEvent.KEYCODE_BACK)
+        assertFocused(R.string.settings_raspberry)
+    }
+
+    @After
+    fun restoreTheme() {
+        NexiumColors.accent = NexiumAccent.Ion
     }
 
     /** Hero → Inicio tab → Biblioteca → Multimedia → Ajustes (tabs are selected on focus). */

@@ -23,10 +23,10 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import dev.nexium.launcher.R
 import dev.nexium.launcher.core.data.AppEntry
 import dev.nexium.launcher.core.data.NetworkStatus
+import dev.nexium.launcher.core.designsystem.NexiumAccent
 import dev.nexium.launcher.core.designsystem.NexiumColors
 import dev.nexium.launcher.core.designsystem.NexiumIcons
 import dev.nexium.launcher.core.designsystem.NexiumSpacing
@@ -41,21 +42,24 @@ import dev.nexium.launcher.ui.AppArtLoader
 import dev.nexium.launcher.ui.home.AppActions
 import dev.nexium.launcher.ui.home.AppActionsDialog
 import dev.nexium.launcher.ui.home.FavoritesPickerDialog
-import dev.nexium.launcher.ui.home.InteractionClock
 import dev.nexium.launcher.ui.home.HomeTab
 import dev.nexium.launcher.ui.home.HomeUiState
+import dev.nexium.launcher.ui.home.InteractionClock
 import dev.nexium.launcher.ui.library.AppGridTab
 import dev.nexium.launcher.ui.performance.PerformanceCenter
 import dev.nexium.launcher.ui.performance.PerformanceSheet
 import dev.nexium.launcher.ui.performance.SystemSources
+import dev.nexium.launcher.ui.screensaver.ScreensaverPreview
 import dev.nexium.launcher.ui.settings.AboutDialog
+import dev.nexium.launcher.ui.settings.AppearancePage
+import dev.nexium.launcher.ui.settings.RaspberrySettingsDialog
 import dev.nexium.launcher.ui.settings.SettingsActions
 import dev.nexium.launcher.ui.settings.SettingsTab
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 /** Pages inside the Ajustes tab. */
-enum class SettingsPage { Overview, Performance }
+enum class SettingsPage { Overview, Performance, Appearance }
 
 /** Everything the shell can ask the outside world to do. */
 data class ShellCallbacks(
@@ -67,6 +71,10 @@ data class ShellCallbacks(
     val onDisplaySoundSettings: () -> Unit,
     val onHomeAppSettings: () -> Unit,
     val onSystemSettings: () -> Unit,
+    /** Applies and saves a theme (Ajustes › Apariencia). */
+    val onSelectAccent: (NexiumAccent) -> Unit = {},
+    /** KonstaKANG's Raspberry Pi settings exist on this device: show their tile. */
+    val showRaspberrySettings: Boolean = false,
 )
 
 @Composable
@@ -97,9 +105,12 @@ fun NexiumShell(
     var heroIndex by remember { mutableIntStateOf(0) }
     val interaction = remember { InteractionClock() }
     var perfSheetOpen by remember { mutableStateOf(false) }
+    var raspberryOpen by remember { mutableStateOf(false) }
+    var screensaverPreviewOpen by remember { mutableStateOf(false) }
     var settingsPage by rememberSaveable { mutableStateOf(SettingsPage.Overview) }
     val performanceTile = remember { FocusRequester() }
-    val dialogOpen = actionsFor != null || aboutOpen || pickerOpen || perfSheetOpen
+    val appearanceTile = remember { FocusRequester() }
+    val dialogOpen = actionsFor != null || aboutOpen || pickerOpen || perfSheetOpen || raspberryOpen || screensaverPreviewOpen
 
     fun focusHero() {
         scope.launch {
@@ -121,13 +132,14 @@ fun NexiumShell(
         }
     }
 
-    // Opening the center removes the focused tile. Park focus on the Ajustes tab (present on
-    // both pages) BEFORE swapping the page, or Compose hands focus to the first focusable (the
-    // Inicio tab) and select-on-focus switches tabs. PerformanceCenter then focuses its rail.
-    fun openPerformanceCenter() {
+    // Opening a sub-page (performance center, appearance) removes the focused tile. Park focus
+    // on the Ajustes tab (present on every page) BEFORE swapping the page, or Compose hands
+    // focus to the first focusable (the Inicio tab) and select-on-focus switches tabs. The
+    // page then focuses its own first element.
+    fun openSettingsPage(page: SettingsPage) {
         runCatching { tabRequesters.getValue(NexiumTab.Settings).requestFocus() }
         selected = NexiumTab.Settings
-        settingsPage = SettingsPage.Performance
+        settingsPage = page
     }
 
     // Focus must never be lost: on first display, or when the focused element disappears
@@ -147,6 +159,8 @@ fun NexiumShell(
             aboutOpen = false
             pickerOpen = false
             perfSheetOpen = false
+            raspberryOpen = false
+            screensaverPreviewOpen = false
             settingsPage = SettingsPage.Overview
             movingKey = null
             focusedCardKey = null
@@ -162,15 +176,17 @@ fun NexiumShell(
     BackHandler(enabled = !dialogOpen && !atRoot) {
         when {
             movingKey != null -> movingKey = null
-            selected == NexiumTab.Settings && settingsPage == SettingsPage.Performance && !topBarFocused -> {
-                // Park focus on the Ajustes tab (present on both pages) BEFORE swapping the page:
-                // otherwise the focused rail item disappears, Compose gives focus to the first
-                // focusable (the Inicio tab) and select-on-focus would switch tabs.
+            selected == NexiumTab.Settings && settingsPage != SettingsPage.Overview && !topBarFocused -> {
+                // Park focus on the Ajustes tab (present on every page) BEFORE swapping the page:
+                // otherwise the focused element disappears, Compose gives focus to the first
+                // focusable (the Inicio tab) and select-on-focus would switch tabs. Then return
+                // to the tile that opened the page.
+                val tile = if (settingsPage == SettingsPage.Appearance) appearanceTile else performanceTile
                 runCatching { tabRequesters.getValue(NexiumTab.Settings).requestFocus() }
                 settingsPage = SettingsPage.Overview
                 scope.launch {
                     withFrameNanos { }
-                    runCatching { performanceTile.requestFocus() }
+                    runCatching { tile.requestFocus() }
                 }
             }
             selected != NexiumTab.Home && !topBarFocused -> focusTab(selected)
@@ -299,7 +315,13 @@ fun NexiumShell(
                     NexiumTab.Settings -> when (settingsPage) {
                         SettingsPage.Overview -> SettingsTab(
                             actions = SettingsActions(
-                                onPerformance = { openPerformanceCenter() },
+                                onPerformance = { openSettingsPage(SettingsPage.Performance) },
+                                onAppearance = { openSettingsPage(SettingsPage.Appearance) },
+                                onRaspberry = if (callbacks.showRaspberrySettings) {
+                                    { raspberryOpen = true }
+                                } else {
+                                    null
+                                },
                                 onNetwork = callbacks.onNetworkSettings,
                                 onDisplaySound = callbacks.onDisplaySoundSettings,
                                 onHomeApp = callbacks.onHomeAppSettings,
@@ -308,11 +330,18 @@ fun NexiumShell(
                             ),
                             metrics = system.metrics,
                             performanceTile = performanceTile,
+                            appearanceTile = appearanceTile,
                         )
                         SettingsPage.Performance -> PerformanceCenter(
                             metrics = system.metrics,
                             network = system.network,
                             appCount = state.apps.size,
+                        )
+                        SettingsPage.Appearance -> AppearancePage(
+                            current = NexiumColors.accent,
+                            onSelectAccent = callbacks.onSelectAccent,
+                            onPreviewScreensaver = { screensaverPreviewOpen = true },
+                            onOpenSystemSettings = callbacks.onSystemSettings,
                         )
                     }
                 }
@@ -351,6 +380,18 @@ fun NexiumShell(
             },
             onDismiss = { perfSheetOpen = false },
         )
+    }
+    if (raspberryOpen) {
+        RaspberrySettingsDialog(
+            onOpenSettings = {
+                raspberryOpen = false
+                callbacks.onSystemSettings()
+            },
+            onDismiss = { raspberryOpen = false },
+        )
+    }
+    if (screensaverPreviewOpen) {
+        ScreensaverPreview(onDismiss = { screensaverPreviewOpen = false })
     }
     if (pickerOpen) {
         FavoritesPickerDialog(

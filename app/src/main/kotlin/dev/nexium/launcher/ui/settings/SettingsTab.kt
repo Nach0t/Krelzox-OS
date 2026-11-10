@@ -3,7 +3,11 @@ package dev.nexium.launcher.ui.settings
 import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import dev.nexium.launcher.core.designsystem.NexiumAccent
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,6 +63,9 @@ private val TileShape = RoundedCornerShape(NexiumDimens.CardCorner)
 
 data class SettingsActions(
     val onPerformance: () -> Unit,
+    val onAppearance: () -> Unit,
+    /** Null when KonstaKANG's Raspberry Pi settings are not installed: the tile is hidden. */
+    val onRaspberry: (() -> Unit)?,
     val onNetwork: () -> Unit,
     val onDisplaySound: () -> Unit,
     val onHomeApp: () -> Unit,
@@ -67,7 +74,12 @@ data class SettingsActions(
 )
 
 @Composable
-fun SettingsTab(actions: SettingsActions, metrics: Flow<SystemMetrics>, performanceTile: FocusRequester) {
+fun SettingsTab(
+    actions: SettingsActions,
+    metrics: Flow<SystemMetrics>,
+    performanceTile: FocusRequester,
+    appearanceTile: FocusRequester,
+) {
     Column(Modifier.fillMaxSize().padding(top = NexiumSpacing.Small)) {
         Text(
             stringResource(R.string.tab_settings),
@@ -81,7 +93,7 @@ fun SettingsTab(actions: SettingsActions, metrics: Flow<SystemMetrics>, performa
         )
         Spacer(Modifier.height(NexiumSpacing.Large))
         // Same 5-column grid as Biblioteca and the rows on Inicio. "Sistema y rendimiento"
-        // spans two columns: it is the richest destination and shows live values.
+        // and "Apariencia" span two columns: the two Nexium pages, with live content.
         BoxWithConstraints(Modifier.fillMaxWidth()) {
             val tile = NexiumGrid.columnWidth(maxWidth, NexiumGrid.APP_COLUMNS)
             Column(verticalArrangement = Arrangement.spacedBy(NexiumGrid.Gap)) {
@@ -92,6 +104,10 @@ fun SettingsTab(actions: SettingsActions, metrics: Flow<SystemMetrics>, performa
                     SettingsTile(tile, NexiumIcons.Home, R.string.settings_home_app, R.string.settings_home_app_desc, actions.onHomeApp)
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(NexiumGrid.Gap)) {
+                    AppearanceTile(tile * 2 + NexiumGrid.Gap, actions.onAppearance, Modifier.focusRequester(appearanceTile))
+                    actions.onRaspberry?.let { onRaspberry ->
+                        SettingsTile(tile, NexiumIcons.Board, R.string.settings_raspberry, R.string.settings_raspberry_desc, onRaspberry)
+                    }
                     SettingsTile(tile, NexiumIcons.Settings, R.string.settings_android, R.string.settings_system_desc, actions.onSystemSettings)
                     SettingsTile(tile, NexiumIcons.Info, R.string.settings_about, R.string.settings_about_desc, actions.onAbout)
                 }
@@ -144,6 +160,39 @@ private fun PerformanceTile(width: Dp, metrics: Flow<SystemMetrics>, onClick: ()
             Text(stringResource(R.string.perf_tile_title), style = MaterialTheme.typography.labelLarge, maxLines = 1)
             Text(
                 stringResource(R.string.perf_tile_desc),
+                style = MaterialTheme.typography.labelMedium,
+                color = NexiumColors.OnSurfaceMuted,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+/** Wide entry to Apariencia: the four themes as swatches (the one in use ringed). */
+@Composable
+private fun AppearanceTile(width: Dp, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val current = NexiumColors.accent
+    SettingsSurface(width, onClick, modifier) {
+        Column(Modifier.fillMaxSize().padding(NexiumSpacing.Medium)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(NexiumIcons.Palette, contentDescription = null, tint = NexiumColors.Cyan, modifier = Modifier.size(26.dp))
+                Spacer(Modifier.weight(1f))
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    NexiumAccent.entries.forEach { accent ->
+                        val ring = if (accent == current) {
+                            Modifier.border(2.dp, NexiumColors.OnBackground, CircleShape).padding(4.dp)
+                        } else {
+                            Modifier.padding(4.dp)
+                        }
+                        Box(ring) { Box(Modifier.size(18.dp).background(accent.brush, CircleShape)) }
+                    }
+                }
+            }
+            Spacer(Modifier.weight(1f))
+            Text(stringResource(R.string.settings_appearance), style = MaterialTheme.typography.labelLarge, maxLines = 1)
+            Text(
+                stringResource(R.string.settings_appearance_desc, stringResource(current.label())),
                 style = MaterialTheme.typography.labelMedium,
                 color = NexiumColors.OnSurfaceMuted,
                 maxLines = 1,
@@ -247,5 +296,59 @@ private fun AboutLine(label: String, value: String) {
     Row(Modifier.fillMaxWidth()) {
         Text(label, style = MaterialTheme.typography.bodyMedium, color = NexiumColors.OnSurfaceMuted, modifier = Modifier.weight(1f))
         Text(value, style = MaterialTheme.typography.bodyMedium, color = NexiumColors.OnBackground)
+    }
+}
+
+/**
+ * KonstaKANG's Raspberry Pi settings are not exported to other apps: Android only opens
+ * them from its own Settings. Say exactly where they are, then open Settings.
+ */
+@Composable
+fun RaspberrySettingsDialog(onOpenSettings: () -> Unit, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        val open = remember { FocusRequester() }
+        Column(
+            Modifier
+                .width(460.dp)
+                .background(NexiumColors.SurfaceRaised, RoundedCornerShape(20.dp))
+                .padding(NexiumSpacing.Large),
+            verticalArrangement = Arrangement.spacedBy(NexiumSpacing.Small),
+        ) {
+            Icon(NexiumIcons.Board, contentDescription = null, tint = NexiumColors.Cyan, modifier = Modifier.size(28.dp))
+            Text(stringResource(R.string.raspberry_title), style = MaterialTheme.typography.headlineMedium, color = NexiumColors.OnBackground)
+            Text(stringResource(R.string.raspberry_body), style = MaterialTheme.typography.bodyMedium, color = NexiumColors.OnSurfaceMuted)
+            Text(
+                stringResource(R.string.raspberry_path),
+                style = MaterialTheme.typography.labelLarge,
+                color = NexiumColors.OnBackground,
+                modifier = Modifier
+                    .padding(vertical = NexiumSpacing.XSmall)
+                    .border(1.dp, NexiumColors.IonBrush, RoundedCornerShape(10.dp))
+                    .padding(horizontal = 14.dp, vertical = 8.dp),
+            )
+            Row(
+                Modifier.fillMaxWidth().padding(top = NexiumSpacing.Small),
+                horizontalArrangement = Arrangement.spacedBy(NexiumSpacing.Small),
+            ) {
+                Button(
+                    onClick = onOpenSettings,
+                    modifier = Modifier.weight(1f).focusRequester(open),
+                    colors = NexiumButtonDefaults.colors(),
+                    border = NexiumButtonDefaults.border(),
+                    shape = NexiumButtonDefaults.shape(),
+                ) { Text(stringResource(R.string.action_open_settings)) }
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    colors = NexiumButtonDefaults.colors(),
+                    border = NexiumButtonDefaults.border(),
+                    shape = NexiumButtonDefaults.shape(),
+                ) { Text(stringResource(R.string.action_cancel)) }
+            }
+        }
+        LaunchedEffect(Unit) {
+            withFrameNanos { }
+            runCatching { open.requestFocus() }
+        }
     }
 }

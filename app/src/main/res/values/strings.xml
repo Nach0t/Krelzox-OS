@@ -179,4 +179,31 @@
     <string name="safe_mode_message">Nexium stopped several times in a row. You can pick another launcher or try again.</string>
     <string name="safe_mode_choose_launcher">Choose another launcher</string>
     <string name="safe_mode_retry">Try again</string>
+
+    <!-- Stage 7: appearance, screensaver and Raspberry Pi -->
+    <string name="screensaver_name">Nexium</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_appearance_desc">%1$s theme · screensaver</string>
+    <string name="settings_raspberry">Raspberry Pi</string>
+    <string name="settings_raspberry_desc">KonstaKANG</string>
+    <string name="raspberry_title">Raspberry Pi settings</string>
+    <string name="raspberry_body">Android TV only opens them from its own Settings. You will find them in:</string>
+    <string name="raspberry_path">System › Raspberry Pi settings</string>
+    <string name="action_open_settings">Open Settings</string>
+    <string name="appearance_title">Appearance</string>
+    <string name="appearance_subtitle">The theme colors focus, brand and charts across Nexium</string>
+    <string name="appearance_theme">Theme</string>
+    <string name="appearance_screensaver">Screensaver</string>
+    <string name="theme_in_use">In use</string>
+    <string name="theme_ion">Ion</string>
+    <string name="theme_ion_desc">Electric blue and cyan · original</string>
+    <string name="theme_aurora">Aurora</string>
+    <string name="theme_aurora_desc">Violet and lavender</string>
+    <string name="theme_amber">Amber</string>
+    <string name="theme_amber_desc">Copper and gold</string>
+    <string name="theme_jade">Jade</string>
+    <string name="theme_jade_desc">Emerald and mint</string>
+    <string name="screensaver_desc">Time, date and the light of your theme. It moves every minute to protect the screen.</string>
+    <string name="screensaver_preview">Preview</string>
+    <string name="screensaver_how_to">To use it: Settings › System › Screen saver › Nexium</string>
 </resources>

@@ -36,6 +36,19 @@ and the stock launcher always kept as a safety net.
 |---|---|
 | ![Expanded performance panel](docs/capturas/etapa5/02-panel-ampliado.png) | ![Processor details](docs/capturas/etapa5/04-procesador.png) |
 
+**Appearance and screensaver**
+- Four themes — Ion (original), Aurora, Amber and Jade — that recolor the whole
+  system at once: focus, brand mark, charts and screensaver. Each theme card
+  previews its own focus before you pick it.
+- Nexium screensaver: time, date and the theme's light on deep graphite. It
+  moves every minute to protect the screen and barely uses the CPU.
+- A Raspberry Pi tile that tells you exactly where KonstaKANG's hardware
+  settings are (Android does not let other apps open them directly).
+
+| Appearance | Screensaver |
+|---|---|
+| ![Appearance in the Amber theme](docs/capturas/etapa7/04-apariencia-ambar.png) | ![Nexium screensaver in the Aurora theme](docs/capturas/etapa7/08-salvapantallas-aurora.png) |
+
 **Reliability**
 - Runs as the HOME app, with **safe mode**: after 3 crashes in 2 minutes it
   opens a minimal screen to pick another launcher or open Settings.
@@ -45,8 +58,8 @@ and the stock launcher always kept as a safety net.
 **Performance and privacy**
 - Baseline Profile + R8: 2.8 MB release APK; D-pad navigation with < 1 % janky
   frames even right after install; cold start well under 600 ms.
-- A single, normal permission (`ACCESS_NETWORK_STATE`). No root, no telemetry,
-  no ads.
+- A single, normal permission (`ACCESS_NETWORK_STATE`) — themes and the
+  screensaver add none. No root, no telemetry, no ads.
 
 ## Target platform
 
@@ -92,7 +105,7 @@ Windows equivalents are in [docs/entorno.md](docs/entorno.md) (Spanish).
 | `./gradlew testDebugUnitTest lintDebug` | Unit tests and lint | CI + local |
 | `./gradlew assembleRelease` | Release build (R8 + Baseline Profile) | CI + local |
 | `./gradlew :app:connectedDebugAndroidTest` | D-pad focus UI tests | Device |
-| `./gradlew :app:generateBaselineProfile` | Regenerates the Baseline Profile | Device |
+| `./gradlew :app:generateBaselineProfile -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true` | Regenerates the Baseline Profile (the flag keeps Nexium and its data installed) | Device |
 | `./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest` | Cold-start Macrobenchmark | Device |
 
 Debug builds use the package `dev.nexium.launcher.debug`, so tests never replace

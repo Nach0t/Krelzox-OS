@@ -199,8 +199,15 @@ object NexiumIcons {
         lineIcon("ArrowRight") { moveTo(9f, 5f); lineTo(16f, 12f); lineTo(9f, 19f) }
     }
 
-    /** Brand "N" mark, filled with the electric → cyan gradient. Draw without tint. */
-    val LogoMark: ImageVector by lazy {
+    /** Brand "N" mark, filled with the active theme's accent gradient. Draw without tint. */
+    val LogoMark: ImageVector get() = logoMarkFor(NexiumColors.accent)
+
+    /** The brand mark in a given theme (theme previews). Built once per theme. */
+    fun logoMarkFor(accent: NexiumAccent): ImageVector = logoMarks.getOrPut(accent) { logoMark(accent) }
+
+    private val logoMarks = HashMap<NexiumAccent, ImageVector>()
+
+    private fun logoMark(accent: NexiumAccent): ImageVector =
         ImageVector.Builder(
             name = "NexiumMark",
             defaultWidth = 20.dp,
@@ -210,7 +217,7 @@ object NexiumIcons {
         ).apply {
             path(
                 fill = Brush.linearGradient(
-                    colors = listOf(NexiumColors.Electric, NexiumColors.Cyan),
+                    colors = listOf(accent.primary, accent.secondary),
                     start = Offset(0f, 0f),
                     end = Offset(40f, 44f),
                 ),
@@ -220,6 +227,50 @@ object NexiumIcons {
                 verticalLineTo(44f); horizontalLineTo(0f); close()
             }
         }.build()
+
+    /** Appearance: a palette with three color wells. */
+    val Palette: ImageVector by lazy {
+        lineIcon("Palette") {
+            moveTo(12f, 3f)
+            arcTo(9f, 9f, 0f, false, false, 12f, 21f)
+            arcTo(2f, 2f, 0f, false, false, 13.4f, 17.6f)
+            arcTo(2f, 2f, 0f, false, true, 15f, 14.5f)
+            lineTo(17f, 14.5f)
+            arcTo(4f, 4f, 0f, false, false, 21f, 10.5f)
+            arcTo(8f, 7.5f, 0f, false, false, 12f, 3f)
+            close()
+            circle(7.5f, 11f, 1.1f)
+            circle(10f, 7f, 1.1f)
+            circle(14.5f, 7f, 1.1f)
+        }
+    }
+
+    /** Raspberry Pi: a board with a chip and pin headers. */
+    val Board: ImageVector by lazy {
+        lineIcon("Board") {
+            rect(3f, 5f, 18f, 14f)
+            rect(9f, 9f, 6f, 6f)
+            moveTo(6f, 8f); lineTo(6f, 8.01f)
+            moveTo(6f, 12f); lineTo(6f, 12.01f)
+            moveTo(6f, 16f); lineTo(6f, 16.01f)
+            moveTo(18f, 8f); lineTo(18f, 8.01f)
+            moveTo(18f, 16f); lineTo(18f, 16.01f)
+        }
+    }
+
+    /** Screensaver: a crescent moon. */
+    val Moon: ImageVector by lazy {
+        lineIcon("Moon") {
+            moveTo(20f, 14.5f)
+            arcTo(8.5f, 8.5f, 0f, true, true, 9.5f, 4f)
+            arcTo(7f, 7f, 0f, false, false, 20f, 14.5f)
+            close()
+        }
+    }
+
+    /** Selected option: a check mark. */
+    val Check: ImageVector by lazy {
+        lineIcon("Check") { moveTo(5f, 12.5f); lineTo(10f, 17.5f); lineTo(19f, 7f) }
     }
 
     private fun lineIcon(name: String, block: PathBuilder.() -> Unit): ImageVector =

@@ -179,4 +179,31 @@
     <string name="safe_mode_message">Nexium se detuvo varias veces seguidas. Puedes elegir otro launcher o volver a intentarlo.</string>
     <string name="safe_mode_choose_launcher">Elegir otro launcher</string>
     <string name="safe_mode_retry">Reintentar</string>
+
+    <!-- Etapa 7: apariencia, salvapantallas y Raspberry Pi -->
+    <string name="screensaver_name">Nexium</string>
+    <string name="settings_appearance">Apariencia</string>
+    <string name="settings_appearance_desc">Tema %1$s · salvapantallas</string>
+    <string name="settings_raspberry">Raspberry Pi</string>
+    <string name="settings_raspberry_desc">KonstaKANG</string>
+    <string name="raspberry_title">Ajustes de Raspberry Pi</string>
+    <string name="raspberry_body">Android TV solo permite abrirlos desde sus propios Ajustes. Los encontrarás en:</string>
+    <string name="raspberry_path">Sistema › Raspberry Pi settings</string>
+    <string name="action_open_settings">Abrir Ajustes</string>
+    <string name="appearance_title">Apariencia</string>
+    <string name="appearance_subtitle">El tema colorea el foco, la marca y los gráficos de todo Nexium</string>
+    <string name="appearance_theme">Tema</string>
+    <string name="appearance_screensaver">Salvapantallas</string>
+    <string name="theme_in_use">En uso</string>
+    <string name="theme_ion">Ion</string>
+    <string name="theme_ion_desc">Azul eléctrico y cian · original</string>
+    <string name="theme_aurora">Aurora</string>
+    <string name="theme_aurora_desc">Violeta y lavanda</string>
+    <string name="theme_amber">Ámbar</string>
+    <string name="theme_amber_desc">Cobre y oro</string>
+    <string name="theme_jade">Jade</string>
+    <string name="theme_jade_desc">Esmeralda y menta</string>
+    <string name="screensaver_desc">Hora, fecha y la luz de tu tema. Cambia de posición cada minuto para cuidar la pantalla.</string>
+    <string name="screensaver_preview">Vista previa</string>
+    <string name="screensaver_how_to">Para usarlo: Ajustes › Sistema › Protector de pantalla › Nexium</string>
 </resources>

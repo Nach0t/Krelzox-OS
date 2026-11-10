@@ -258,12 +258,19 @@ internal enum class PerfMetric(
     val label: Int,
     val chartTitle: Int,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
-    val color: Color,
     val yMin: Float,
 ) {
-    Cpu(R.string.perf_cpu, R.string.cpu_usage, NexiumIcons.Cpu, NexiumColors.Cyan, 0f),
-    Ram(R.string.perf_ram, R.string.ram_usage, NexiumIcons.Memory, NexiumColors.Electric, 0f),
-    Temperature(R.string.perf_temp, R.string.perf_temp, NexiumIcons.Thermometer, Color(0xFF7DD3FC), 30f);
+    Cpu(R.string.perf_cpu, R.string.cpu_usage, NexiumIcons.Cpu, 0f),
+    Ram(R.string.perf_ram, R.string.ram_usage, NexiumIcons.Memory, 0f),
+    Temperature(R.string.perf_temp, R.string.perf_temp, NexiumIcons.Thermometer, 30f);
+
+    /** Read on use, not stored: CPU and RAM follow the active theme's accent. */
+    val color: Color
+        get() = when (this) {
+            Cpu -> NexiumColors.Cyan
+            Ram -> NexiumColors.Electric
+            Temperature -> Color(0xFF7DD3FC)
+        }
 
     fun history(m: SystemMetrics): List<Float> = when (this) {
         Cpu -> m.cpuHistory

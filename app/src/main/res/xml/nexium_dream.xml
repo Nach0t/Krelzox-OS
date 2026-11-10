@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nexium screensaver metadata (no settings activity: it is configured in Nexium). -->
+<dream xmlns:android="http://schemas.android.com/apk/res/android"
+    android:previewImage="@drawable/banner" />

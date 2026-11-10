@@ -22,6 +22,9 @@ $env:PATH += ";$PWD\platform-tools"
   tecla reales (como un mando): foco inicial en el hero, ↓ desde la pestaña
   Ajustes llega a «Sistema y rendimiento», OK abre el centro con el foco en
   «Procesador» y Back vuelve al mosaico, y la vista ampliada abre el centro.
+- Desde la etapa 7 hay 7 pruebas: además, Apariencia se abre en el tema en uso
+  y Back vuelve a su mosaico, OK en un tema lo aplica, y el mosaico Raspberry Pi
+  abre su diálogo.
 - Usan la build **debug** (`dev.nexium.launcher.debug`): Gradle la instala y la
   desinstala al terminar sin tocar el Nexium de uso diario ni su rol HOME.
 - Comprobado que detectan los bugs de la etapa 5: al deshacer cada corrección,
@@ -34,9 +37,14 @@ a mano cuando cambian pantallas o recorridos importantes:
 
 ```powershell
 adb shell cmd role add-role-holder android.app.role.HOME org.lineageos.tv.launcher
-.\gradlew :app:generateBaselineProfile
+.\gradlew :app:generateBaselineProfile "-Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true"
 adb shell cmd role add-role-holder android.app.role.HOME dev.nexium.launcher
 ```
+
+> **Importante:** sin `leaveApksInstalledAfterRun=true`, Gradle **desinstala
+> Nexium** al terminar (la app medida) y se pierden sus datos: favoritos,
+> recientes y tema. Ocurrió en la etapa 6; desde la etapa 7 los comandos llevan
+> la opción, comprobado en la Pi (el tema elegido sobrevive a la generación).
 
 - **Nexium no puede ser HOME mientras tanto**: el generador pulsa HOME entre
   iteraciones y, si Nexium es el launcher, HOME lo relanzaría. Se usa Catapult
@@ -44,7 +52,8 @@ adb shell cmd role add-role-holder android.app.role.HOME dev.nexium.launcher
   terminar.
 - Recorrido (`baselineprofile/.../NexiumJourney.kt`): arranque, hero ↔
   Favoritos ↔ Aplicaciones, las cuatro pestañas, el centro de rendimiento con
-  sus cinco categorías y la vista ampliada del panel. Todo con D-pad.
+  sus cinco categorías, Apariencia (solo navegando: nunca pulsa OK en un tema,
+  para no cambiar el del usuario) y la vista ampliada del panel. Todo con D-pad.
 - `profileinstaller` instala el perfil en el dispositivo (sin Play Store no hay
   perfiles en la nube); el sistema compila con él en segundo plano.
 - La conexión Wi-Fi con la Pi es inestable: si ADB falla con `TimeoutException` o
@@ -55,14 +64,15 @@ adb shell cmd role add-role-holder android.app.role.HOME dev.nexium.launcher
 ```powershell
 adb shell cmd role add-role-holder android.app.role.HOME org.lineageos.tv.launcher
 .\gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest `
-  "-Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=Macrobenchmark"
+  "-Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.enabledRules=Macrobenchmark" `
+  "-Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true"
 adb shell cmd role add-role-holder android.app.role.HOME dev.nexium.launcher
 ```
 
 Resultados en
 `baselineprofile/build/outputs/connected_android_test_additional_output/`.
-El benchmark instala la variante `benchmarkRelease` sobre Nexium: al terminar,
-reinstalar la release normal ([entorno.md](entorno.md)).
+El benchmark instala la variante `benchmarkRelease` sobre Nexium (conserva sus
+datos): al terminar, reinstalar la release normal ([entorno.md](entorno.md)).
 
 La fluidez al navegar **no** se mide con Macrobenchmark: en esta ROM
 `FrameTimingMetric` no captura ningún frame de la app («0 found for

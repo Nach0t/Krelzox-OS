@@ -40,6 +40,21 @@ seguridad.
 |---|---|
 | ![Vista ampliada del panel](docs/capturas/etapa5/02-panel-ampliado.png) | ![Detalle del procesador](docs/capturas/etapa5/04-procesador.png) |
 
+**Apariencia y salvapantallas**
+- Cuatro temas (Ion, el original; Aurora, Ámbar y Jade) que recolorean todo el
+  sistema a la vez: foco, marca, gráficos y salvapantallas. Cada tarjeta de tema
+  muestra su propio foco antes de elegirlo.
+- Salvapantallas de Nexium: hora, fecha y la luz del tema sobre grafito
+  profundo. Cambia de posición cada minuto para cuidar la pantalla y apenas usa
+  la CPU.
+- Mosaico Raspberry Pi que indica dónde están exactamente los ajustes de
+  hardware de KonstaKANG (Android no permite que otras apps los abran
+  directamente).
+
+| Apariencia | Salvapantallas |
+|---|---|
+| ![Apariencia con el tema Ámbar](docs/capturas/etapa7/04-apariencia-ambar.png) | ![Salvapantallas de Nexium con el tema Aurora](docs/capturas/etapa7/08-salvapantallas-aurora.png) |
+
 **Fiabilidad**
 - Funciona como app de inicio (HOME), con **modo seguro**: tras 3 cierres por
   error en 2 minutos abre una pantalla mínima para elegir otro launcher o abrir
@@ -51,8 +66,8 @@ seguridad.
 - Baseline Profile + R8: APK release de 2,8 MB; navegación con D-pad con < 1 %
   de frames con tirones incluso justo después de instalar; arranque en frío muy
   por debajo de 600 ms.
-- Un único permiso, normal (`ACCESS_NETWORK_STATE`). Sin root, sin telemetría,
-  sin anuncios.
+- Un único permiso, normal (`ACCESS_NETWORK_STATE`); los temas y el
+  salvapantallas no añaden ninguno. Sin root, sin telemetría, sin anuncios.
 
 ## Plataforma objetivo
 
@@ -99,7 +114,7 @@ En Windows, los comandos equivalentes están en [docs/entorno.md](docs/entorno.m
 | `./gradlew testDebugUnitTest lintDebug` | Tests unitarios y lint | CI + local |
 | `./gradlew assembleRelease` | Build release (R8 + Baseline Profile) | CI + local |
 | `./gradlew :app:connectedDebugAndroidTest` | Pruebas de UI de foco con D-pad | Dispositivo |
-| `./gradlew :app:generateBaselineProfile` | Regenera el Baseline Profile | Dispositivo |
+| `./gradlew :app:generateBaselineProfile -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true` | Regenera el Baseline Profile (la opción conserva Nexium y sus datos) | Dispositivo |
 | `./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest` | Macrobenchmark de arranque en frío | Dispositivo |
 
 Las builds debug usan el paquete `dev.nexium.launcher.debug`, así que las

@@ -14,6 +14,7 @@ import dev.nexium.launcher.core.data.metrics.SystemMetrics
 import dev.nexium.launcher.core.data.metrics.SystemMonitor
 import dev.nexium.launcher.safety.CrashGuard
 import dev.nexium.launcher.ui.AppArtLoader
+import dev.nexium.launcher.ui.appearance.AppearanceStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,9 +29,14 @@ class NexiumApp : Application() {
     lateinit var crashGuard: CrashGuard
         private set
 
+    /** Theme selection, shared by the launcher and the screensaver. */
+    val appearance: AppearanceStore by lazy { AppearanceStore(this) }
+
     override fun onCreate() {
         super.onCreate()
         crashGuard = CrashGuard(this).also { it.install() }
+        // Before any UI (launcher or screensaver) draws its first frame.
+        appearance.restore()
     }
 }
 

@@ -50,8 +50,9 @@ fun MacrobenchmarkScope.browseHome() {
 }
 
 /**
- * The rest of the UI: every tab, the performance center (all categories) and the
- * expanded performance panel. Starts on the hero; ends back on it.
+ * The rest of the UI: every tab, the performance center (all categories), Apariencia
+ * (themes and screensaver, browsed only) and the expanded performance panel. Starts on
+ * the hero; ends back on it.
  */
 fun MacrobenchmarkScope.browseTabsAndPerformance() {
     // Hero → Inicio tab → Biblioteca → Multimedia → Ajustes (tabs are selected on focus).
@@ -59,7 +60,12 @@ fun MacrobenchmarkScope.browseTabsAndPerformance() {
     // Ajustes grid → "Sistema y rendimiento" → its five categories → back to the grid.
     press(Key.Down, Key.Ok, settleMs = 600)
     press(Key.Down, Key.Down, Key.Down, Key.Down, settleMs = 400)
-    // Back is hierarchical: center → its tile → Ajustes tab (never ↑, which could land on,
+    // Back → its tile; ↓ → Apariencia: browse the themes and the screensaver actions
+    // WITHOUT pressing OK (that would change the user's theme).
+    press(Key.Back, settleMs = 600)
+    press(Key.Down, Key.Ok, settleMs = 700)
+    press(Key.Right, Key.Down, Key.Left, Key.Right, Key.Right, settleMs = 400)
+    // Back is hierarchical: page → its tile → Ajustes tab (never ↑, which could land on,
     // and select, another tab).
     press(Key.Back, Key.Back, settleMs = 600)
     // Performance panel (right of the tabs) → expanded view → its metrics → close.

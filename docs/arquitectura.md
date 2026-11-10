@@ -69,7 +69,7 @@ rendimiento, red y hora) y cuatro pestañas:
 | Inicio | Hero (app destacada o enfocada) + filas Favoritos y Aplicaciones (12 + "Ver todas") |
 | Biblioteca | Catálogo completo en cuadrícula de 5 columnas |
 | Multimedia | Apps con categoría video, audio o imagen (estado vacío con acceso a Biblioteca) |
-| Ajustes | Mosaico doble «Sistema y rendimiento» (valores en directo) + accesos a Red, Pantalla y sonido, App de inicio, Ajustes de Android y "Acerca de Nexium". «Sistema y rendimiento» es una subpágina de la pestaña (`SettingsPage.Performance`) |
+| Ajustes | Fila 1: «Sistema y rendimiento» (doble, valores en directo), Red, Pantalla y sonido, App de inicio. Fila 2: «Apariencia» (doble, muestras de los temas), Raspberry Pi (solo si existen los ajustes de KonstaKANG), Ajustes de Android, «Acerca de Nexium». «Sistema y rendimiento» y «Apariencia» son subpáginas de la pestaña (`SettingsPage.Performance` / `.Appearance`) |
 
 Hero (carrusel de hasta 5 apps, `buildReadyState`):
 1. Apps abiertas recientemente (la más reciente: *Continuar*; el resto:
@@ -123,6 +123,22 @@ SystemSources ──► PerformancePill (barra superior, todas las pestañas)
 | Vista ampliada | Tres métricas seleccionables (CPU, RAM, temperatura) con sparkline; gráfico grande con actual, máximo y media de los últimos 4 min; botón al centro de rendimiento |
 | Centro «Sistema y rendimiento» | Carril de categorías (Procesador, Memoria, Almacenamiento, Sistema, Red) y detalle de solo lectura: tarjetas de valores, gráficos y nota de fuente |
 
+## Apariencia y salvapantallas (etapa 7)
+
+Decisiones: [ADR-005](decisiones/ADR-005-apariencia-salvapantallas-ajustes.md).
+
+- **Tema:** `NexiumColors.accent` (`:core:designsystem`) es estado de Compose; los
+  tokens de acento lo leen al usarse, así que un cambio repinta todo Nexium al
+  instante. `AppearanceStore` (`:app`, SharedPreferences) lo guarda y lo
+  restaura en `NexiumApp.onCreate`, antes del primer frame.
+- **Salvapantallas:** `NexiumDreamService` (ciclo de vida propio para Compose)
+  muestra `NexiumScreensaver`, el mismo composable que la miniatura y la vista
+  previa de Apariencia. Comparte proceso con el launcher, así que usa el mismo
+  tema. Lo elige el usuario en los Ajustes del sistema.
+- **Raspberry Pi:** `DeviceSettings` comprueba si existe
+  `com.konstakang.settings.device`; su actividad no es exportada, así que el
+  mosaico abre un diálogo con la ruta y luego Ajustes.
+
 ## Favoritos
 
 - Se guardan en Preferences DataStore (`nexium_preferences`) como lista
@@ -149,6 +165,8 @@ SystemSources ──► PerformancePill (barra superior, todas las pestañas)
 | Back | Termina el modo reordenar si está activo. Después, jerárquico: contenido → su pestaña → Inicio → botón *Abrir* del hero. Ahí no se consume: como HOME no hace nada; como app normal, sale |
 | Panel de rendimiento + OK | Vista ampliada: ←/→ elige métrica, ↓ llega a *Abrir el centro de rendimiento*, Back cierra |
 | Centro de rendimiento | ↑/↓ recorre las categorías (se seleccionan al enfocarlas); Back vuelve al mosaico de Ajustes |
+| Apariencia | Se abre con el foco en el tema en uso; OK en un tema lo aplica en todo Nexium; → desde la columna derecha lleva a *Vista previa*; Back vuelve a su mosaico |
+| Vista previa del salvapantallas | A pantalla completa; cualquier tecla la cierra (como el salvapantallas real) |
 | HOME con Nexium delante | Cierra diálogos (también la vista ampliada), sale del centro de rendimiento, vuelve a Inicio y enfoca *Abrir* del hero |
 
 Reglas de foco:
@@ -163,8 +181,8 @@ Reglas de foco:
   Android). Se declara con `focusProperties { down = … }` en la pestaña
   seleccionada (`TopBar(contentEntry = …)`): `focusRestorer` no sirve aquí,
   porque la búsqueda direccional entra directamente en el mosaico más cercano.
-- Cambiar entre la rejilla de Ajustes y el centro de rendimiento elimina el
-  elemento enfocado. Antes del cambio, el foco se aparca en la pestaña Ajustes
+- Cambiar entre la rejilla de Ajustes y una subpágina (centro de rendimiento,
+  Apariencia) elimina el elemento enfocado. Antes del cambio, el foco se aparca en la pestaña Ajustes
   (presente en ambas páginas); si no, Compose lo daría a la primera pestaña y,
   como las pestañas se seleccionan al enfocarse, saltaría a Inicio.
 - Reordenar favoritos cuenta solo los **visibles**: las claves ocultas (apps no
@@ -179,6 +197,8 @@ Ninguno privilegiado ni peligroso. Único permiso: `ACCESS_NETWORK_STATE`
 (normal, para el indicador de red; [ADR-003](decisiones/ADR-003-red-y-tipografia.md)).
 El monitor de rendimiento no añade ninguno: `/proc`, `/sys`, `ActivityManager`,
 `StatFs` y `TrafficStats` no requieren permisos ([ADR-004](decisiones/ADR-004-metricas-del-sistema.md)).
+Tampoco los temas ni el salvapantallas: el `DreamService` se protege con
+`BIND_DREAM_SERVICE` (solo el sistema puede usarlo) ([ADR-005](decisiones/ADR-005-apariencia-salvapantallas-ajustes.md)).
 No hace falta `RECEIVE_BOOT_COMPLETED`: el sistema lanza HOME por sí mismo.
 Cualquier permiso nuevo requiere un ADR.
 

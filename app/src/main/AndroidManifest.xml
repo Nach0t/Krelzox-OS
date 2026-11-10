@@ -11,6 +11,9 @@
         <intent>
             <action android:name="android.settings.SETTINGS" />
         </intent>
+        <!-- KonstaKANG's Raspberry Pi settings: only checked for, never opened directly
+             (not exported). See ADR-005. -->
+        <package android:name="com.konstakang.settings.device" />
     </queries>
 
     <application
@@ -46,5 +49,21 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <!-- Screensaver: chosen by the user in Settings › Sistema › Protector de pantalla.
+             BIND_DREAM_SERVICE ensures only the system can bind to it. -->
+        <service
+            android:name=".ui.screensaver.NexiumDreamService"
+            android:exported="true"
+            android:label="@string/screensaver_name"
+            android:permission="android.permission.BIND_DREAM_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.dreams.DreamService" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.dream"
+                android:resource="@xml/nexium_dream" />
+        </service>
     </application>
 </manifest>

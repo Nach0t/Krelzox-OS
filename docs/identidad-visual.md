@@ -4,8 +4,8 @@ Concepto: un espacio grafito, profundo y silencioso, donde la luz eléctrica
 (azul → cian) marca exclusivamente lo que importa: la marca, el foco y la
 selección. Premium por contención, cinematográfico sin efectos costosos.
 
-Capturas del dispositivo: [capturas/etapa5/](capturas/etapa5/) (versión
-actual, con el monitor de rendimiento), [capturas/refinamiento/](capturas/refinamiento/)
+Capturas del dispositivo: [capturas/etapa7/](capturas/etapa7/) (temas y
+salvapantallas), [capturas/etapa5/](capturas/etapa5/) (monitor de rendimiento), [capturas/refinamiento/](capturas/refinamiento/)
 (etapa 4.1) y [capturas/etapa4/](capturas/etapa4/) (primera versión).
 La categoría Red del centro de rendimiento no tiene captura publicada: muestra
 la IP local y la IPv6 del dispositivo.
@@ -32,6 +32,24 @@ vistas: CPU en `Cyan`, RAM en `Electric` y temperatura en azul cielo
 (`#7DD3FC`); en Red, bajada en `Cyan` y subida en `Electric`.
 
 Contraste mínimo WCAG AA (4,5:1) para todo texto sobre su fondo.
+
+### Temas (etapa 7)
+
+Un tema solo cambia la **luz**: los tokens `Electric` (primario) y `Cyan`
+(secundario) y sus degradados (`IonBrush`, `IonHorizontal`). Grafito,
+tipografía, formas y movimiento son los mismos en todos.
+
+| Tema | Primario | Secundario | Carácter |
+|---|---|---|---|
+| **Ion** (original) | `#2F6BFF` | `#22D3EE` | Azul eléctrico y cian |
+| **Aurora** | `#7C3AED` | `#C4B5FD` | Violeta y lavanda |
+| **Ámbar** | `#B45309` | `#FBBF24` | Cobre y oro |
+| **Jade** | `#047857` | `#34D399` | Esmeralda y menta |
+
+El logotipo, el foco, los rótulos, los gráficos del monitor y el salvapantallas
+siguen el tema. No cambian: `Error`, los fondos y textos, el color de cada app
+en el hero y la temperatura (`#7DD3FC`) en los gráficos. Contraste verificado:
+[ADR-005](decisiones/ADR-005-apariencia-salvapantallas-ajustes.md).
 
 ## Tipografía
 
@@ -76,6 +94,28 @@ y el icono ocupa siempre el 46 % de la altura de la tarjeta. Los banners de TV
 | Panel de rendimiento (barra superior) | Píldora `Surface` con borde `Outline`: CPU · RAM (% y MB) · TEMP · LIBRE, valor arriba y rótulo en mayúsculas debajo, separadores finos | `SurfaceRaised` · borde Ion 1,5 dp · escala 1,04; OK abre la vista ampliada |
 | Vista ampliada | Panel bajo la barra, a la derecha (donde vive la píldora): tres métricas con sparkline, gráfico grande y botón al centro | La métrica enfocada se selecciona: fondo `Electric` 22 % y borde Ion 2 dp (seleccionada sin foco: `Electric` 16 % y borde `Electric` 1 dp) |
 | Carril del centro de rendimiento | Categoría con icono, nombre y valor actual | Fondo `Electric` 28 %, borde cian 1,5 dp, escala 1,02; la seleccionada lleva una barra cian a la izquierda |
+
+### Apariencia (Ajustes)
+
+- **Tarjeta de tema:** miniatura de Nexium en ese tema (marca, barra de acento y
+  tres tarjetas con la central «enfocada»), nombre y descripción. Su foco usa
+  **el acento de esa tarjeta**, no el actual: enfocarla ya muestra cómo será.
+  OK lo aplica; la tarjeta en uso lleva un borde de su primario y la etiqueta
+  *En uso*.
+- **Salvapantallas:** miniatura real (estática), la ruta para activarlo y los
+  botones *Vista previa* y *Abrir Ajustes*.
+- **Mosaico Apariencia:** doble ancho, como «Sistema y rendimiento»; las cuatro
+  muestras de color con un anillo en la del tema en uso.
+
+### Salvapantallas
+
+- Grafito profundo (`BackgroundDeep`), hora en Inter 104 sp (regular, tracking
+  −3,5 %), fecha completa, línea de acento de 56 dp y marca `N NEXIUM`.
+- Halo radial del primario al 20 % detrás del texto y un contraluz del
+  secundario al 5 % en la esquina opuesta: profundidad sin blur.
+- Cada minuto se funde (900 ms), cambia a una de 6 zonas del área segura y
+  reaparece (1,2 s). Todas las medidas son relativas al ancho: el mismo diseño
+  sirve de miniatura.
 
 ### Gráficos (`NexiumChart`)
 
@@ -133,6 +173,9 @@ Sin anuncios ni contenido patrocinado.
 - Pestañas: cambio instantáneo, sin transición.
 - Monitor de rendimiento: los valores cambian cada 2 s sin animación (cifras
   estables, sin parpadeo); los gráficos avanzan una muestra cada vez.
+- Cambio de tema: inmediato, sin transición (como el cambio de pestaña).
+- Salvapantallas: fundido de salida 900 ms → cambio de zona → fundido de entrada
+  1,2 s, una vez por minuto; nada se mueve entre medias.
 
 ## Reglas de rendimiento visual
 
