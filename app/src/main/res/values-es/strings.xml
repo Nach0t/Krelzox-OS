@@ -16,4 +16,9 @@
     <string name="action_remove_favorite">Quitar de favoritos</string>
     <string name="action_app_info">Información de la app</string>
     <string name="action_cancel">Cancelar</string>
+
+    <string name="safe_mode_title">Modo seguro de Nexium</string>
+    <string name="safe_mode_message">Nexium se detuvo varias veces seguidas. Puedes elegir otro launcher o volver a intentarlo.</string>
+    <string name="safe_mode_choose_launcher">Elegir otro launcher</string>
+    <string name="safe_mode_retry">Reintentar</string>
 </resources>

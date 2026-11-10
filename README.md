@@ -1,6 +1,6 @@
 # Nexium-OS
 
-> **Estado:** etapa 2 — cuadrícula de apps con favoritos y navegación D-pad completa. Aún no se usa como launcher principal.
+> **Estado:** etapa 3 — Nexium funciona como launcher principal (rol HOME) con modo seguro y recuperación verificada.
 
 Nexium-OS es una experiencia Android TV premium para Raspberry Pi 5. Su primer
 componente es **Nexium Launcher** (`dev.nexium.launcher`), un launcher propio en

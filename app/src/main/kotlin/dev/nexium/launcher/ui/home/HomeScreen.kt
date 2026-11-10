@@ -151,9 +151,12 @@ private fun HomeGrid(
         if (!gridHasFocus && !dialogOpen && primaryKey != null) focusPrimary()
     }
 
-    // HOME pressed while already in front: back to the top.
+    // HOME pressed while already in front: close any dialog and go back to the top.
     LaunchedEffect(homeResets) {
-        homeResets.collect { focusPrimary() }
+        homeResets.collect {
+            actionsFor = null
+            focusPrimary()
+        }
     }
 
     // Free cached banners of uninstalled apps.

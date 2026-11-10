@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.nexium.launcher.core.designsystem.NexiumTheme
+import dev.nexium.launcher.safety.SafeModeView
 import dev.nexium.launcher.ui.AppLauncher
 import dev.nexium.launcher.ui.home.HomeScreen
 import dev.nexium.launcher.ui.home.HomeViewModel
@@ -27,16 +28,29 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val container = (application as NexiumApp).container
+        val app = application as NexiumApp
 
         // As the home app, Back must never leave the user on an empty screen.
-        // When launched as a normal app (current stage), Back exits as usual.
+        // When launched as a normal app, Back exits as usual.
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (!isDefaultHome()) finish()
             }
         })
 
+        if (app.crashGuard.isInCrashLoop()) {
+            showSafeMode(app)
+            return
+        }
+        showHome(app.container)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.hasCategory(Intent.CATEGORY_HOME)) homeResets.tryEmit(Unit)
+    }
+
+    private fun showHome(container: AppContainer) {
         setContent {
             NexiumTheme {
                 val viewModel: HomeViewModel = viewModel(
@@ -60,9 +74,21 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        if (intent.hasCategory(Intent.CATEGORY_HOME)) homeResets.tryEmit(Unit)
+    /** Crash loop detected: plain-View recovery screen, no Compose, no data loading. */
+    private fun showSafeMode(app: NexiumApp) {
+        setContentView(
+            SafeModeView.create(
+                context = this,
+                onChooseLauncher = {
+                    if (!AppLauncher.openHomeSettings(this)) AppLauncher.openSettings(this)
+                },
+                onOpenSettings = { AppLauncher.openSettings(this) },
+                onRetry = {
+                    app.crashGuard.reset()
+                    recreate()
+                },
+            ),
+        )
     }
 
     private fun showLaunchError(label: String) {

@@ -25,6 +25,10 @@ object AppLauncher {
     fun openSettings(context: Context): Boolean =
         start(context, Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 
+    /** System "default home app" chooser: lets the user switch back to another launcher. */
+    fun openHomeSettings(context: Context): Boolean =
+        start(context, Intent(Settings.ACTION_HOME_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+
     /** System app-details screen (force stop, storage, uninstall). No extra permission needed. */
     fun openAppInfo(context: Context, packageName: String): Boolean =
         start(

@@ -103,4 +103,10 @@ Reglas para la GPU V3D:
 - Catapult permanece instalado y habilitado como respaldo.
 - `MainActivity` captura fallos de carga de datos y siempre muestra al menos la
   fila de Ajustes, para que el usuario nunca quede sin salida.
+- **CrashGuard:** un `UncaughtExceptionHandler` registra cada fallo
+  (SharedPreferences con escritura síncrona, porque el proceso muere justo
+  después). Con 3 fallos en 2 minutos, `MainActivity` arranca en **modo seguro**:
+  una pantalla con Views nativas (sin Compose ni repositorios) que ofrece elegir
+  otro launcher (`ACTION_HOME_SETTINGS`), abrir Ajustes o reintentar.
+- HOME con Nexium delante cierra cualquier diálogo y vuelve arriba.
 - Procedimiento de recuperación: [recuperacion.md](recuperacion.md).
