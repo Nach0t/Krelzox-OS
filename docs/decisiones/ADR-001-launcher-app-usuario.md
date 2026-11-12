@@ -24,8 +24,8 @@ Opción 2.
 
 - ✅ Sin root, sin reflashear, sin tocar particiones del sistema.
 - ✅ Reversible con un comando ([recuperacion.md](../recuperacion.md)).
-- ✅ Catapult queda como respaldo automático si Nexium falla.
+- ✅ Catapult queda como respaldo automático si Krelzox falla.
 - ✅ Sobrevive a actualizaciones OTA de Lineage.
 - ⚠️ Sin permisos privilegiados: no se puede, por ejemplo, ocultar apps del
   sistema globalmente ni controlar la barra del sistema. Se acepta.
-- ⚠️ El usuario (o ADB) debe elegir Nexium como app de inicio una vez.
+- ⚠️ El usuario (o ADB) debe elegir Krelzox como app de inicio una vez.

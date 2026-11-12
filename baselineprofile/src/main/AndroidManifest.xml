@@ -2,6 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- The instrumentation must see the app it drives and measures. -->
     <queries>
-        <package android:name="dev.nexium.launcher" />
+        <package android:name="dev.krelzox.launcher" />
     </queries>
 </manifest>

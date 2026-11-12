@@ -7,7 +7,7 @@
 
 La etapa 5 añade un monitor de rendimiento permanente (barra superior), una
 vista ampliada con gráficos y el centro «Sistema y rendimiento» en Ajustes.
-Nexium es una app de usuario (ADR-001): no tiene root ni permisos de sistema, y
+Krelzox es una app de usuario (ADR-001): no tiene root ni permisos de sistema, y
 el dispositivo ejecuta una ROM (KonstaKANG, Android 17) con SELinux en modo
 **permisivo**, que no es lo habitual.
 
@@ -51,7 +51,7 @@ vez por fuente, no en cada lectura).
 - Un único `SystemMonitor` toma una muestra cada **2 s** en el dispatcher de
   IO; el almacenamiento se lee cada ~30 s.
 - El flujo se comparte con `shareIn(WhileSubscribed(3 s), replay = 1)`: con
-  Nexium en segundo plano, o con otra app delante, no se lee nada.
+  Krelzox en segundo plano, o con otra app delante, no se lee nada.
 - Historial en memoria de **120 muestras (4 min)**; se reinicia en cada
   reanudación (las diferencias nunca abarcan una pausa).
 - Solo el panel de rendimiento recompone con cada muestra, no la barra ni la

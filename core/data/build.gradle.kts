@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.nexium.launcher.core.data"
+    namespace = "dev.krelzox.launcher.core.data"
     compileSdk = 37
 
     defaultConfig {

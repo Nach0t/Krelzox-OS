@@ -6,7 +6,7 @@ plugins {
 // Baseline Profile generator and startup / navigation macrobenchmarks for :app.
 // Both run on a real device (the Raspberry Pi); see docs/rendimiento.md.
 android {
-    namespace = "dev.nexium.launcher.baselineprofile"
+    namespace = "dev.krelzox.launcher.baselineprofile"
     compileSdk = 37
 
     defaultConfig {

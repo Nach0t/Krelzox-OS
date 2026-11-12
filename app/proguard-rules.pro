@@ -1,2 +1,2 @@
-# Nexium Launcher R8 rules.
+# Krelzox Launcher R8 rules.
 # Compose and AndroidX ship their own consumer rules; nothing extra needed yet.

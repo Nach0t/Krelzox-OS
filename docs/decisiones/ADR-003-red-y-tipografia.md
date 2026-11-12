@@ -28,7 +28,7 @@ Se incluye Inter (variable, SIL OFL 1.1) en el APK.
 - Un único archivo variable (≈ 860 KB, ≈ 0,6 MB comprimido en el APK) cubre
   los pesos 400–700.
 - La licencia OFL permite empaquetarla; el texto está en
-  `third_party/inter/OFL.txt` y el crédito aparece en "Acerca de Nexium".
+  `third_party/inter/OFL.txt` y el crédito aparece en "Acerca de Krelzox".
 
 ## Consecuencias
 

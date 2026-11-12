@@ -20,7 +20,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Nexium-OS"
+rootProject.name = "Krelzox-OS"
 
 include(":app")
 include(":core:designsystem")

@@ -12,7 +12,7 @@ la IP local y la IPv6 del dispositivo.
 
 ## Color
 
-| Token (`NexiumColors`) | Valor | Uso |
+| Token (`KrelzoxColors`) | Valor | Uso |
 |---|---|---|
 | `Background` | `#0B0D12` | Fondo grafito |
 | `BackgroundDeep` | `#07080B` | Fondos de arte, viñetas |
@@ -66,13 +66,13 @@ en el hero y la temperatura (`#7DD3FC`) en los gráficos. Contraste verificado:
 | Overline | 12 sp | SemiBold, tracking +14 %, mayúsculas |
 
 Logotipo: marca "N" con degradado Ion (24×26 dp, ≈ 1,5 × la altura de las
-mayúsculas) + `NEXIUM` en Inter SemiBold 19 sp, tracking +26 %, separados 12 dp.
+mayúsculas) + `KRELZOX` en Inter SemiBold 19 sp, tracking +26 %, separados 12 dp.
 El interlineado del texto se recorta (`LineHeightStyle.Trim.Both`) para que las
 mayúsculas queden ópticamente centradas sobre la marca.
 
 ## Iconografía
 
-Familia propia `NexiumIcons` (vector, 24×24, trazo 1,8, extremos y uniones
+Familia propia `KrelzoxIcons` (vector, 24×24, trazo 1,8, extremos y uniones
 redondeados): Inicio, Biblioteca, Multimedia, Ajustes, Wi-Fi, Ethernet, Sin
 conexión, Reproducir, Estrella (contorno y rellena), Más, Reordenar,
 Información, flechas; y para el monitor: Pulso, Procesador, Memoria,
@@ -97,7 +97,7 @@ y el icono ocupa siempre el 46 % de la altura de la tarjeta. Los banners de TV
 
 ### Apariencia (Ajustes)
 
-- **Tarjeta de tema:** miniatura de Nexium en ese tema (marca, barra de acento y
+- **Tarjeta de tema:** miniatura de Krelzox en ese tema (marca, barra de acento y
   tres tarjetas con la central «enfocada»), nombre y descripción. Su foco usa
   **el acento de esa tarjeta**, no el actual: enfocarla ya muestra cómo será.
   OK lo aplica; la tarjeta en uso lleva un borde de su primario y la etiqueta
@@ -110,14 +110,14 @@ y el icono ocupa siempre el 46 % de la altura de la tarjeta. Los banners de TV
 ### Salvapantallas
 
 - Grafito profundo (`BackgroundDeep`), hora en Inter 104 sp (regular, tracking
-  −3,5 %), fecha completa, línea de acento de 56 dp y marca `N NEXIUM`.
+  −3,5 %), fecha completa, línea de acento de 56 dp y marca `N KRELZOX`.
 - Halo radial del primario al 20 % detrás del texto y un contraluz del
   secundario al 5 % en la esquina opuesta: profundidad sin blur.
 - Cada minuto se funde (900 ms), cambia a una de 6 zonas del área segura y
   reaparece (1,2 s). Todas las medidas son relativas al ancho: el mismo diseño
   sirve de miniatura.
 
-### Gráficos (`NexiumChart`)
+### Gráficos (`KrelzoxChart`)
 
 - Línea de 2,5 dp con extremos redondeados, relleno degradado (28 % → 0 %) y un
   punto en el valor más reciente.
@@ -130,7 +130,7 @@ y el icono ocupa siempre el 46 % de la altura de la tarjeta. Los banners de TV
 - Toda vista del monitor termina con una nota «Fuente: …» que dice de dónde sale
   el dato.
 
-### Rejilla (`NexiumGrid`)
+### Rejilla (`KrelzoxGrid`)
 
 Todas las pantallas comparten una rejilla: separación de 20 dp y anchos
 calculados a partir del ancho disponible, nunca fijos.
@@ -164,7 +164,7 @@ Sin anuncios ni contenido patrocinado.
 
 - Foco: 160 ms. Hero: fundido de 280 ms; sigue al foco con 140 ms de retardo
   para no saltar al recorrer filas rápido.
-- Carrusel del hero: avanza cada 9 s solo con Nexium en primer plano, sin foco
+- Carrusel del hero: avanza cada 9 s solo con Krelzox en primer plano, sin foco
   en las filas y sin pulsaciones del mando durante ese tiempo.
 - Reordenar favoritos: la tarjeta se mueve en directo; marco cian y chevrones
   ← → mientras dura el modo.

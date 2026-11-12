@@ -1,11 +1,11 @@
-# Arquitectura de Nexium Launcher
+# Arquitectura de Krelzox Launcher
 
 ## Visión general
 
 ```
 ┌────────────────────────────── :app ────────────────────────────────┐
 │ MainActivity (HOME + LEANBACK_LAUNCHER) · safety/ (CrashGuard,      │
-│ SafeModeView) · HomeViewModel · ui/shell (NexiumShell, TopBar)      │
+│ SafeModeView) · HomeViewModel · ui/shell (KrelzoxShell, TopBar)      │
 │ ui/home (Hero, HomeTab, AppCard, diálogos) · ui/library · ui/settings│
 │ ui/performance (PerformancePill, PerformanceSheet,                  │
 │ PerformanceCenter, PerformanceFormat, SystemSources)                │
@@ -13,9 +13,9 @@
                 │                                    │
 ┌──────── :core:designsystem ─────────┐  ┌──────── :core:data ─────────────┐
 │ Tokens (color, tipo, espacio,        │  │ AppRepository (PackageManager,  │
-│ movimiento) · NexiumTheme (Inter) ·  │  │ LauncherApps callbacks)         │
-│ NexiumIcons · NexiumButtonDefaults · │  │ Favorites/RecentsRepository     │
-│ NexiumChart (líneas y sparklines)    │  │ (DataStore) · NetworkRepository │
+│ movimiento) · KrelzoxTheme (Inter) ·  │  │ LauncherApps callbacks)         │
+│ KrelzoxIcons · KrelzoxButtonDefaults · │  │ Favorites/RecentsRepository     │
+│ KrelzoxChart (líneas y sparklines)    │  │ (DataStore) · NetworkRepository │
 │ Sin dependencias de datos            │  │ metrics/ (SystemMonitor,        │
 │                                      │  │ SystemMetrics, parsers)         │
 └──────────────────────────────────────┘  └─────────────────────────────────┘
@@ -40,11 +40,11 @@ fuera con UiAutomator: genera el Baseline Profile y mide el arranque
 | DI | Manual (contenedor en `Application`) | Proyecto pequeño; Hilt añade coste de compilación sin beneficio todavía |
 | Imágenes | Banners/iconos vía `PackageManager` + `LruCache`; Coil 3 solo para fondos | Mínimas dependencias y memoria controlada |
 | Build | Gradle Kotlin DSL, version catalog, R8 en release, Baseline Profile versionado (`app/src/main/generated/baselineProfiles/`) instalado con `profileinstaller` | APK pequeño; sin jank por JIT tras instalar |
-| Variantes | `debug` con paquete `dev.nexium.launcher.debug`; `release` con `dev.nexium.launcher` | Las pruebas instrumentadas instalan y desinstalan la app: nunca deben tocar el launcher en uso |
+| Variantes | `debug` con paquete `dev.krelzox.launcher.debug`; `release` con `dev.krelzox.launcher` | Las pruebas instrumentadas instalan y desinstalan la app: nunca deben tocar el launcher en uso |
 | Pruebas | Unitarias (JVM) para lógica pura; de UI (Compose + eventos de tecla reales) en la Pi para las reglas de foco | El foco con D-pad es lo que más se rompe y lo que más importa en TV |
 | CI | GitHub Actions: tests, lint, build release y compilación de las pruebas de dispositivo | Lo que necesita la Pi se ejecuta a mano ([rendimiento.md](rendimiento.md)) |
 | SDK | `minSdk 31`; `compileSdk`/`targetSdk` al máximo soportado por el AGP estable (objetivo 37) | El dispositivo es SDK 37; portable a otros TV |
-| Package | `dev.nexium.launcher` | — |
+| Package | `dev.krelzox.launcher` | — |
 
 ## Descubrimiento de apps
 
@@ -59,9 +59,9 @@ fuera con UiAutomator: genera el Baseline Profile y mide el arranque
 ## Estructura de la interfaz (etapas 4 y 5)
 
 `HomeScreen` decide el estado: cargando / error / vacío (pantalla mínima con
-"Abrir ajustes") o catálogo listo → `NexiumShell`.
+"Abrir ajustes") o catálogo listo → `KrelzoxShell`.
 
-`NexiumShell` contiene la barra superior (logotipo, pestañas, panel de
+`KrelzoxShell` contiene la barra superior (logotipo, pestañas, panel de
 rendimiento, red y hora) y cuatro pestañas:
 
 | Pestaña | Contenido |
@@ -69,7 +69,7 @@ rendimiento, red y hora) y cuatro pestañas:
 | Inicio | Hero (app destacada o enfocada) + filas Favoritos y Aplicaciones (12 + "Ver todas") |
 | Biblioteca | Catálogo completo en cuadrícula de 5 columnas |
 | Multimedia | Apps con categoría video, audio o imagen (estado vacío con acceso a Biblioteca) |
-| Ajustes | Fila 1: «Sistema y rendimiento» (doble, valores en directo), Red, Pantalla y sonido, App de inicio. Fila 2: «Apariencia» (doble, muestras de los temas), Raspberry Pi (solo si existen los ajustes de KonstaKANG), Ajustes de Android, «Acerca de Nexium». «Sistema y rendimiento» y «Apariencia» son subpáginas de la pestaña (`SettingsPage.Performance` / `.Appearance`) |
+| Ajustes | Fila 1: «Sistema y rendimiento» (doble, valores en directo), Red, Pantalla y sonido, App de inicio. Fila 2: «Apariencia» (doble, muestras de los temas), Raspberry Pi (solo si existen los ajustes de KonstaKANG), Ajustes de Android, «Acerca de Krelzox». «Sistema y rendimiento» y «Apariencia» son subpáginas de la pestaña (`SettingsPage.Performance` / `.Appearance`) |
 
 Hero (carrusel de hasta 5 apps, `buildReadyState`):
 1. Apps abiertas recientemente (la más reciente: *Continuar*; el resto:
@@ -99,7 +99,7 @@ Decisiones y fuentes: [ADR-004](decisiones/ADR-004-metricas-del-sistema.md).
 ```
 SystemMonitor (:core:data) ── muestra cada 2 s (IO) ──► Flow<SystemMetrics>
 NetworkRepository.observeDetails() ─────────────────► Flow<NetworkDetails>
-        │  shareIn(WhileSubscribed(3 s), replay = 1) en NexiumApp
+        │  shareIn(WhileSubscribed(3 s), replay = 1) en KrelzoxApp
         ▼
 SystemSources ──► PerformancePill (barra superior, todas las pestañas)
               ──► PerformanceSheet (vista ampliada, diálogo)
@@ -112,7 +112,7 @@ SystemSources ──► PerformancePill (barra superior, todas las pestañas)
 - Los parsers del kernel (`/proc/stat`, `/proc/loadavg`, zona térmica,
   `cpufreq`) son funciones puras con tests (`KernelParsersTest`); el formato de
   valores con configuración regional, en `PerformanceFormat` (`PerformanceFormatTest`).
-- Cada vista recoge el flujo con `collectAsStateWithLifecycle`: con Nexium en
+- Cada vista recoge el flujo con `collectAsStateWithLifecycle`: con Krelzox en
   segundo plano no hay suscriptores y el muestreo se detiene.
 - Una fuente bloqueada (p. ej. por SELinux) se marca como no disponible y la UI
   muestra «No disponible»; nunca se estima.
@@ -127,12 +127,12 @@ SystemSources ──► PerformancePill (barra superior, todas las pestañas)
 
 Decisiones: [ADR-005](decisiones/ADR-005-apariencia-salvapantallas-ajustes.md).
 
-- **Tema:** `NexiumColors.accent` (`:core:designsystem`) es estado de Compose; los
-  tokens de acento lo leen al usarse, así que un cambio repinta todo Nexium al
+- **Tema:** `KrelzoxColors.accent` (`:core:designsystem`) es estado de Compose; los
+  tokens de acento lo leen al usarse, así que un cambio repinta todo Krelzox al
   instante. `AppearanceStore` (`:app`, SharedPreferences) lo guarda y lo
-  restaura en `NexiumApp.onCreate`, antes del primer frame.
-- **Salvapantallas:** `NexiumDreamService` (ciclo de vida propio para Compose)
-  muestra `NexiumScreensaver`, el mismo composable que la miniatura y la vista
+  restaura en `KrelzoxApp.onCreate`, antes del primer frame.
+- **Salvapantallas:** `KrelzoxDreamService` (ciclo de vida propio para Compose)
+  muestra `KrelzoxScreensaver`, el mismo composable que la miniatura y la vista
   previa de Apariencia. Comparte proceso con el launcher, así que usa el mismo
   tema. Lo elige el usuario en los Ajustes del sistema.
 - **Raspberry Pi:** `DeviceSettings` comprueba si existe
@@ -141,7 +141,7 @@ Decisiones: [ADR-005](decisiones/ADR-005-apariencia-salvapantallas-ajustes.md).
 
 ## Favoritos
 
-- Se guardan en Preferences DataStore (`nexium_preferences`) como lista
+- Se guardan en Preferences DataStore (`krelzox_preferences`) como lista
   ordenada de claves `paquete/actividad`.
 - Un archivo corrupto se reemplaza por preferencias vacías: nunca bloquea el
   arranque.
@@ -165,9 +165,9 @@ Decisiones: [ADR-005](decisiones/ADR-005-apariencia-salvapantallas-ajustes.md).
 | Back | Termina el modo reordenar si está activo. Después, jerárquico: contenido → su pestaña → Inicio → botón *Abrir* del hero. Ahí no se consume: como HOME no hace nada; como app normal, sale |
 | Panel de rendimiento + OK | Vista ampliada: ←/→ elige métrica, ↓ llega a *Abrir el centro de rendimiento*, Back cierra |
 | Centro de rendimiento | ↑/↓ recorre las categorías (se seleccionan al enfocarlas); Back vuelve al mosaico de Ajustes |
-| Apariencia | Se abre con el foco en el tema en uso; OK en un tema lo aplica en todo Nexium; → desde la columna derecha lleva a *Vista previa*; Back vuelve a su mosaico |
+| Apariencia | Se abre con el foco en el tema en uso; OK en un tema lo aplica en todo Krelzox; → desde la columna derecha lleva a *Vista previa*; Back vuelve a su mosaico |
 | Vista previa del salvapantallas | A pantalla completa; cualquier tecla la cierra (como el salvapantallas real) |
-| HOME con Nexium delante | Cierra diálogos (también la vista ampliada), sale del centro de rendimiento, vuelve a Inicio y enfoca *Abrir* del hero |
+| HOME con Krelzox delante | Cierra diálogos (también la vista ampliada), sale del centro de rendimiento, vuelve a Inicio y enfoca *Abrir* del hero |
 
 Reglas de foco:
 - Al mostrarse, el foco va a *Abrir* del hero.
@@ -189,7 +189,7 @@ Reglas de foco:
   instaladas) conservan su lugar y nunca se "intercambian" en silencio.
 
 "Información de la app" abre la pantalla del sistema (forzar cierre,
-almacenamiento, desinstalar): Nexium no necesita `REQUEST_DELETE_PACKAGES`.
+almacenamiento, desinstalar): Krelzox no necesita `REQUEST_DELETE_PACKAGES`.
 
 ## Permisos
 
@@ -228,5 +228,5 @@ Reglas para la GPU V3D:
   después). Con 3 fallos en 2 minutos, `MainActivity` arranca en **modo seguro**:
   una pantalla con Views nativas (sin Compose ni repositorios) que ofrece elegir
   otro launcher (`ACTION_HOME_SETTINGS`), abrir Ajustes o reintentar.
-- HOME con Nexium delante cierra cualquier diálogo y vuelve arriba.
+- HOME con Krelzox delante cierra cualquier diálogo y vuelve arriba.
 - Procedimiento de recuperación: [recuperacion.md](recuperacion.md).

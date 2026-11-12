@@ -50,25 +50,25 @@ Pruebas en el dispositivo, Baseline Profile y Macrobenchmark:
 sdk.dir=C\:\\Users\\<usuario>\\AppData\\Local\\Android\\Sdk
 ```
 
-La build **debug** usa el paquete `dev.nexium.launcher.debug` (desde la etapa
-6): se instala junto al Nexium de uso diario sin reemplazarlo, y las pruebas
+La build **debug** usa el paquete `dev.krelzox.launcher.debug` (desde la etapa
+6): se instala junto al Krelzox de uso diario sin reemplazarlo, y las pruebas
 instrumentadas pueden instalarla y desinstalarla sin tocar el launcher.
 
 Instalar la debug en la Pi **sin** cambiar el launcher y abrirla como app normal:
 
 ```cmd
 platform-tools\adb install -r app\build\outputs\apk\debug\app-debug.apk
-platform-tools\adb shell am start -n dev.nexium.launcher.debug/dev.nexium.launcher.MainActivity
+platform-tools\adb shell am start -n dev.krelzox.launcher.debug/dev.krelzox.launcher.MainActivity
 ```
 
-La build release (`dev.nexium.launcher`) se firma con la clave de depuración
+La build release (`dev.krelzox.launcher`) se firma con la clave de depuración
 local para instalarla sobre la existente:
 
 ```cmd
 %LOCALAPPDATA%\Android\Sdk\build-tools\37.0.0\apksigner sign --ks %USERPROFILE%\.android\debug.keystore ^
-  --ks-pass pass:android --ks-key-alias androiddebugkey --out nexium-release.apk ^
+  --ks-pass pass:android --ks-key-alias androiddebugkey --out krelzox-release.apk ^
   app\build\outputs\apk\release\app-release-unsigned.apk
-platform-tools\adb install -r nexium-release.apk
+platform-tools\adb install -r krelzox-release.apk
 ```
 
 ## Conexión con la Raspberry Pi

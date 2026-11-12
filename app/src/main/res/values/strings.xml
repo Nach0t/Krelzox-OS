@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Nexium</string>
+    <string name="app_name" translatable="false">Krelzox</string>
     <string name="home_hint">Hold OK or press Menu for options</string>
     <string name="home_loading">Loading apps…</string>
     <string name="home_empty">No apps found.</string>
@@ -56,15 +56,15 @@
     <string name="media_empty">No video, music or photo apps installed yet.</string>
 
     <!-- Settings -->
-    <string name="settings_subtitle">Quick access to the system and to Nexium</string>
+    <string name="settings_subtitle">Quick access to the system and to Krelzox</string>
     <string name="settings_network">Network</string>
     <string name="settings_network_desc">Wi-Fi and Ethernet</string>
     <string name="settings_display_sound">Display &amp; sound</string>
     <string name="settings_display_sound_desc">Picture and audio</string>
     <string name="settings_home_app">Home app</string>
-    <string name="settings_home_app_desc">Nexium or Catapult</string>
+    <string name="settings_home_app_desc">Krelzox or Catapult</string>
     <string name="settings_system_desc">All settings</string>
-    <string name="settings_about">About Nexium</string>
+    <string name="settings_about">About Krelzox</string>
     <string name="settings_about_desc">Version and device</string>
     <string name="about_version">Version</string>
     <string name="about_android">System</string>
@@ -138,7 +138,7 @@
     <string name="sys_uptime">Uptime</string>
     <string name="sys_android">Android</string>
     <string name="sys_patch">Security patch</string>
-    <string name="sys_nexium">Nexium</string>
+    <string name="sys_krelzox">Krelzox</string>
     <string name="sys_model">Model</string>
     <string name="sys_manufacturer">Manufacturer</string>
     <string name="sys_build">Build</string>
@@ -175,13 +175,13 @@
     <string name="source_network">Source: Android TrafficStats (real traffic, no speed tests).</string>
     <string name="settings_android">Android settings</string>
 
-    <string name="safe_mode_title">Nexium safe mode</string>
-    <string name="safe_mode_message">Nexium stopped several times in a row. You can pick another launcher or try again.</string>
+    <string name="safe_mode_title">Krelzox safe mode</string>
+    <string name="safe_mode_message">Krelzox stopped several times in a row. You can pick another launcher or try again.</string>
     <string name="safe_mode_choose_launcher">Choose another launcher</string>
     <string name="safe_mode_retry">Try again</string>
 
     <!-- Stage 7: appearance, screensaver and Raspberry Pi -->
-    <string name="screensaver_name">Nexium</string>
+    <string name="screensaver_name">Krelzox</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_appearance_desc">%1$s theme · screensaver</string>
     <string name="settings_raspberry">Raspberry Pi</string>
@@ -191,7 +191,7 @@
     <string name="raspberry_path">System › Raspberry Pi settings</string>
     <string name="action_open_settings">Open Settings</string>
     <string name="appearance_title">Appearance</string>
-    <string name="appearance_subtitle">The theme colors focus, brand and charts across Nexium</string>
+    <string name="appearance_subtitle">The theme colors focus, brand and charts across Krelzox</string>
     <string name="appearance_theme">Theme</string>
     <string name="appearance_screensaver">Screensaver</string>
     <string name="theme_in_use">In use</string>
@@ -205,5 +205,5 @@
     <string name="theme_jade_desc">Emerald and mint</string>
     <string name="screensaver_desc">Time, date and the light of your theme. It moves every minute to protect the screen.</string>
     <string name="screensaver_preview">Preview</string>
-    <string name="screensaver_how_to">To use it: Settings › System › Screen saver › Nexium</string>
+    <string name="screensaver_how_to">To use it: Settings › System › Screen saver › Krelzox</string>
 </resources>

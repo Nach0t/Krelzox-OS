@@ -1,4 +1,4 @@
-# Nexium-OS · Estructura propuesta y revisión inicial
+# Krelzox-OS · Estructura propuesta y revisión inicial
 
 > Borrador para revisión. No se ha hecho commit, push ni cambio en la Raspberry Pi.
 
@@ -6,7 +6,7 @@
 
 | Punto | Resultado |
 |---|---|
-| Remoto `origin` | `https://github.com/Nach0t/Nexium-OS.git` (fetch y push) |
+| Remoto `origin` | `https://github.com/Nach0t/Krelzox-OS.git` (fetch y push) |
 | Conexión a GitHub | OK: `git ls-remote` responde |
 | Rama actual | `main`, rastrea `origin/main` |
 | Sincronización | Local y remoto en el mismo commit (`71db53c Initial commit`) |
@@ -18,7 +18,7 @@
 ## 2. Estructura propuesta
 
 ```
-Nexium-OS/
+Krelzox-OS/
 ├── README.md              # Qué es, estado, cómo empezar
 ├── LICENSE                # Apache 2.0 (ya existe)
 ├── CONTRIBUTING.md        # Flujo de ramas, commits, revisión

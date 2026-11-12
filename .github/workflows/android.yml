@@ -1,4 +1,4 @@
-# Nexium CI: everything that can be checked without a device.
+# Krelzox CI: everything that can be checked without a device.
 # Device-only checks (UI tests, Baseline Profile, Macrobenchmark) run on the
 # Raspberry Pi by hand; see docs/rendimiento.md.
 name: Android CI
@@ -75,7 +75,7 @@ jobs:
       - name: Upload release APK (unsigned)
         uses: actions/upload-artifact@v7
         with:
-          name: nexium-release-unsigned
+          name: krelzox-release-unsigned
           path: app/build/outputs/apk/release/*.apk
           retention-days: 30
 

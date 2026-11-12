@@ -17,14 +17,14 @@
     </queries>
 
     <application
-        android:name=".NexiumApp"
+        android:name=".KrelzoxApp"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:banner="@drawable/banner"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Nexium">
+        android:theme="@style/Theme.Krelzox">
 
         <activity
             android:name=".MainActivity"
@@ -53,7 +53,7 @@
         <!-- Screensaver: chosen by the user in Settings › Sistema › Protector de pantalla.
              BIND_DREAM_SERVICE ensures only the system can bind to it. -->
         <service
-            android:name=".ui.screensaver.NexiumDreamService"
+            android:name=".ui.screensaver.KrelzoxDreamService"
             android:exported="true"
             android:label="@string/screensaver_name"
             android:permission="android.permission.BIND_DREAM_SERVICE">
@@ -63,7 +63,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.service.dream"
-                android:resource="@xml/nexium_dream" />
+                android:resource="@xml/krelzox_dream" />
         </service>
     </application>
 </manifest>

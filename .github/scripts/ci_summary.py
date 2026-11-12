@@ -70,7 +70,7 @@ def apk() -> list[str]:
 
 
 def main() -> int:
-    lines = ["## Nexium CI", "", "### Unit tests", *tests(), "", "### Lint", *lint(), "", "### Release APK", *apk(), ""]
+    lines = ["## Krelzox CI", "", "### Unit tests", *tests(), "", "### Lint", *lint(), "", "### Release APK", *apk(), ""]
     print("\n".join(lines))
     return 0
 

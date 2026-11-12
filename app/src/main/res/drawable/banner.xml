@@ -11,7 +11,7 @@
     android:viewportWidth="320"
     android:viewportHeight="180">
     <path
-        android:fillColor="@color/nexium_background"
+        android:fillColor="@color/krelzox_background"
         android:pathData="M0,0 H320 V180 H0 Z" />
     <path android:pathData="M140,62 h9 l23,30 V62 h8 v44 h-9 L148,76 v30 h-8 Z">
         <aapt:attr name="android:fillColor">
@@ -19,8 +19,8 @@
                 android:type="linear"
                 android:startX="140" android:startY="62"
                 android:endX="180" android:endY="106"
-                android:startColor="@color/nexium_ion_start"
-                android:endColor="@color/nexium_ion_end" />
+                android:startColor="@color/krelzox_ion_start"
+                android:endColor="@color/krelzox_ion_end" />
         </aapt:attr>
     </path>
     <path android:pathData="M120,128 H200 V130 H120 Z">
@@ -29,8 +29,8 @@
                 android:type="linear"
                 android:startX="120" android:startY="129"
                 android:endX="200" android:endY="129"
-                android:startColor="@color/nexium_ion_start"
-                android:endColor="@color/nexium_ion_end" />
+                android:startColor="@color/krelzox_ion_start"
+                android:endColor="@color/krelzox_ion_end" />
         </aapt:attr>
     </path>
 </vector>

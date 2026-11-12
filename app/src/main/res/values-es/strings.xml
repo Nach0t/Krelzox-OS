@@ -56,15 +56,15 @@
     <string name="media_empty">Todavía no hay apps de video, música o fotos instaladas.</string>
 
     <!-- Ajustes -->
-    <string name="settings_subtitle">Acceso rápido al sistema y a Nexium</string>
+    <string name="settings_subtitle">Acceso rápido al sistema y a Krelzox</string>
     <string name="settings_network">Red</string>
     <string name="settings_network_desc">Wi-Fi y Ethernet</string>
     <string name="settings_display_sound">Pantalla y sonido</string>
     <string name="settings_display_sound_desc">Imagen y audio</string>
     <string name="settings_home_app">App de inicio</string>
-    <string name="settings_home_app_desc">Nexium o Catapult</string>
+    <string name="settings_home_app_desc">Krelzox o Catapult</string>
     <string name="settings_system_desc">Todos los ajustes</string>
-    <string name="settings_about">Acerca de Nexium</string>
+    <string name="settings_about">Acerca de Krelzox</string>
     <string name="settings_about_desc">Versión y equipo</string>
     <string name="about_version">Versión</string>
     <string name="about_android">Sistema</string>
@@ -138,7 +138,7 @@
     <string name="sys_uptime">Tiempo encendido</string>
     <string name="sys_android">Android</string>
     <string name="sys_patch">Parche de seguridad</string>
-    <string name="sys_nexium">Nexium</string>
+    <string name="sys_krelzox">Krelzox</string>
     <string name="sys_model">Modelo</string>
     <string name="sys_manufacturer">Fabricante</string>
     <string name="sys_build">Compilación</string>
@@ -175,13 +175,13 @@
     <string name="source_network">Fuente: TrafficStats de Android (tráfico real, sin pruebas de velocidad).</string>
     <string name="settings_android">Ajustes de Android</string>
 
-    <string name="safe_mode_title">Modo seguro de Nexium</string>
-    <string name="safe_mode_message">Nexium se detuvo varias veces seguidas. Puedes elegir otro launcher o volver a intentarlo.</string>
+    <string name="safe_mode_title">Modo seguro de Krelzox</string>
+    <string name="safe_mode_message">Krelzox se detuvo varias veces seguidas. Puedes elegir otro launcher o volver a intentarlo.</string>
     <string name="safe_mode_choose_launcher">Elegir otro launcher</string>
     <string name="safe_mode_retry">Reintentar</string>
 
     <!-- Etapa 7: apariencia, salvapantallas y Raspberry Pi -->
-    <string name="screensaver_name">Nexium</string>
+    <string name="screensaver_name">Krelzox</string>
     <string name="settings_appearance">Apariencia</string>
     <string name="settings_appearance_desc">Tema %1$s · salvapantallas</string>
     <string name="settings_raspberry">Raspberry Pi</string>
@@ -191,7 +191,7 @@
     <string name="raspberry_path">Sistema › Raspberry Pi settings</string>
     <string name="action_open_settings">Abrir Ajustes</string>
     <string name="appearance_title">Apariencia</string>
-    <string name="appearance_subtitle">El tema colorea el foco, la marca y los gráficos de todo Nexium</string>
+    <string name="appearance_subtitle">El tema colorea el foco, la marca y los gráficos de todo Krelzox</string>
     <string name="appearance_theme">Tema</string>
     <string name="appearance_screensaver">Salvapantallas</string>
     <string name="theme_in_use">En uso</string>
@@ -205,5 +205,5 @@
     <string name="theme_jade_desc">Esmeralda y menta</string>
     <string name="screensaver_desc">Hora, fecha y la luz de tu tema. Cambia de posición cada minuto para cuidar la pantalla.</string>
     <string name="screensaver_preview">Vista previa</string>
-    <string name="screensaver_how_to">Para usarlo: Ajustes › Sistema › Protector de pantalla › Nexium</string>
+    <string name="screensaver_how_to">Para usarlo: Ajustes › Sistema › Protector de pantalla › Krelzox</string>
 </resources>

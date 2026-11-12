@@ -13,7 +13,7 @@ ni el centro de rendimiento.
 ## Decisión 1: un tema es solo la luz de acento
 
 «Graphite & Ion» se mantiene: grafito, tipografía, formas y movimiento no
-cambian. Un tema (`NexiumAccent`) es un par de colores, **primario** (superficies
+cambian. Un tema (`KrelzoxAccent`) es un par de colores, **primario** (superficies
 rellenas con texto blanco) y **secundario** (iconos, rótulos y líneas sobre
 grafito), más sus degradados.
 
@@ -28,7 +28,7 @@ Los temas nuevos cumplen WCAG AA (≥ 4,5:1) para texto blanco sobre el primario
 Ion conserva sus valores originales. El color de error y los colores de datos
 fijos (temperatura) no cambian con el tema.
 
-**Implementación:** `NexiumColors.accent` es estado de Compose (snapshot) y los
+**Implementación:** `KrelzoxColors.accent` es estado de Compose (snapshot) y los
 tokens de acento (`Electric`, `Cyan`, `IonBrush`, `IonHorizontal`) lo leen al
 usarse. Así, un tema nuevo se aplica al instante en todas las pantallas sin
 tocar sus ~55 usos ni reiniciar. Única adaptación: el enum `PerfMetric` del panel
@@ -45,7 +45,7 @@ ninguna dependencia nueva.
 
 ## Decisión 3: salvapantallas como `DreamService`, sin permisos
 
-- `NexiumDreamService` muestra el mismo composable que la vista previa de
+- `KrelzoxDreamService` muestra el mismo composable que la vista previa de
   Ajustes › Apariencia: hora, fecha, marca y la luz del tema sobre grafito
   profundo.
 - Contra el marcado de pantalla, cada minuto el bloque se funde y reaparece en
@@ -53,12 +53,12 @@ ninguna dependencia nueva.
 - Coste medido en la Pi: 0,2 s de CPU en 65 s y solo dibuja durante los cambios
   de minuto o de posición (0 % de jank, GPU 3 ms).
 - `android:permission="android.permission.BIND_DREAM_SERVICE"` en el manifiesto
-  garantiza que solo el sistema puede usarlo. Nexium no necesita ningún permiso.
+  garantiza que solo el sistema puede usarlo. Krelzox no necesita ningún permiso.
 
 **Limitación:** una app normal no puede elegir el salvapantallas activo
 (requiere `WRITE_SECURE_SETTINGS`) y Android TV no exporta la pantalla
-«Protector de pantalla». Nexium muestra la ruta exacta (Ajustes › Sistema ›
-Protector de pantalla › Nexium) y un botón que abre Ajustes.
+«Protector de pantalla». Krelzox muestra la ruta exacta (Ajustes › Sistema ›
+Protector de pantalla › Krelzox) y un botón que abre Ajustes.
 
 ## Decisión 4: ajustes de Raspberry Pi mediante una guía, no un acceso directo
 
@@ -68,7 +68,7 @@ incluso desde ADB). Solo aparece dentro de Ajustes › Sistema.
 
 - El mosaico «Raspberry Pi» solo se muestra si ese paquete existe (se declara
   en `<queries>` para poder comprobarlo).
-- Al pulsarlo, un diálogo con el estilo de Nexium explica dónde están (Sistema ›
+- Al pulsarlo, un diálogo con el estilo de Krelzox explica dónde están (Sistema ›
   Raspberry Pi settings) y abre Ajustes.
 
 ## Decisión 5: TvProvider queda fuera de esta etapa

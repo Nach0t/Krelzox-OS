@@ -1,6 +1,6 @@
-# Nexium OS
+# Krelzox OS
 
-[![Android CI](https://github.com/Nach0t/Nexium-OS/actions/workflows/android.yml/badge.svg)](https://github.com/Nach0t/Nexium-OS/actions/workflows/android.yml)
+[![Android CI](https://github.com/Nach0t/Krelzox-OS/actions/workflows/android.yml/badge.svg)](https://github.com/Nach0t/Krelzox-OS/actions/workflows/android.yml)
 ![Plataforma](https://img.shields.io/badge/plataforma-Android%20TV%2017-3DDC84)
 ![Kotlin](https://img.shields.io/badge/Kotlin-Jetpack%20Compose%20for%20TV-7F52FF)
 ![Licencia](https://img.shields.io/badge/licencia-Apache%202.0-blue)
@@ -8,12 +8,14 @@
 [English](README.md) · **Español**
 
 Una experiencia Android TV premium para Raspberry Pi 5. Su primer componente es
-**Nexium Launcher** (`dev.nexium.launcher`): una pantalla de inicio en Kotlin y
+**Krelzox Launcher** (`dev.krelzox.launcher`): una pantalla de inicio en Kotlin y
 Jetpack Compose for TV que se instala como una app normal, sin root, sin
 modificar la ROM y conservando siempre el launcher del sistema como red de
 seguridad.
 
-![Inicio de Nexium con el panel de rendimiento](docs/capturas/etapa5/01-inicio-panel.png)
+*Antes se llamaba Nexium OS.*
+
+![Inicio de Krelzox con el panel de rendimiento](docs/capturas/etapa5/01-inicio-panel.png)
 
 ## Características
 
@@ -44,7 +46,7 @@ seguridad.
 - Cuatro temas (Ion, el original; Aurora, Ámbar y Jade) que recolorean todo el
   sistema a la vez: foco, marca, gráficos y salvapantallas. Cada tarjeta de tema
   muestra su propio foco antes de elegirlo.
-- Salvapantallas de Nexium: hora, fecha y la luz del tema sobre grafito
+- Salvapantallas de Krelzox: hora, fecha y la luz del tema sobre grafito
   profundo. Cambia de posición cada minuto para cuidar la pantalla y apenas usa
   la CPU.
 - Mosaico Raspberry Pi que indica dónde están exactamente los ajustes de
@@ -53,7 +55,7 @@ seguridad.
 
 | Apariencia | Salvapantallas |
 |---|---|
-| ![Apariencia con el tema Ámbar](docs/capturas/etapa7/04-apariencia-ambar.png) | ![Salvapantallas de Nexium con el tema Aurora](docs/capturas/etapa7/08-salvapantallas-aurora.png) |
+| ![Apariencia con el tema Ámbar](docs/capturas/etapa7/04-apariencia-ambar.png) | ![Salvapantallas de Krelzox con el tema Aurora](docs/capturas/etapa7/08-salvapantallas-aurora.png) |
 
 **Fiabilidad**
 - Funciona como app de inicio (HOME), con **modo seguro**: tras 3 cierres por
@@ -78,7 +80,7 @@ seguridad.
 | Pantalla | 1920×1080 @ 60 Hz, 320 dpi (960×540 dp) |
 | GPU | Broadcom V3D (Mesa GLES 3.1 / Vulkan 1.4) |
 
-El dispositivo no tiene Google Mobile Services. Nexium funciona en otros
+El dispositivo no tiene Google Mobile Services. Krelzox funciona en otros
 dispositivos Android TV con SDK 31 o superior, pero se diseña y se mide en este.
 
 ## Primeros pasos
@@ -93,16 +95,16 @@ Firmar el APK (para desarrollo basta la clave de depuración local) e instalarlo
 
 ```sh
 apksigner sign --ks ~/.android/debug.keystore --ks-pass pass:android \
-  --ks-key-alias androiddebugkey --out nexium.apk \
+  --ks-key-alias androiddebugkey --out krelzox.apk \
   app/build/outputs/apk/release/app-release-unsigned.apk
-adb install -r nexium.apk
+adb install -r krelzox.apk
 ```
 
 Convertirlo en la app de inicio (totalmente reversible; ver la
 [guía de recuperación](docs/recuperacion.md)):
 
 ```sh
-adb shell cmd role add-role-holder android.app.role.HOME dev.nexium.launcher
+adb shell cmd role add-role-holder android.app.role.HOME dev.krelzox.launcher
 ```
 
 En Windows, los comandos equivalentes están en [docs/entorno.md](docs/entorno.md).
@@ -114,10 +116,10 @@ En Windows, los comandos equivalentes están en [docs/entorno.md](docs/entorno.m
 | `./gradlew testDebugUnitTest lintDebug` | Tests unitarios y lint | CI + local |
 | `./gradlew assembleRelease` | Build release (R8 + Baseline Profile) | CI + local |
 | `./gradlew :app:connectedDebugAndroidTest` | Pruebas de UI de foco con D-pad | Dispositivo |
-| `./gradlew :app:generateBaselineProfile -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true` | Regenera el Baseline Profile (la opción conserva Nexium y sus datos) | Dispositivo |
+| `./gradlew :app:generateBaselineProfile -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true` | Regenera el Baseline Profile (la opción conserva Krelzox y sus datos) | Dispositivo |
 | `./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest` | Macrobenchmark de arranque en frío | Dispositivo |
 
-Las builds debug usan el paquete `dev.nexium.launcher.debug`, así que las
+Las builds debug usan el paquete `dev.krelzox.launcher.debug`, así que las
 pruebas nunca reemplazan ni desinstalan el launcher en uso. Procedimientos y
 resultados en el dispositivo: [docs/rendimiento.md](docs/rendimiento.md).
 

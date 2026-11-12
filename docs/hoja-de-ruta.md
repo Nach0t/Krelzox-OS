@@ -3,14 +3,14 @@
 | Etapa | Contenido | Estado |
 |---|---|---|
 | 0 | Higiene del repo (`.gitignore`, `.gitattributes`), documentación, ADR-001/002, JDK 21 y SDK 37 | ✅ Hecho |
-| 1 | Esqueleto Gradle (`:app`, `:core:designsystem`, `:core:data`), `NexiumTheme`, `MainActivity` con `HOME` + `LEANBACK_LAUNCHER`, lista de apps. Instalación por `adb install` **sin** asignar rol HOME | ✅ Hecho |
+| 1 | Esqueleto Gradle (`:app`, `:core:designsystem`, `:core:data`), `KrelzoxTheme`, `MainActivity` con `HOME` + `LEANBACK_LAUNCHER`, lista de apps. Instalación por `adb install` **sin** asignar rol HOME | ✅ Hecho |
 | 2 | Cuadrícula con secciones Favoritos/Aplicaciones, favoritos (DataStore), diálogo de acciones, foco D-pad/teclado robusto, reacción a instalación/desinstalación | ✅ Hecho |
 | 3 | Asignación reversible del rol HOME; pruebas de reinicio, tecla Home, fallos y recuperación | ✅ Hecho. Pendiente: prueba de reinicio físico |
 | 4 | Diseño premium "Graphite & Ion": Inter, iconos propios, barra superior con navegación/hora/red, hero cinematográfico, filas, Biblioteca, Multimedia, Ajustes, reordenar favoritos | ✅ Hecho |
 | 4.1 | Refinamiento visual: logotipo, hero dinámico (carrusel), gestión de favoritos (selector + reordenar en directo), iconos unificados, rejilla común | ✅ Hecho (en revisión) |
 | 5 | Monitor de rendimiento: panel permanente en la barra superior (CPU, RAM, temperatura, almacenamiento), vista ampliada con gráficos en tiempo real y centro «Sistema y rendimiento» en Ajustes (procesador, memoria, almacenamiento, sistema, red). [ADR-004](decisiones/ADR-004-metricas-del-sistema.md) | ✅ Hecho |
 | 6 | Baseline Profile (`profileinstaller`), Macrobenchmark de arranque, pruebas de UI de foco con D-pad, CI en GitHub Actions (tests, lint, release, compilación de pruebas de dispositivo). R8 ya activo desde la etapa 1. Procedimiento y resultados: [rendimiento.md](rendimiento.md) | ✅ Hecho |
-| 7 | Ajustes › Apariencia: 4 temas (Ion, Aurora, Ámbar, Jade) aplicados al instante en todo Nexium; salvapantallas propio (`DreamService`) con protección contra marcado; mosaico Raspberry Pi con guía a los ajustes de KonstaKANG. Sin permisos nuevos. [ADR-005](decisiones/ADR-005-apariencia-salvapantallas-ajustes.md) | ✅ Hecho |
+| 7 | Ajustes › Apariencia: 4 temas (Ion, Aurora, Ámbar, Jade) aplicados al instante en todo Krelzox; salvapantallas propio (`DreamService`) con protección contra marcado; mosaico Raspberry Pi con guía a los ajustes de KonstaKANG. Sin permisos nuevos. [ADR-005](decisiones/ADR-005-apariencia-salvapantallas-ajustes.md) | ✅ Hecho |
 | 8 | Opcional: canales TvProvider y «Seguir viendo» (requiere `READ_EPG_DATA`; hoy ninguna app de la Pi publica canales) | Pendiente |
 
 Cada etapa requiere autorización explícita antes de empezar.

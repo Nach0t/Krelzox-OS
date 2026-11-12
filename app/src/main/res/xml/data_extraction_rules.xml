@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Privacy: Nexium data never leaves the device (no cloud backup, no device transfer). -->
+<!-- Privacy: Krelzox data never leaves the device (no cloud backup, no device transfer). -->
 <data-extraction-rules>
     <cloud-backup>
         <exclude domain="root" />

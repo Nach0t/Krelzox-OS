@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "dev.nexium.launcher"
+    namespace = "dev.krelzox.launcher"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "dev.nexium.launcher"
+        applicationId = "dev.krelzox.launcher"
         minSdk = 31
         targetSdk = 37
         versionCode = 2
@@ -21,7 +21,7 @@ android {
     buildTypes {
         debug {
             // Separate package: connected tests install AND uninstall the app under test,
-            // which must never touch the installed Nexium (it may be the HOME app).
+            // which must never touch the installed Krelzox (it may be the HOME app).
             applicationIdSuffix = ".debug"
         }
         release {
