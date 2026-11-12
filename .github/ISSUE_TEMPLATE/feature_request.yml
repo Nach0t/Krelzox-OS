@@ -1,0 +1,47 @@
+name: Feature request
+description: Suggest a new feature or an improvement for Krelzox.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea. Krelzox focuses on a fast, remote-friendly home screen
+        with no root, no telemetry and as few permissions as possible — please keep
+        that in mind when proposing changes.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or motivation
+      description: What are you trying to do, and why is it hard or impossible today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe how it should work, including how it is used with the remote.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other solutions or workarounds you have considered.
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Would it need new permissions or dependencies, or affect performance or privacy?
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched the existing issues and this has not been proposed yet.
+          required: true

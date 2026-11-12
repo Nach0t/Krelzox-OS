@@ -1,0 +1,33 @@
+name: Question
+description: Ask a question about using, building or contributing to Krelzox.
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before asking, check the [README](https://github.com/Nach0t/Krelzox-OS#readme),
+        the [contributing guide](https://github.com/Nach0t/Krelzox-OS/blob/main/CONTRIBUTING.md)
+        and the [documentation](https://github.com/Nach0t/Krelzox-OS/tree/main/docs).
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What would you like to know?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What you have tried so far, and your device and system if relevant.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched the existing issues and the documentation.
+          required: true
