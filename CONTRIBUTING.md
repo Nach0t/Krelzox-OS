@@ -33,7 +33,7 @@ Gradle to the Android SDK with `local.properties` (`sdk.dir=...`) or the
 Install the debug build with `adb install -r app/build/outputs/apk/debug/app-debug.apk`.
 It uses its own package, so it never replaces the launcher in daily use.
 Installing a release build and making Krelzox the home app is described in the
-[README](README.md#getting-started). If a device gets stuck, follow the
+[README](README.md#build-and-install). If a device gets stuck, follow the
 [recovery guide](docs/recuperacion.md).
 
 Device-only procedures (UI tests, Baseline Profile, benchmarks) are documented
