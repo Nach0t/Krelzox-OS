@@ -45,9 +45,6 @@ jobs:
       # Gradle cache (written only from main) and wrapper checksum validation.
       - uses: gradle/actions/setup-gradle@v6
 
-      # gradlew is stored without the executable bit (committed from Windows).
-      - run: chmod +x gradlew
-
       - name: Unit tests and lint
         run: ./gradlew testDebugUnitTest lintDebug
 
@@ -96,7 +93,5 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
-
-      - run: chmod +x gradlew
 
       - uses: gradle/actions/dependency-submission@v6
