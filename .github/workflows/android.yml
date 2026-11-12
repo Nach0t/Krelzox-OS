@@ -69,11 +69,13 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
-      - name: Upload release APK (unsigned)
+      - name: Upload release APKs (unsigned)
         uses: actions/upload-artifact@v7
         with:
           name: krelzox-release-unsigned
-          path: app/build/outputs/apk/release/*.apk
+          path: |
+            app/build/outputs/apk/release/*.apk
+            store/build/outputs/apk/release/*.apk
           retention-days: 30
 
   # Sends the resolved Gradle dependencies to GitHub, so Dependabot can raise

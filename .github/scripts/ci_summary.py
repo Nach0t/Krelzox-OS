@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Markdown summary of a CI run: unit tests, lint issues and the release APK.
+"""Markdown summary of a CI run: unit tests, lint issues and the release APKs.
 
 Reads the reports Gradle already writes; prints Markdown to stdout (the workflow
 appends it to $GITHUB_STEP_SUMMARY). Never fails the build: missing reports are
@@ -49,28 +49,36 @@ def lint() -> list[str]:
     return ["| Module | Issues | Detail |", "|---|---:|---|", *rows]
 
 
+# (module, expects a Baseline Profile). Only the launcher ships one.
+APKS = (("app", True), ("store", False))
+
+
 def apk() -> list[str]:
-    paths = glob.glob("app/build/outputs/apk/release/*.apk")
-    if not paths:
-        return ["_No release APK found._"]
-    path = paths[0]
-    size_mb = os.path.getsize(path) / 1_000_000
-    with zipfile.ZipFile(path) as z:
-        names = set(z.namelist())
-        dex = sorted(n for n in names if n.startswith("classes") and n.endswith(".dex"))
-    profile = "✅ included" if "assets/dexopt/baseline.prof" in names else "❌ missing"
+    rows = []
+    for module, wants_profile in APKS:
+        paths = glob.glob(f"{module}/build/outputs/apk/release/*.apk")
+        if not paths:
+            rows.append(f"| `:{module}` | _not found_ | | | |")
+            continue
+        path = paths[0]
+        size_mb = os.path.getsize(path) / 1_000_000
+        with zipfile.ZipFile(path) as z:
+            names = set(z.namelist())
+            dex = sorted(n for n in names if n.startswith("classes") and n.endswith(".dex"))
+        if wants_profile:
+            profile = "✅ included" if "assets/dexopt/baseline.prof" in names else "❌ missing"
+        else:
+            profile = "n/a"
+        rows.append(f"| `:{module}` | `{os.path.basename(path)}` (unsigned) | {size_mb:.2f} MB | {profile} | {len(dex)} |")
     return [
-        "| | |",
-        "|---|---|",
-        f"| File | `{os.path.basename(path)}` (unsigned) |",
-        f"| Size | {size_mb:.2f} MB (budget: 10 MB) |",
-        f"| Baseline Profile | {profile} |",
-        f"| Dex files | {len(dex)} |",
+        "| Module | File | Size (budget: 10 MB) | Baseline Profile | Dex files |",
+        "|---|---|---:|---|---:|",
+        *rows,
     ]
 
 
 def main() -> int:
-    lines = ["## Krelzox CI", "", "### Unit tests", *tests(), "", "### Lint", *lint(), "", "### Release APK", *apk(), ""]
+    lines = ["## Krelzox CI", "", "### Unit tests", *tests(), "", "### Lint", *lint(), "", "### Release APKs", *apk(), ""]
     print("\n".join(lines))
     return 0
 
