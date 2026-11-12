@@ -39,6 +39,7 @@ captures/
 *.apk
 *.aab
 *.ap_
+*.idsig
 *.dex
 output-metadata.json
 # Nota: gradle/wrapper/gradle-wrapper.jar SÍ se versiona (no está ignorado).
