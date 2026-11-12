@@ -118,7 +118,7 @@ fun TopBar(
 }
 
 /**
- * Brand lockup: the "N" mark at cap-height × 1.5 and the spaced wordmark, optically
+ * Brand lockup: the "K" mark at cap-height × 1.5 and the spaced wordmark, optically
  * centered on each other (line-height trimmed so the caps sit on the mark's center).
  */
 @Composable

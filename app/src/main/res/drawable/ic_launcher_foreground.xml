@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Krelzox "N" mark, Ion gradient. Fits the 66 dp adaptive-icon safe zone. -->
+<!-- Krelzox "K" mark, Ion gradient. Fits the 66 dp adaptive-icon safe zone. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:pathData="M34,32 h9 l23,30 V32 h8 v44 h-9 L42,46 v30 h-8 Z">
+    <path android:pathData="M34,32 h9 v18 L62,32 H74 L55,52 L74,76 H62.5 L48.5,57.5 L43,63 V76 H34 Z">
         <aapt:attr name="android:fillColor">
             <gradient
                 android:type="linear"

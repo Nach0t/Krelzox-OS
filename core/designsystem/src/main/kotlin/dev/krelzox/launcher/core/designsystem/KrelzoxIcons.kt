@@ -199,7 +199,7 @@ object KrelzoxIcons {
         lineIcon("ArrowRight") { moveTo(9f, 5f); lineTo(16f, 12f); lineTo(9f, 19f) }
     }
 
-    /** Brand "N" mark, filled with the active theme's accent gradient. Draw without tint. */
+    /** Brand "K" mark, filled with the active theme's accent gradient. Draw without tint. */
     val LogoMark: ImageVector get() = logoMarkFor(KrelzoxColors.accent)
 
     /** The brand mark in a given theme (theme previews). Built once per theme. */
@@ -222,8 +222,8 @@ object KrelzoxIcons {
                     end = Offset(40f, 44f),
                 ),
             ) {
-                moveTo(0f, 0f); horizontalLineTo(9f); lineTo(32f, 30f); verticalLineTo(0f)
-                horizontalLineTo(40f); verticalLineTo(44f); horizontalLineTo(31f); lineTo(8f, 14f)
+                moveTo(0f, 0f); horizontalLineTo(9f); verticalLineTo(18f); lineTo(28f, 0f); horizontalLineTo(40f)
+                lineTo(21f, 20f); lineTo(40f, 44f); horizontalLineTo(28.5f); lineTo(14.5f, 25.5f); lineTo(9f, 31f)
                 verticalLineTo(44f); horizontalLineTo(0f); close()
             }
         }.build()

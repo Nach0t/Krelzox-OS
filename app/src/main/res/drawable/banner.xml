@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TV banner (320x180 dp): obsidian field, centered Ion "N", thin Ion baseline.
+<!-- TV banner (320x180 dp): obsidian field, centered Ion "K", thin Ion baseline.
      VectorRaster ignored: it only matters for minSdk < 24 (ours is 31) and the banner
      size is mandated by Android TV. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,7 +13,7 @@
     <path
         android:fillColor="@color/krelzox_background"
         android:pathData="M0,0 H320 V180 H0 Z" />
-    <path android:pathData="M140,62 h9 l23,30 V62 h8 v44 h-9 L148,76 v30 h-8 Z">
+    <path android:pathData="M140,62 h9 v18 L168,62 H180 L161,82 L180,106 H168.5 L154.5,87.5 L149,93 V106 H140 Z">
         <aapt:attr name="android:fillColor">
             <gradient
                 android:type="linear"
