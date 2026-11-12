@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="store_name" translatable="false">Krelzox Store</string>
+
+    <!-- Navigation -->
+    <string name="nav_search">Search</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_apps">Apps</string>
+    <string name="nav_games">Games</string>
+    <string name="nav_categories">Categories</string>
+    <string name="nav_library">Library</string>
+    <string name="nav_installed">Installed</string>
+    <string name="nav_updates">Updates</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Catalog state -->
+    <string name="loading_catalog">Loading the catalog…</string>
+    <string name="catalog_error">The catalog could not be loaded. Check the network connection and try again.</string>
+    <string name="action_retry">Try again</string>
+    <string name="empty_list">Nothing here yet</string>
+
+    <!-- Home -->
+    <string name="home_title">Discover</string>
+    <plurals name="home_subtitle">
+        <item quantity="one">%1$d free and open-source app from signed repositories</item>
+        <item quantity="other">%1$d free and open-source apps from signed repositories</item>
+    </plurals>
+    <string name="section_tv">Built for TV</string>
+    <string name="section_for_you">From the categories you use</string>
+    <string name="section_updated">Recently updated</string>
+    <string name="section_new">New in the catalog</string>
+    <string name="section_games">Games</string>
+    <plurals name="section_apps_count">
+        <item quantity="one">%1$d app</item>
+        <item quantity="other">%1$d apps</item>
+    </plurals>
+
+    <!-- Search -->
+    <string name="search_hint">Search apps and games</string>
+    <plurals name="search_results">
+        <item quantity="one">%1$d result</item>
+        <item quantity="other">%1$d results</item>
+    </plurals>
+    <string name="search_none">No apps match “%1$s”</string>
+
+    <!-- App page -->
+    <string name="action_install">Install</string>
+    <string name="action_open">Open</string>
+    <string name="action_update">Update</string>
+    <string name="action_uninstall">Uninstall</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_favorite">Add to favorites</string>
+    <string name="action_unfavorite">Remove from favorites</string>
+    <string name="action_allow">Allow</string>
+    <string name="detail_version">Version</string>
+    <string name="detail_size">Size</string>
+    <string name="detail_updated">Updated</string>
+    <string name="detail_added">In catalog since</string>
+    <string name="detail_license">License</string>
+    <string name="detail_categories">Categories</string>
+    <string name="detail_requires">Requires Android API %1$d+</string>
+    <string name="detail_about">About this app</string>
+    <string name="detail_whats_new">What’s new</string>
+    <string name="detail_permissions">Permissions (%1$d)</string>
+    <string name="detail_notices">Notices from the repository</string>
+    <string name="detail_versions">Version history</string>
+    <string name="detail_screenshots">Screenshots</string>
+    <string name="detail_source">Source code: %1$s</string>
+    <string name="detail_repository">Repository: %1$s</string>
+    <string name="detail_ratings">Ratings and reviews are not available yet.</string>
+    <string name="detail_not_tv">The developer did not publish a TV version: it may need a touchscreen or a mouse.</string>
+    <string name="detail_version_line">%1$s · %2$s · API %3$d+</string>
+    <string name="detail_version_installed">installed</string>
+    <string name="detail_version_incompatible">not compatible</string>
+
+    <!-- Status -->
+    <string name="status_installed">Installed · %1$s</string>
+    <string name="status_update">Update available: %1$s → %2$s</string>
+    <string name="status_incompatible">Not compatible with this device</string>
+    <string name="status_signature">Installed from another source with a different signing key: Krelzox Store cannot update it.</string>
+    <string name="task_queued">Waiting…</string>
+    <string name="task_downloading">Downloading %1$d%% · %2$s of %3$s</string>
+    <string name="task_verifying">Verifying the download…</string>
+    <string name="task_waiting">Confirm on the screen to continue</string>
+
+    <!-- Failures -->
+    <string name="fail_permission">Krelzox Store needs your permission to install apps.</string>
+    <string name="fail_incompatible">This version is not compatible with this device.</string>
+    <string name="fail_storage">There is not enough free storage.</string>
+    <string name="fail_network">The download failed. Check the network connection.</string>
+    <string name="fail_verification">Verification failed: the file does not match the repository. Nothing was installed.</string>
+    <string name="fail_system">The system installer refused the app.</string>
+
+    <!-- Incompatibility reasons -->
+    <string name="incompat_sdk_low">needs Android API %1$d or later</string>
+    <string name="incompat_sdk_high">only supports up to Android API %1$d</string>
+    <string name="incompat_abi">built only for %1$s</string>
+    <string name="incompat_features">requires %1$s</string>
+
+    <!-- Library -->
+    <string name="library_history">History</string>
+    <string name="library_summary">%1$d installed from the catalog · %2$d updates · %3$d favorites</string>
+    <string name="op_install">Install</string>
+    <string name="op_update">Update</string>
+    <string name="op_uninstall">Uninstall</string>
+    <string name="outcome_success">done</string>
+    <string name="outcome_failed">failed</string>
+    <string name="outcome_cancelled">cancelled</string>
+
+    <!-- Updates / installed / favorites -->
+    <string name="updates_all">Update all (%1$d)</string>
+    <string name="updates_none">All apps from the catalog are up to date.</string>
+    <string name="installed_none">No apps from the catalog are installed yet.</string>
+    <string name="favorites_none">Add apps to your favorites from their page.</string>
+
+    <!-- Settings -->
+    <string name="settings_repos">Repositories</string>
+    <string name="settings_refresh">Refresh catalog</string>
+    <string name="settings_refreshing">Refreshing…</string>
+    <string name="repo_line">%1$d apps · checked %2$s</string>
+    <string name="repo_never">never checked</string>
+    <string name="repo_error_network">Last refresh failed: network</string>
+    <string name="repo_error_verification">Last refresh failed: signature verification</string>
+    <string name="repo_error_format">Last refresh failed: invalid index</string>
+    <string name="repo_enabled">Enabled</string>
+    <string name="repo_disabled">Disabled</string>
+    <string name="repo_add">Add repository</string>
+    <string name="repo_name">Name</string>
+    <string name="repo_address">Address (https://…/repo)</string>
+    <string name="repo_fingerprint">Signing key fingerprint (SHA-256)</string>
+    <string name="repo_save">Save repository</string>
+    <string name="repo_invalid">Use an https:// address and a 64-character SHA-256 fingerprint.</string>
+    <string name="settings_permission">Install permission</string>
+    <string name="permission_granted">Allowed</string>
+    <string name="permission_denied">Not allowed yet</string>
+    <string name="settings_device">This device</string>
+    <string name="settings_device_line">Android API %1$d · %2$s</string>
+    <string name="settings_security">How apps are verified</string>
+    <string name="settings_security_text">Repository indexes must be signed by the pinned key and can never go back to an older version. Every APK is checked against the size, SHA-256 hash, package name, version and signing certificate published in the index before Android installs it, and Android asks you to confirm every install and uninstall.</string>
+
+    <!-- Anti-features (F-Droid notices) -->
+    <string name="af_Ads">Contains advertising</string>
+    <string name="af_Tracking">Tracks or reports your activity</string>
+    <string name="af_NonFreeNet">Promotes or depends on non-free network services</string>
+    <string name="af_NonFreeAdd">Promotes non-free add-ons</string>
+    <string name="af_NonFreeDep">Depends on non-free software</string>
+    <string name="af_NonFreeAssets">Contains non-free assets</string>
+    <string name="af_TetheredNet">Depends on a single network service</string>
+    <string name="af_NoSourceSince">Source code is no longer available</string>
+    <string name="af_KnownVuln">Has known security vulnerabilities</string>
+    <string name="af_NSFW">Contains content not suitable for all audiences</string>
+    <string name="af_UpstreamNonFree">The upstream source code is not entirely free</string>
+</resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TV banner (320x180 dp): obsidian field, centered store bag, thin Ion baseline.
+     VectorRaster ignored: it only matters for minSdk < 24 (ours is 31). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="VectorRaster"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <path
+        android:fillColor="@color/store_background"
+        android:pathData="M0,0 H320 V180 H0 Z" />
+    <path
+        android:pathData="M151,58 V51 A9,9 0 0 1 169,51 V58"
+        android:strokeWidth="4.5"
+        android:strokeColor="@color/store_ion_end"
+        android:strokeLineCap="round" />
+    <path android:pathData="M140,56 H180 L177,90 H143 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="140" android:startY="56"
+                android:endX="180" android:endY="90"
+                android:startColor="@color/store_ion_start"
+                android:endColor="@color/store_ion_end" />
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="@color/store_background"
+        android:pathData="M151.6,64 L155.38,64 L155.38,71.56 L163.36,64 L168.4,64 L160.42,72.4 L168.4,82.48 L163.57,82.48 L157.69,74.71 L155.38,77.02 L155.38,82.48 L151.6,82.48 Z" />
+    <path android:pathData="M120,118 H200 V120 H120 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="120" android:startY="119"
+                android:endX="200" android:endY="119"
+                android:startColor="@color/store_ion_start"
+                android:endColor="@color/store_ion_end" />
+        </aapt:attr>
+    </path>
+</vector>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Repository indexes, images and APKs are fetched over HTTPS only. Integrity does not
+     depend on TLS alone: indexes are signature-pinned and APKs are SHA-256 verified. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

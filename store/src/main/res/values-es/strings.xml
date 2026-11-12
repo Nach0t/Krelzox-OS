@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_search">Buscar</string>
+    <string name="nav_home">Inicio</string>
+    <string name="nav_apps">Aplicaciones</string>
+    <string name="nav_games">Juegos</string>
+    <string name="nav_categories">Categorías</string>
+    <string name="nav_library">Biblioteca</string>
+    <string name="nav_installed">Instaladas</string>
+    <string name="nav_updates">Actualizaciones</string>
+    <string name="nav_favorites">Favoritos</string>
+    <string name="nav_settings">Configuración</string>
+
+    <string name="loading_catalog">Cargando el catálogo…</string>
+    <string name="catalog_error">No se pudo cargar el catálogo. Comprueba la conexión de red y vuelve a intentarlo.</string>
+    <string name="action_retry">Reintentar</string>
+    <string name="empty_list">Aún no hay nada aquí</string>
+
+    <string name="home_title">Descubre</string>
+    <plurals name="home_subtitle">
+        <item quantity="one">%1$d app libre y de código abierto de repositorios firmados</item>
+        <item quantity="many">%1$d apps libres y de código abierto de repositorios firmados</item>
+        <item quantity="other">%1$d apps libres y de código abierto de repositorios firmados</item>
+    </plurals>
+    <string name="section_tv">Hechas para TV</string>
+    <string name="section_for_you">De las categorías que usas</string>
+    <string name="section_updated">Actualizadas recientemente</string>
+    <string name="section_new">Nuevas en el catálogo</string>
+    <string name="section_games">Juegos</string>
+    <plurals name="section_apps_count">
+        <item quantity="one">%1$d app</item>
+        <item quantity="many">%1$d apps</item>
+        <item quantity="other">%1$d apps</item>
+    </plurals>
+
+    <string name="search_hint">Busca apps y juegos</string>
+    <plurals name="search_results">
+        <item quantity="one">%1$d resultado</item>
+        <item quantity="many">%1$d resultados</item>
+        <item quantity="other">%1$d resultados</item>
+    </plurals>
+    <string name="search_none">Ninguna app coincide con «%1$s»</string>
+
+    <string name="action_install">Instalar</string>
+    <string name="action_open">Abrir</string>
+    <string name="action_update">Actualizar</string>
+    <string name="action_uninstall">Desinstalar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_favorite">Añadir a favoritos</string>
+    <string name="action_unfavorite">Quitar de favoritos</string>
+    <string name="action_allow">Permitir</string>
+    <string name="detail_version">Versión</string>
+    <string name="detail_size">Tamaño</string>
+    <string name="detail_updated">Actualizada</string>
+    <string name="detail_added">En el catálogo desde</string>
+    <string name="detail_license">Licencia</string>
+    <string name="detail_categories">Categorías</string>
+    <string name="detail_requires">Requiere Android API %1$d o superior</string>
+    <string name="detail_about">Acerca de esta app</string>
+    <string name="detail_whats_new">Novedades</string>
+    <string name="detail_permissions">Permisos (%1$d)</string>
+    <string name="detail_notices">Avisos del repositorio</string>
+    <string name="detail_versions">Historial de versiones</string>
+    <string name="detail_screenshots">Capturas</string>
+    <string name="detail_source">Código fuente: %1$s</string>
+    <string name="detail_repository">Repositorio: %1$s</string>
+    <string name="detail_ratings">Las valoraciones y reseñas aún no están disponibles.</string>
+    <string name="detail_not_tv">El desarrollador no ha publicado una versión para TV: puede necesitar pantalla táctil o ratón.</string>
+    <string name="detail_version_line">%1$s · %2$s · API %3$d+</string>
+    <string name="detail_version_installed">instalada</string>
+    <string name="detail_version_incompatible">no compatible</string>
+
+    <string name="status_installed">Instalada · %1$s</string>
+    <string name="status_update">Actualización disponible: %1$s → %2$s</string>
+    <string name="status_incompatible">No es compatible con este dispositivo</string>
+    <string name="status_signature">Instalada desde otra fuente con otra clave de firma: Krelzox Store no puede actualizarla.</string>
+    <string name="task_queued">En espera…</string>
+    <string name="task_downloading">Descargando %1$d%% · %2$s de %3$s</string>
+    <string name="task_verifying">Verificando la descarga…</string>
+    <string name="task_waiting">Confirma en la pantalla para continuar</string>
+
+    <string name="fail_permission">Krelzox Store necesita tu permiso para instalar apps.</string>
+    <string name="fail_incompatible">Esta versión no es compatible con este dispositivo.</string>
+    <string name="fail_storage">No hay suficiente almacenamiento libre.</string>
+    <string name="fail_network">La descarga falló. Comprueba la conexión de red.</string>
+    <string name="fail_verification">La verificación falló: el archivo no coincide con el repositorio. No se ha instalado nada.</string>
+    <string name="fail_system">El instalador del sistema rechazó la app.</string>
+
+    <string name="incompat_sdk_low">necesita Android API %1$d o superior</string>
+    <string name="incompat_sdk_high">solo admite hasta Android API %1$d</string>
+    <string name="incompat_abi">compilada solo para %1$s</string>
+    <string name="incompat_features">requiere %1$s</string>
+
+    <string name="library_history">Historial</string>
+    <string name="library_summary">%1$d instaladas del catálogo · %2$d actualizaciones · %3$d favoritas</string>
+    <string name="op_install">Instalación</string>
+    <string name="op_update">Actualización</string>
+    <string name="op_uninstall">Desinstalación</string>
+    <string name="outcome_success">completada</string>
+    <string name="outcome_failed">fallida</string>
+    <string name="outcome_cancelled">cancelada</string>
+
+    <string name="updates_all">Actualizar todas (%1$d)</string>
+    <string name="updates_none">Todas las apps del catálogo están al día.</string>
+    <string name="installed_none">Aún no hay apps del catálogo instaladas.</string>
+    <string name="favorites_none">Añade apps a favoritos desde su página.</string>
+
+    <string name="settings_repos">Repositorios</string>
+    <string name="settings_refresh">Actualizar catálogo</string>
+    <string name="settings_refreshing">Actualizando…</string>
+    <string name="repo_line">%1$d apps · comprobado %2$s</string>
+    <string name="repo_never">nunca comprobado</string>
+    <string name="repo_error_network">La última actualización falló: red</string>
+    <string name="repo_error_verification">La última actualización falló: verificación de firma</string>
+    <string name="repo_error_format">La última actualización falló: índice no válido</string>
+    <string name="repo_enabled">Activado</string>
+    <string name="repo_disabled">Desactivado</string>
+    <string name="repo_add">Añadir repositorio</string>
+    <string name="repo_name">Nombre</string>
+    <string name="repo_address">Dirección (https://…/repo)</string>
+    <string name="repo_fingerprint">Huella de la clave de firma (SHA-256)</string>
+    <string name="repo_save">Guardar repositorio</string>
+    <string name="repo_invalid">Usa una dirección https:// y una huella SHA-256 de 64 caracteres.</string>
+    <string name="settings_permission">Permiso de instalación</string>
+    <string name="permission_granted">Permitido</string>
+    <string name="permission_denied">Aún no permitido</string>
+    <string name="settings_device">Este dispositivo</string>
+    <string name="settings_device_line">Android API %1$d · %2$s</string>
+    <string name="settings_security">Cómo se verifican las apps</string>
+    <string name="settings_security_text">El índice de cada repositorio debe estar firmado por la clave fijada y nunca puede volver a una versión anterior. Antes de que Android instale un APK se comprueban su tamaño, su hash SHA-256, el nombre del paquete, la versión y el certificado de firma publicados en el índice, y Android te pide confirmar cada instalación y desinstalación.</string>
+
+    <string name="af_Ads">Contiene publicidad</string>
+    <string name="af_Tracking">Registra o comunica tu actividad</string>
+    <string name="af_NonFreeNet">Promueve o depende de servicios de red no libres</string>
+    <string name="af_NonFreeAdd">Promueve complementos no libres</string>
+    <string name="af_NonFreeDep">Depende de software no libre</string>
+    <string name="af_NonFreeAssets">Contiene recursos no libres</string>
+    <string name="af_TetheredNet">Depende de un único servicio de red</string>
+    <string name="af_NoSourceSince">El código fuente ya no está disponible</string>
+    <string name="af_KnownVuln">Tiene vulnerabilidades de seguridad conocidas</string>
+    <string name="af_NSFW">Contiene contenido no apto para todos los públicos</string>
+    <string name="af_UpstreamNonFree">El código original no es totalmente libre</string>
+</resources>

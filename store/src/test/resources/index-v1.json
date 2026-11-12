@@ -1,0 +1,101 @@
+{
+  "repo": {
+    "timestamp": 1794404913394,
+    "version": 30000,
+    "name": "Krelzox Test Repo",
+    "icon": "icon.png",
+    "address": "https://evil.example/should-not-be-used",
+    "description": "Fixture for Krelzox Store unit tests."
+  },
+  "requests": { "install": [], "uninstall": [] },
+  "apps": [
+    {
+      "packageName": "org.example.player",
+      "categories": ["Local Media Player", "Cast"],
+      "license": "GPL-3.0-only",
+      "authorName": "Example Devs",
+      "sourceCode": "https://git.example/player",
+      "added": 1600000000000,
+      "lastUpdated": 1790000000000,
+      "icon": "org.example.player.30.png",
+      "antiFeatures": ["NonFreeNet"],
+      "unknownField": {"nested": [1, 2, 3]},
+      "localized": {
+        "en-US": {
+          "name": "Example Player",
+          "summary": "Plays every format",
+          "description": "<p>Plays <b>everything</b>.</p><ul><li>Video</li><li>Audio</li></ul>",
+          "icon": "icon_abc.png",
+          "phoneScreenshots": ["01.png", "02.png"],
+          "tvScreenshots": ["tv1.png"]
+        },
+        "es": {
+          "summary": "Reproduce cualquier formato"
+        },
+        "fr": {
+          "name": "Lecteur",
+          "summary": "Lit tout"
+        }
+      }
+    },
+    {
+      "packageName": "org.example.puzzle",
+      "categories": ["Puzzle Game"],
+      "license": "MIT",
+      "added": 1700000000000,
+      "lastUpdated": 1780000000000,
+      "localized": {
+        "en-US": { "name": "Block Puzzle", "summary": "Slide the blocks" }
+      }
+    },
+    {
+      "packageName": "org.example.unverifiable",
+      "categories": ["System"],
+      "license": "MIT",
+      "added": 1700000000000,
+      "lastUpdated": 1780000000000,
+      "name": "No Hash App",
+      "summary": "Its only package has no SHA-256"
+    }
+  ],
+  "packages": {
+    "org.example.player": [
+      {
+        "versionCode": 30, "versionName": "3.0", "apkName": "org.example.player_30.apk",
+        "hash": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "hashType": "sha256",
+        "size": 1000, "minSdkVersion": 21, "targetSdkVersion": 35, "nativecode": ["x86_64"],
+        "signer": "1111111111111111111111111111111111111111111111111111111111111111", "added": 1790000000000,
+        "uses-permission": [["android.permission.INTERNET", null], ["android.permission.READ_LOGS", 18]]
+      },
+      {
+        "versionCode": 29, "versionName": "3.0", "apkName": "org.example.player_29.apk",
+        "hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "hashType": "sha256",
+        "size": 1000, "minSdkVersion": 21, "targetSdkVersion": 35, "nativecode": ["arm64-v8a"],
+        "signer": "1111111111111111111111111111111111111111111111111111111111111111", "added": 1790000000000,
+        "uses-permission": [["android.permission.INTERNET", null]]
+      },
+      {
+        "versionCode": 20, "versionName": "2.0", "apkName": "org.example.player_20.apk",
+        "hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "hashType": "sha256",
+        "size": 900, "minSdkVersion": 21, "targetSdkVersion": 33,
+        "signer": "1111111111111111111111111111111111111111111111111111111111111111", "added": 1700000000000
+      }
+    ],
+    "org.example.puzzle": [
+      {
+        "versionCode": 5, "versionName": "1.5", "apkName": "org.example.puzzle_5.apk",
+        "hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "hashType": "sha256",
+        "size": 500, "minSdkVersion": 26, "targetSdkVersion": 34,
+        "features": ["android.hardware.touchscreen"],
+        "signer": "2222222222222222222222222222222222222222222222222222222222222222", "added": 1780000000000
+      }
+    ],
+    "org.example.unverifiable": [
+      {
+        "versionCode": 1, "versionName": "1.0", "apkName": "org.example.unverifiable_1.apk",
+        "hash": "eeee", "hashType": "md5", "size": 10, "minSdkVersion": 21,
+        "signer": "3333333333333333333333333333333333333333333333333333333333333333", "added": 1700000000000
+      }
+    ]
+  }
+}

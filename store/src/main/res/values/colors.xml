@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="store_background">#FF0B0D12</color>
+    <color name="store_ion_start">#FF2F6BFF</color>
+    <color name="store_ion_end">#FF22D3EE</color>
+</resources>

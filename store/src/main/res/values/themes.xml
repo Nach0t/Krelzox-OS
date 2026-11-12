@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Window theme only: paints graphite before Compose draws, avoiding a white flash. -->
+    <style name="Theme.KrelzoxStore" parent="android:Theme.DeviceDefault.NoActionBar">
+        <item name="android:windowBackground">@color/store_background</item>
+        <item name="android:windowSplashScreenBackground">@color/store_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_store_foreground</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>
