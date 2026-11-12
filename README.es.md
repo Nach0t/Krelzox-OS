@@ -145,12 +145,22 @@ docs/                Arquitectura, identidad visual, hoja de ruta, ADR
 - [Recuperación del dispositivo](docs/recuperacion.md) · [Dispositivo de referencia](docs/dispositivo.md)
 - Decisiones técnicas (ADR): [docs/decisiones/](docs/decisiones/)
 
+## Contribuir
+
+Las contribuciones son bienvenidas. Lee la [guía de contribución](CONTRIBUTING.md)
+y el [código de conducta](CODE_OF_CONDUCT.md) (en inglés) antes de abrir un issue
+o un pull request. El estado de la accesibilidad y sus limitaciones conocidas
+están en [ACCESSIBILITY.md](ACCESSIBILITY.md).
+
 ## Convenciones
 
 - Código, identificadores y mensajes de commit: **inglés**.
 - README: inglés y español. Documentación detallada (`docs/`): **español**.
 
 ## Seguridad
+
+Para informar de una vulnerabilidad, sigue la [política de seguridad](SECURITY.md)
+(en inglés); nunca uses issues públicos.
 
 No subas claves de firma (`*.jks`, `*.keystore`), contraseñas, tokens,
 `local.properties` ni logs del dispositivo. El `.gitignore` los excluye, pero

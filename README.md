@@ -137,12 +137,22 @@ Detailed documentation is written in **Spanish**:
 - [Device recovery](docs/recuperacion.md) · [Reference device](docs/dispositivo.md)
 - Architecture decision records: [docs/decisiones/](docs/decisiones/)
 
+## Contributing
+
+Contributions are welcome. Read the [contributing guide](CONTRIBUTING.md) and
+the [Code of Conduct](CODE_OF_CONDUCT.md) before opening an issue or pull
+request. Accessibility status and known limitations are described in
+[ACCESSIBILITY.md](ACCESSIBILITY.md).
+
 ## Conventions
 
 - Code, identifiers and commit messages: **English**.
 - README: English and Spanish. Detailed documentation (`docs/`): **Spanish**.
 
 ## Security
+
+To report a vulnerability, follow the [security policy](SECURITY.md) — never
+use public issues.
 
 Never commit signing keys (`*.jks`, `*.keystore`), passwords, tokens,
 `local.properties` or device logs. `.gitignore` excludes them, but always check
