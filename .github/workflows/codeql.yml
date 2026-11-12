@@ -1,0 +1,80 @@
+# CodeQL code scanning (advanced setup).
+#
+# Replaces GitHub's default setup, whose autobuild restored Gradle's build cache:
+# every Kotlin compile task came FROM-CACHE, the compiler never ran and CodeQL
+# found no Java/Kotlin code to analyze. Here the build runs without the build
+# cache and with the Kotlin compiler in-process, so CodeQL traces every file.
+name: CodeQL
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+      - "LICENSE"
+      - "third_party/**/*.txt"
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+      - "LICENSE"
+      - "third_party/**/*.txt"
+  schedule:
+    - cron: "17 4 * * 1"   # weekly, Monday 04:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: java-kotlin
+            build-mode: manual
+          - language: actions
+            build-mode: none
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: JDK 21
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      # No build cache and no daemons: the Kotlin compiler must actually run
+      # inside the traced build for CodeQL to extract the sources.
+      - name: Build
+        if: matrix.build-mode == 'manual'
+        run: >
+          ./gradlew assembleDebug
+          --no-build-cache --no-configuration-cache --no-daemon
+          -Pkotlin.compiler.execution.strategy=in-process
+
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"
