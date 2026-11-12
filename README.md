@@ -20,6 +20,7 @@ and the stock launcher always kept as a safety net.
 
 - [Screenshots](#screenshots)
 - [Features](#features)
+- [Krelzox Store](#krelzox-store)
 - [Technology](#technology)
 - [Architecture](#architecture)
 - [Requirements](#requirements)
@@ -87,6 +88,36 @@ Captured on the reference Raspberry Pi 5 with the **Aurora** theme.
   screensaver add none. No root, no telemetry, no ads, no network server.
 - English and Spanish user interface.
 
+## Krelzox Store
+
+A separate TV app (`dev.krelzox.store`) to discover, install, update and
+uninstall apps — real installs through Android's own installer, not simulations.
+
+- Catalog from **F-Droid-format repositories** (f-droid.org by default: about
+  5,000 free and open-source apps). Other repositories can be added with their
+  HTTPS address and signing-key fingerprint.
+- Sections: Search, Home (Built for TV, From the categories you use, Recently
+  updated, New, Games), Apps, Games, Categories, Library (history), Installed,
+  Updates (with *Update all*), Favorites and Settings.
+- App pages with version, size, dates, license, requirements, screenshots,
+  permissions, repository notices and version history. Buttons follow the real
+  state of each app (Install, Update, Open, Uninstall, Favorite).
+- **Verified before installing:** the repository index must be signed by its
+  pinned key and can never roll back to an older version; every APK is checked
+  against the published size, SHA-256, package name, version and signing
+  certificate. Android asks the user to confirm every install and uninstall.
+- No ratings or download counts are shown: the repositories do not publish them
+  and the store does not invent them.
+
+| Home | App page |
+|---|---|
+| ![Krelzox Store home](docs/images/store-home.png) | ![App page in Krelzox Store](docs/images/store-app.png) |
+
+The launcher keeps its single permission; the store is a separate app with the
+permissions it needs (internet access and installing, uninstalling and listing
+apps). Details, publishing guide and security model: [docs/tienda.md](docs/tienda.md)
+(Spanish) and [ADR-006](docs/decisiones/ADR-006-krelzox-store.md).
+
 ## Technology
 
 | Area | Stack |
@@ -94,20 +125,23 @@ Captured on the reference Raspberry Pi 5 with the **Aurora** theme.
 | Language | Kotlin 2.4 (JVM target 17) |
 | UI | Jetpack Compose (BOM 2026.09) + Compose for TV Material 1.1, Inter typeface |
 | State and storage | AndroidX Lifecycle / ViewModel, Kotlin coroutines, DataStore |
+| Store | F-Droid index v1 (signed JAR), Gson streaming reader, Android PackageInstaller |
 | Build | Gradle 9.9 (wrapper), Android Gradle Plugin 9.5, R8, Baseline Profiles |
 | Tests | JUnit 4 (unit), UI Automator + AndroidX Test (device), Macrobenchmark |
 | CI | GitHub Actions, Dependabot, CodeQL, dependency graph |
 
 ## Architecture
 
-Krelzox is a single Android app split into Gradle modules with one-way
-dependencies:
+Krelzox is made of two Android apps — the launcher and the store — split into
+Gradle modules with one-way dependencies:
 
 ```
 app/                 Launcher: activity, shell, Home / Library / Media / Settings,
                      performance UI, screensaver (DreamService), crash-loop safe mode
  ├─ core/designsystem/   Tokens, themes, icons, charts — no data dependencies
  └─ core/data/           Installed apps, favorites, recents, network, system metrics
+store/               Krelzox Store: repositories, catalog, verified installs, store UI
+                     (uses core/designsystem)
 baselineprofile/     Baseline Profile generator and startup benchmarks (runs on the device)
 docs/                Architecture, visual identity, roadmap, ADRs (Spanish), images
 scripts/             Helper scripts (remote access)
@@ -115,7 +149,9 @@ scripts/             Helper scripts (remote access)
 
 The launcher reads system information locally (`/proc`, thermal zones,
 `PackageManager`, `ConnectivityManager`) and stores preferences on the device
-only; it has no backend and opens no network ports. Details:
+only; it has no backend and opens no network ports. The store downloads signed
+repository indexes and APKs over HTTPS and hands verified APKs to the system
+installer; it has no backend either. Details:
 [docs/arquitectura.md](docs/arquitectura.md).
 
 ## Requirements
@@ -250,7 +286,7 @@ options › *Revoke debugging authorizations*.
 | Command | What it does | Where |
 |---|---|---|
 | `./gradlew testDebugUnitTest lintDebug` | Unit tests and lint | CI + local |
-| `./gradlew assembleRelease` | Release build (R8 + Baseline Profile) | CI + local |
+| `./gradlew assembleRelease` | Release build of the launcher and the store (R8; Baseline Profile for the launcher) | CI + local |
 | `./gradlew :app:connectedDebugAndroidTest` | D-pad focus UI tests | Device |
 | `./gradlew :app:generateBaselineProfile -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true` | Regenerates the Baseline Profile (the flag keeps Krelzox and its data installed) | Device |
 | `./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest` | Cold-start Macrobenchmark | Device |
@@ -269,7 +305,7 @@ Detailed documentation is written in **Spanish**:
 
 - [Architecture](docs/arquitectura.md) · [Visual identity](docs/identidad-visual.md) · [Roadmap](docs/hoja-de-ruta.md)
 - [Development environment](docs/entorno.md) · [Performance and device tests](docs/rendimiento.md)
-- [Device recovery](docs/recuperacion.md) · [Reference device](docs/dispositivo.md)
+- [Device recovery](docs/recuperacion.md) · [Reference device](docs/dispositivo.md) · [Krelzox Store](docs/tienda.md)
 - Architecture decision records: [docs/decisiones/](docs/decisiones/)
 
 ## Contributing

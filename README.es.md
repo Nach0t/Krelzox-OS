@@ -21,6 +21,7 @@ seguridad.
 
 - [Capturas](#capturas)
 - [Características](#características)
+- [Krelzox Store](#krelzox-store)
 - [Tecnología](#tecnología)
 - [Arquitectura](#arquitectura)
 - [Requisitos](#requisitos)
@@ -97,6 +98,38 @@ inglés; también está disponible en español).
   sin servidor de red.
 - Interfaz en inglés y español.
 
+## Krelzox Store
+
+Una app de TV aparte (`dev.krelzox.store`) para descubrir, instalar, actualizar
+y desinstalar apps: instalaciones reales con el instalador de Android, no
+simulaciones.
+
+- Catálogo de **repositorios con formato F-Droid** (f-droid.org por defecto:
+  unas 5.000 apps libres y de código abierto). Se pueden añadir otros con su
+  dirección HTTPS y la huella de su clave de firma.
+- Secciones: Buscar, Inicio (Hechas para TV, De las categorías que usas,
+  Actualizadas recientemente, Nuevas, Juegos), Aplicaciones, Juegos, Categorías,
+  Biblioteca (historial), Instaladas, Actualizaciones (con *Actualizar todas*),
+  Favoritos y Configuración.
+- Fichas con versión, tamaño, fechas, licencia, requisitos, capturas, permisos,
+  avisos del repositorio e historial de versiones. Los botones siguen el estado
+  real de cada app (Instalar, Actualizar, Abrir, Desinstalar, Favorito).
+- **Verificación antes de instalar:** el índice del repositorio debe estar
+  firmado por su clave fijada y nunca puede volver a una versión anterior; cada
+  APK se comprueba contra el tamaño, SHA-256, paquete, versión y certificado de
+  firma publicados. Android pide confirmar cada instalación y desinstalación.
+- No se muestran valoraciones ni número de descargas: los repositorios no los
+  publican y la tienda no los inventa.
+
+| Inicio | Ficha de una app |
+|---|---|
+| ![Inicio de Krelzox Store](docs/images/store-home.png) | ![Ficha de una app en Krelzox Store](docs/images/store-app.png) |
+
+El launcher conserva su único permiso; la tienda es una app aparte con los
+permisos que necesita (acceso a internet e instalar, desinstalar y listar apps).
+Detalles, guía de publicación y modelo de seguridad: [docs/tienda.md](docs/tienda.md)
+y [ADR-006](docs/decisiones/ADR-006-krelzox-store.md).
+
 ## Tecnología
 
 | Área | Tecnología |
@@ -104,20 +137,23 @@ inglés; también está disponible en español).
 | Lenguaje | Kotlin 2.4 (JVM 17) |
 | Interfaz | Jetpack Compose (BOM 2026.09) + Compose for TV Material 1.1, tipografía Inter |
 | Estado y almacenamiento | AndroidX Lifecycle / ViewModel, corrutinas de Kotlin, DataStore |
+| Tienda | Índice F-Droid v1 (JAR firmado), lector en streaming de Gson, PackageInstaller de Android |
 | Compilación | Gradle 9.9 (wrapper), Android Gradle Plugin 9.5, R8, Baseline Profiles |
 | Pruebas | JUnit 4 (unitarias), UI Automator + AndroidX Test (dispositivo), Macrobenchmark |
 | CI | GitHub Actions, Dependabot, CodeQL, grafo de dependencias |
 
 ## Arquitectura
 
-Krelzox es una única app Android dividida en módulos de Gradle con dependencias
-en un solo sentido:
+Krelzox son dos apps Android, el launcher y la tienda, divididas en módulos de
+Gradle con dependencias en un solo sentido:
 
 ```
 app/                 Launcher: actividad, shell, Inicio / Biblioteca / Multimedia / Ajustes,
                      UI de rendimiento, salvapantallas (DreamService), modo seguro
  ├─ core/designsystem/   Tokens, temas, iconos, gráficos — sin dependencias de datos
  └─ core/data/           Apps instaladas, favoritos, recientes, red, métricas del sistema
+store/               Krelzox Store: repositorios, catálogo, instalación verificada, interfaz
+                     (usa core/designsystem)
 baselineprofile/     Generador del Baseline Profile y benchmarks de arranque (en el dispositivo)
 docs/                Arquitectura, identidad visual, hoja de ruta, ADR (español), imágenes
 scripts/             Scripts de ayuda (acceso remoto)
@@ -125,7 +161,9 @@ scripts/             Scripts de ayuda (acceso remoto)
 
 El launcher lee la información del sistema en local (`/proc`, zonas térmicas,
 `PackageManager`, `ConnectivityManager`) y guarda las preferencias solo en el
-dispositivo; no tiene backend ni abre puertos de red. Detalles:
+dispositivo; no tiene backend ni abre puertos de red. La tienda descarga por
+HTTPS índices firmados y APK, y entrega al instalador del sistema solo los APK
+verificados; tampoco tiene backend. Detalles:
 [docs/arquitectura.md](docs/arquitectura.md).
 
 ## Requisitos
@@ -262,7 +300,7 @@ de desarrollador › *Revocar autorizaciones de depuración*.
 | Comando | Qué hace | Dónde |
 |---|---|---|
 | `./gradlew testDebugUnitTest lintDebug` | Tests unitarios y lint | CI + local |
-| `./gradlew assembleRelease` | Build release (R8 + Baseline Profile) | CI + local |
+| `./gradlew assembleRelease` | Build release del launcher y la tienda (R8; Baseline Profile en el launcher) | CI + local |
 | `./gradlew :app:connectedDebugAndroidTest` | Pruebas de UI de foco con D-pad | Dispositivo |
 | `./gradlew :app:generateBaselineProfile -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true` | Regenera el Baseline Profile (el flag conserva Krelzox y sus datos) | Dispositivo |
 | `./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest` | Macrobenchmark de arranque en frío | Dispositivo |
@@ -282,7 +320,7 @@ La documentación detallada está en **español**:
 
 - [Arquitectura](docs/arquitectura.md) · [Identidad visual](docs/identidad-visual.md) · [Hoja de ruta](docs/hoja-de-ruta.md)
 - [Entorno de desarrollo](docs/entorno.md) · [Rendimiento y pruebas en dispositivo](docs/rendimiento.md)
-- [Recuperación del dispositivo](docs/recuperacion.md) · [Dispositivo de referencia](docs/dispositivo.md)
+- [Recuperación del dispositivo](docs/recuperacion.md) · [Dispositivo de referencia](docs/dispositivo.md) · [Krelzox Store](docs/tienda.md)
 - Registros de decisiones de arquitectura: [docs/decisiones/](docs/decisiones/)
 
 ## Contribuir

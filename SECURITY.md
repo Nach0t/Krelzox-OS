@@ -49,8 +49,9 @@ it publicly.
 
 ## Scope
 
-In scope: the code in this repository — the Krelzox Launcher app, its modules,
-and the build and CI configuration.
+In scope: the code in this repository — the Krelzox Launcher and Krelzox Store
+apps, their modules, and the build and CI configuration. For the store this
+includes how repository indexes and APKs are verified before installing.
 
 Out of scope: vulnerabilities in LineageOS, the KonstaKANG builds, Android
 itself or third-party apps launched from Krelzox. Report those to their
