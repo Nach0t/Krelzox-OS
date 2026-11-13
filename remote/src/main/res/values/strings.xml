@@ -3,6 +3,7 @@
     <string name="remote_name" translatable="false">Krelzox Remote</string>
     <string name="remote_subtitle">See and control this TV from a browser on your local network</string>
     <string name="remote_switch_hint">Press OK to switch on. Android will ask you to allow screen capture.</string>
+    <string name="remote_switch_off_hint">Press OK to switch off. Every browser is disconnected.</string>
 
     <string name="remote_state_on">On</string>
     <string name="remote_state_off">Off</string>

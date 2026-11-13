@@ -154,7 +154,8 @@ private fun RemotePanel(status: RemoteStatus, onToggle: () -> Unit, onOpenAccess
                 Row_(
                     title = stringResource(R.string.remote_name),
                     value = stringResource(if (status.running) R.string.remote_state_on else R.string.remote_state_off),
-                    detail = errorText(status.error) ?: stringResource(R.string.remote_switch_hint),
+                    detail = errorText(status.error)
+                        ?: stringResource(if (status.running) R.string.remote_switch_off_hint else R.string.remote_switch_hint),
                     highlight = status.running,
                     modifier = Modifier.focusRequester(first),
                     onClick = onToggle,

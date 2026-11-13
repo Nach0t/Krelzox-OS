@@ -2,6 +2,7 @@
 <resources>
     <string name="remote_subtitle">Mira y controla esta tele desde un navegador de tu red local</string>
     <string name="remote_switch_hint">Pulsa OK para activarlo. Android te pedirá permitir la captura de pantalla.</string>
+    <string name="remote_switch_off_hint">Pulsa OK para desactivarlo. Se desconectarán todos los navegadores.</string>
 
     <string name="remote_state_on">Activado</string>
     <string name="remote_state_off">Desactivado</string>
