@@ -1,6 +1,7 @@
 package dev.krelzox.remote.control
 
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.accessibilityservice.GestureDescription
 import android.content.Intent
 import android.graphics.Color
@@ -30,6 +31,11 @@ import dev.krelzox.remote.security.Session
  * launching apps. The user enables it once in Settings › Accessibility; Android shows
  * that it is active. It also draws the remote cursor, the pairing PIN and the control
  * approval prompt as accessibility overlays (no extra permission needed).
+ *
+ * Overlay windows don't reliably get D-pad focus on TV, so while the approval prompt is
+ * up the service filters key events itself (and only then): Left/Right choose, OK/Enter
+ * confirms, Back denies, and every other key is swallowed so it can't reach the app
+ * underneath. The filter is switched off as soon as the prompt goes away.
  */
 class RemoteAccessibilityService : AccessibilityService() {
 
@@ -38,6 +44,8 @@ class RemoteAccessibilityService : AccessibilityService() {
     private var cursor: View? = null
     private var pinView: View? = null
     private var approval: View? = null
+    private var approvalChoices: List<Pair<Button, () -> Unit>> = emptyList()
+    private var approvalIndex = 0
     private val hideCursor = Runnable { cursor?.visibility = View.GONE }
 
     override fun onServiceConnected() {
@@ -59,6 +67,35 @@ class RemoteAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) = Unit
 
     override fun onInterrupt() = Unit
+
+    override fun onKeyEvent(event: KeyEvent): Boolean {
+        if (approval == null || approvalChoices.isEmpty()) return false
+        if (event.action != KeyEvent.ACTION_UP) return true // act on release, swallow the rest
+        when (event.keyCode) {
+            KeyEvent.KEYCODE_DPAD_LEFT -> highlightChoice(approvalIndex - 1)
+            KeyEvent.KEYCODE_DPAD_RIGHT -> highlightChoice(approvalIndex + 1)
+            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER ->
+                approvalChoices[approvalIndex].second()
+            KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> approvalChoices.first().second() // deny
+        }
+        return true
+    }
+
+    /** Turns key filtering on only while the approval prompt needs the D-pad. */
+    private fun filterKeys(enabled: Boolean) {
+        val info = serviceInfo ?: return
+        val flags = if (enabled) {
+            info.flags or AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS
+        } else {
+            info.flags and AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS.inv()
+        }
+        if (flags != info.flags) serviceInfo = info.apply { this.flags = flags }
+    }
+
+    private fun highlightChoice(index: Int) {
+        approvalIndex = index.coerceIn(0, approvalChoices.lastIndex)
+        approvalChoices.forEachIndexed { i, (button, _) -> paint(button, i == approvalIndex) }
+    }
 
     private val width get() = RemoteHub.screenWidth.toFloat()
     private val height get() = RemoteHub.screenHeight.toFloat()
@@ -156,11 +193,13 @@ class RemoteAccessibilityService : AccessibilityService() {
 
     // --- Overlays -----------------------------------------------------------------
 
-    private fun overlayParams(focusable: Boolean, gravity: Int) = WindowManager.LayoutParams(
+    /** Overlays never take focus; only the approval prompt is touchable (for a mouse). */
+    private fun overlayParams(touchable: Boolean, gravity: Int) = WindowManager.LayoutParams(
         WindowManager.LayoutParams.WRAP_CONTENT,
         WindowManager.LayoutParams.WRAP_CONTENT,
         WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
-        (if (focusable) 0 else WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE) or
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+            (if (touchable) 0 else WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE) or
             WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
         PixelFormat.TRANSLUCENT,
     ).apply { this.gravity = gravity }
@@ -224,26 +263,22 @@ class RemoteAccessibilityService : AccessibilityService() {
             row.addView(deny)
             row.addView(allow, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginStart = dp(12) })
             addView(row)
-            // Deny is focused first: a stray OK never grants control.
-            deny.post { deny.requestFocus() }
-            isFocusableInTouchMode = true
-            setOnKeyListener { _, keyCode, event ->
-                if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
-                    decide(false)
-                    true
-                } else {
-                    false
-                }
-            }
+            approvalChoices = listOf(deny to { decide(false) }, allow to { decide(true) })
         }
+        // Keys come from the filter, not window focus, so the app underneath keeps its focus.
         windows.addView(view, overlayParams(true, Gravity.CENTER))
         approval = view
+        // Deny is highlighted first: a stray OK never grants control.
+        highlightChoice(0)
+        filterKeys(true)
         main.postDelayed({ if (approval === view) decide(false) }, 60_000)
     }
 
     fun dismissApproval() {
         approval?.let { runCatching { windows.removeView(it) } }
         approval = null
+        approvalChoices = emptyList()
+        filterKeys(false)
     }
 
     private fun removeAll() {
@@ -252,6 +287,7 @@ class RemoteAccessibilityService : AccessibilityService() {
         cursor = null
         pinView = null
         approval = null
+        approvalChoices = emptyList()
     }
 
     private fun card() = LinearLayout(this).apply {
@@ -279,11 +315,14 @@ class RemoteAccessibilityService : AccessibilityService() {
             cornerRadius = dp(12).toFloat()
             setColor(Color.argb(255, 28, 33, 44))
         }
-        setOnFocusChangeListener { v, focused ->
-            (v.background as GradientDrawable).setColor(if (focused) Color.argb(255, 47, 107, 255) else Color.argb(255, 28, 33, 44))
-        }
         setPadding(dp(20), dp(10), dp(20), dp(10))
         setOnClickListener { onClick() }
+    }
+
+    private fun paint(button: Button, highlighted: Boolean) {
+        (button.background as GradientDrawable).setColor(if (highlighted) Color.argb(255, 47, 107, 255) else Color.argb(255, 28, 33, 44))
+        button.scaleX = if (highlighted) 1.06f else 1f
+        button.scaleY = button.scaleX
     }
 
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
