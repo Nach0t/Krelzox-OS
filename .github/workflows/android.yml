@@ -76,6 +76,7 @@ jobs:
           path: |
             app/build/outputs/apk/release/*.apk
             store/build/outputs/apk/release/*.apk
+            remote/build/outputs/apk/release/*.apk
           retention-days: 30
 
   # Sends the resolved Gradle dependencies to GitHub, so Dependabot can raise

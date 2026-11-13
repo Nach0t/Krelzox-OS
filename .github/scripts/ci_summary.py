@@ -50,7 +50,7 @@ def lint() -> list[str]:
 
 
 # (module, expects a Baseline Profile). Only the launcher ships one.
-APKS = (("app", True), ("store", False))
+APKS = (("app", True), ("store", False), ("remote", False))
 
 
 def apk() -> list[str]:
