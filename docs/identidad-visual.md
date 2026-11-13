@@ -66,7 +66,9 @@ en el hero y la temperatura (`#7DD3FC`) en los gráficos. Contraste verificado:
 | Overline | 12 sp | SemiBold, tracking +14 %, mayúsculas |
 
 Logotipo: marca "K" con degradado Ion (24×26 dp, ≈ 1,5 × la altura de las
-mayúsculas) + `KRELZOX` en Inter SemiBold 19 sp, tracking +26 %, separados 12 dp.
+mayúsculas) que hace de primera letra, seguida de `RELZOX` en Inter SemiBold
+19 sp, tracking +26 %, separadas 5 dp (el mismo paso que el tracking). Se lee
+«KRELZOX» y se anuncia como «Krelzox» en accesibilidad.
 El interlineado del texto se recorta (`LineHeightStyle.Trim.Both`) para que las
 mayúsculas queden ópticamente centradas sobre la marca.
 
@@ -110,7 +112,7 @@ y el icono ocupa siempre el 46 % de la altura de la tarjeta. Los banners de TV
 ### Salvapantallas
 
 - Grafito profundo (`BackgroundDeep`), hora en Inter 104 sp (regular, tracking
-  −3,5 %), fecha completa, línea de acento de 56 dp y marca `K KRELZOX`.
+  −3,5 %), fecha completa, línea de acento de 56 dp y marca `K` + `RELZOX`.
 - Halo radial del primario al 20 % detrás del texto y un contraluz del
   secundario al 5 % en la esquina opuesta: profundidad sin blur.
 - Cada minuto se funde (900 ms), cambia a una de 6 zonas del área segura y

@@ -19,6 +19,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
@@ -118,16 +120,21 @@ fun TopBar(
 }
 
 /**
- * Brand lockup: the "K" mark at cap-height × 1.5 and the spaced wordmark, optically
- * centered on each other (line-height trimmed so the caps sit on the mark's center).
+ * Brand lockup: the "K" mark at cap-height × 1.5 is the wordmark's first letter, followed by
+ * "RELZOX" one tracking step away, optically centered on each other (line-height trimmed so
+ * the caps sit on the mark's center). Read as a whole as "Krelzox".
  */
 @Composable
 private fun Logo(modifier: Modifier = Modifier) {
-    Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier.clearAndSetSemantics { contentDescription = "Krelzox" },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Image(rememberVectorPainter(KrelzoxIcons.LogoMark), contentDescription = null, modifier = Modifier.size(24.dp, 26.dp))
-        Spacer(Modifier.width(12.dp))
+        // Same gap as the wordmark's tracking (0.26 em × 19 sp ≈ 5 dp), so the mark reads as its "K".
+        Spacer(Modifier.width(5.dp))
         Text(
-            text = "KRELZOX",
+            text = "RELZOX",
             style = TextStyle(
                 fontFamily = Inter,
                 fontWeight = FontWeight.SemiBold,

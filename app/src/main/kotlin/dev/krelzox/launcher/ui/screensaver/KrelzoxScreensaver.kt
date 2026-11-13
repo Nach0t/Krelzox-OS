@@ -173,14 +173,14 @@ fun KrelzoxScreensaver(modifier: Modifier = Modifier, shiftIntervalMs: Long = 60
                     .background(accent.horizontal, CircleShape),
             )
             Spacer(Modifier.height(18.dp * unit))
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp * unit)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp * unit)) {
                 Image(
                     rememberVectorPainter(KrelzoxIcons.LogoMark),
                     contentDescription = null,
                     modifier = Modifier.size(13.dp * unit, 14.dp * unit),
                 )
                 Text(
-                    "KRELZOX",
+                    "RELZOX",
                     style = MaterialTheme.typography.labelSmall.copy(fontSize = (11f * unit).sp, letterSpacing = 0.3.em),
                     color = KrelzoxColors.OnSurfaceSubtle,
                 )
