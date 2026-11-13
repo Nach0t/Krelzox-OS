@@ -22,6 +22,7 @@ seguridad.
 - [Capturas](#capturas)
 - [Características](#características)
 - [Krelzox Store](#krelzox-store)
+- [Krelzox Remote](#krelzox-remote)
 - [Tecnología](#tecnología)
 - [Arquitectura](#arquitectura)
 - [Requisitos](#requisitos)
@@ -130,6 +131,33 @@ permisos que necesita (acceso a internet e instalar, desinstalar y listar apps).
 Detalles, guía de publicación y modelo de seguridad: [docs/tienda.md](docs/tienda.md)
 y [ADR-006](docs/decisiones/ADR-006-krelzox-store.md).
 
+## Krelzox Remote
+
+Una app de TV aparte (`dev.krelzox.remote`) para ver y controlar la tele desde
+el navegador de un móvil o un PC de la misma red local, sin instalar nada en
+ellos.
+
+- Pantalla en directo en el navegador y tres formas de controlarla: **Táctil**
+  (tocar la imagen), **Trackpad** (mover un cursor y hacer clic) y **Mando**
+  (D-pad y OK), además de Atrás, Inicio, Recientes, multimedia y volumen,
+  escribir en el campo de texto enfocado y abrir las apps instaladas.
+- **Apagado por defecto y solo local:** el servidor se enlaza a la dirección
+  privada de la tele y rechaza cualquier otra subred, comprueba `Host` y
+  `Origin` y sirve su página desde dentro del APK.
+- **Dos aprobaciones:** emparejar requiere el PIN de un solo uso que muestra la
+  tele y solo permite ver; el control lo pide el navegador y se aprueba en la
+  tele, con «Denegar» seleccionado por defecto. El control caduca tras 10
+  minutos sin usarse.
+- Todo se apaga desde la tele: el servicio entero, ver, controlar o cada
+  navegador por separado.
+
+El launcher conserva su único permiso; el mando es una app aparte con permisos
+de red, red local y captura de pantalla, y un servicio de accesibilidad que el
+usuario activa una vez para permitir el control. El tráfico no va cifrado:
+úsalo solo en redes de confianza. Detalles y modelo de seguridad:
+[docs/mando-remoto.md](docs/mando-remoto.md) y
+[ADR-007](docs/decisiones/ADR-007-krelzox-remote.md).
+
 ## Tecnología
 
 | Área | Tecnología |
@@ -138,13 +166,14 @@ y [ADR-006](docs/decisiones/ADR-006-krelzox-store.md).
 | Interfaz | Jetpack Compose (BOM 2026.09) + Compose for TV Material 1.1, tipografía Inter |
 | Estado y almacenamiento | AndroidX Lifecycle / ViewModel, corrutinas de Kotlin, DataStore |
 | Tienda | Índice F-Droid v1 (JAR firmado), lector en streaming de Gson, PackageInstaller de Android |
+| Mando | Servidor HTTP + WebSocket propio, MediaProjection + JPEG, AccessibilityService, página HTML/JS sin dependencias |
 | Compilación | Gradle 9.9 (wrapper), Android Gradle Plugin 9.5, R8, Baseline Profiles |
 | Pruebas | JUnit 4 (unitarias), UI Automator + AndroidX Test (dispositivo), Macrobenchmark |
 | CI | GitHub Actions, Dependabot, CodeQL, grafo de dependencias |
 
 ## Arquitectura
 
-Krelzox son dos apps Android, el launcher y la tienda, divididas en módulos de
+Krelzox son tres apps Android, el launcher, la tienda y el mando, divididas en módulos de
 Gradle con dependencias en un solo sentido:
 
 ```
@@ -154,6 +183,8 @@ app/                 Launcher: actividad, shell, Inicio / Biblioteca / Multimedi
  └─ core/data/           Apps instaladas, favoritos, recientes, red, métricas del sistema
 store/               Krelzox Store: repositorios, catálogo, instalación verificada, interfaz
                      (usa core/designsystem)
+remote/              Krelzox Remote: servidor en la LAN, emparejamiento, captura, entrada por
+                     accesibilidad, panel de la tele y página web (usa core/designsystem)
 baselineprofile/     Generador del Baseline Profile y benchmarks de arranque (en el dispositivo)
 docs/                Arquitectura, identidad visual, hoja de ruta, ADR (español), imágenes
 scripts/             Scripts de ayuda (acceso remoto)
@@ -163,7 +194,8 @@ El launcher lee la información del sistema en local (`/proc`, zonas térmicas,
 `PackageManager`, `ConnectivityManager`) y guarda las preferencias solo en el
 dispositivo; no tiene backend ni abre puertos de red. La tienda descarga por
 HTTPS índices firmados y APK, y entrega al instalador del sistema solo los APK
-verificados; tampoco tiene backend. Detalles:
+verificados; tampoco tiene backend. El mando abre un servidor en la red local
+solo mientras el usuario lo tiene activado. Detalles:
 [docs/arquitectura.md](docs/arquitectura.md).
 
 ## Requisitos
@@ -241,9 +273,10 @@ Puede que haya que reactivar el ADB por red tras reiniciar
 
 ## Acceso remoto desde la red local
 
-Krelzox no tiene interfaz web: es una app de TV. Para verlo y controlarlo desde
-un PC de la misma red, usa **scrcpy**, que replica la pantalla de la tele y
-envía el teclado y el ratón por ADB.
+Para el uso diario, [Krelzox Remote](#krelzox-remote) muestra y controla la
+tele desde cualquier navegador. Para desarrollo, o cuando hace falta acceso
+completo por ADB, usa **scrcpy**, que replica la pantalla de la tele y envía el
+teclado y el ratón por ADB.
 
 Instálalo una vez (Windows: `winget install --id Genymobile.scrcpy -e`; otros
 sistemas: ver la documentación de scrcpy) y ejecuta desde la raíz del repositorio:
@@ -300,7 +333,7 @@ de desarrollador › *Revocar autorizaciones de depuración*.
 | Comando | Qué hace | Dónde |
 |---|---|---|
 | `./gradlew testDebugUnitTest lintDebug` | Tests unitarios y lint | CI + local |
-| `./gradlew assembleRelease` | Build release del launcher y la tienda (R8; Baseline Profile en el launcher) | CI + local |
+| `./gradlew assembleRelease` | Build release del launcher, la tienda y el mando (R8; Baseline Profile en el launcher) | CI + local |
 | `./gradlew :app:connectedDebugAndroidTest` | Pruebas de UI de foco con D-pad | Dispositivo |
 | `./gradlew :app:generateBaselineProfile -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true` | Regenera el Baseline Profile (el flag conserva Krelzox y sus datos) | Dispositivo |
 | `./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest` | Macrobenchmark de arranque en frío | Dispositivo |
@@ -320,7 +353,7 @@ La documentación detallada está en **español**:
 
 - [Arquitectura](docs/arquitectura.md) · [Identidad visual](docs/identidad-visual.md) · [Hoja de ruta](docs/hoja-de-ruta.md)
 - [Entorno de desarrollo](docs/entorno.md) · [Rendimiento y pruebas en dispositivo](docs/rendimiento.md)
-- [Recuperación del dispositivo](docs/recuperacion.md) · [Dispositivo de referencia](docs/dispositivo.md) · [Krelzox Store](docs/tienda.md)
+- [Recuperación del dispositivo](docs/recuperacion.md) · [Dispositivo de referencia](docs/dispositivo.md) · [Krelzox Store](docs/tienda.md) · [Krelzox Remote](docs/mando-remoto.md)
 - Registros de decisiones de arquitectura: [docs/decisiones/](docs/decisiones/)
 
 ## Contribuir

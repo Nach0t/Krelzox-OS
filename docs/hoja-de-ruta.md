@@ -13,6 +13,7 @@
 | 7 | Ajustes › Apariencia: 4 temas (Ion, Aurora, Ámbar, Jade) aplicados al instante en todo Krelzox; salvapantallas propio (`DreamService`) con protección contra marcado; mosaico Raspberry Pi con guía a los ajustes de KonstaKANG. Sin permisos nuevos. [ADR-005](decisiones/ADR-005-apariencia-salvapantallas-ajustes.md) | ✅ Hecho |
 | 8 | Opcional: canales TvProvider y «Seguir viendo» (requiere `READ_EPG_DATA`; hoy ninguna app de la Pi publica canales) | Pendiente |
 | 9 | **Krelzox Store** (app aparte `dev.krelzox.store`): catálogo de repositorios F-Droid con índice firmado y huella fijada, búsqueda, categorías, fichas, instalación/actualización/desinstalación reales con verificación SHA-256 y de firma, biblioteca, favoritos e historial. [ADR-006](decisiones/ADR-006-krelzox-store.md) · [tienda.md](tienda.md) | ✅ Hecho. Pendiente: reseñas, panel web y notificaciones (requieren servidor) |
+| 10 | **Krelzox Remote** (app aparte `dev.krelzox.remote`): ver y controlar la tele desde un navegador de la red local; servidor solo en la LAN, PIN de un solo uso, control aprobado en la tele, captura MediaProjection + JPEG y entrada por servicio de accesibilidad. [ADR-007](decisiones/ADR-007-krelzox-remote.md) · [mando-remoto.md](mando-remoto.md) | ✅ Hecho. Pendiente: vídeo comprimido, audio y TLS |
 
 Cada etapa requiere autorización explícita antes de empezar.
 
