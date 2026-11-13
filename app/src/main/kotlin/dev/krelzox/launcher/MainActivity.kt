@@ -89,6 +89,11 @@ class MainActivity : ComponentActivity() {
                         onSystemSettings = { AppLauncher.openSettings(this) },
                         onSelectAccent = { (application as KrelzoxApp).appearance.select(it) },
                         showRaspberrySettings = DeviceSettings.hasRaspberrySettings(this),
+                        hasKrelzoxRemote = { DeviceSettings.hasKrelzoxRemote(this) },
+                        onKrelzoxRemote = {
+                            val panel = Intent().setClassName(DeviceSettings.KRELZOX_REMOTE_PACKAGE, DeviceSettings.KRELZOX_REMOTE_PANEL)
+                            runCatching { startActivity(panel) }
+                        },
                     )
                 }
                 HomeScreen(

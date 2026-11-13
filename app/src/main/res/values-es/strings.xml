@@ -186,6 +186,7 @@
     <string name="settings_appearance_desc">Tema %1$s · salvapantallas</string>
     <string name="settings_raspberry">Raspberry Pi</string>
     <string name="settings_raspberry_desc">KonstaKANG</string>
+    <string name="settings_remote_desc">Ver y controlar desde el móvil</string>
     <string name="raspberry_title">Ajustes de Raspberry Pi</string>
     <string name="raspberry_body">Android TV solo permite abrirlos desde sus propios Ajustes. Los encontrarás en:</string>
     <string name="raspberry_path">Sistema › Raspberry Pi settings</string>

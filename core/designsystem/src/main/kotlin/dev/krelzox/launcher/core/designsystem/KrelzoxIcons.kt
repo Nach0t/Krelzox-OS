@@ -268,6 +268,16 @@ object KrelzoxIcons {
         }
     }
 
+    /** Krelzox Remote: a screen with two signal arcs. */
+    val Remote: ImageVector by lazy {
+        lineIcon("Remote") {
+            rect(3f, 6f, 14f, 10f)
+            moveTo(7f, 19.5f); lineTo(13f, 19.5f)
+            moveTo(18f, 3.5f); arcTo(3f, 3f, 0f, false, true, 21f, 6.5f)
+            moveTo(18f, 0.8f); arcTo(5.7f, 5.7f, 0f, false, true, 23.2f, 6.5f)
+        }
+    }
+
     /** Selected option: a check mark. */
     val Check: ImageVector by lazy {
         lineIcon("Check") { moveTo(5f, 12.5f); lineTo(10f, 17.5f); lineTo(19f, 7f) }

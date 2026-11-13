@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.KrelzoxRemote" parent="android:Theme.DeviceDefault.NoActionBar">
+        <item name="android:windowBackground">@color/remote_background</item>
+        <item name="android:windowSplashScreenBackground">@color/remote_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_remote_foreground</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

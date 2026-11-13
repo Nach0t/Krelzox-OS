@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TV banner (320x180 dp). VectorRaster ignored: minSdk is 31. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="VectorRaster"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <path android:fillColor="@color/remote_background" android:pathData="M0,0 H320 V180 H0 Z" />
+    <path
+        android:pathData="M143,52 H177 A3,3 0 0 1 180,55 V82 A3,3 0 0 1 177,85 H143 A3,3 0 0 1 140,82 V55 A3,3 0 0 1 143,52 Z M150,90 H170"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient android:type="linear" android:startX="140" android:startY="52" android:endX="180" android:endY="90"
+                android:startColor="@color/remote_ion_start" android:endColor="@color/remote_ion_end" />
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="@color/remote_ion_end"
+        android:pathData="M151.6,59.5 L155.38,59.5 L155.38,67.06 L163.36,59.5 L168.4,59.5 L160.42,67.9 L168.4,77.98 L163.57,77.98 L157.69,70.21 L155.38,72.52 L155.38,77.98 L151.6,77.98 Z" />
+    <path android:pathData="M120,118 H200 V120 H120 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="120" android:startY="119" android:endX="200" android:endY="119"
+                android:startColor="@color/remote_ion_start" android:endColor="@color/remote_ion_end" />
+        </aapt:attr>
+    </path>
+</vector>

@@ -75,6 +75,9 @@ data class ShellCallbacks(
     val onSelectAccent: (KrelzoxAccent) -> Unit = {},
     /** KonstaKANG's Raspberry Pi settings exist on this device: show their tile. */
     val showRaspberrySettings: Boolean = false,
+    /** Checked on every visit to Settings, so the tile appears as soon as it is installed. */
+    val hasKrelzoxRemote: () -> Boolean = { false },
+    val onKrelzoxRemote: () -> Unit = {},
 )
 
 @Composable
@@ -327,6 +330,7 @@ fun KrelzoxShell(
                                 onHomeApp = callbacks.onHomeAppSettings,
                                 onSystemSettings = callbacks.onSystemSettings,
                                 onAbout = { aboutOpen = true },
+                                onRemote = if (callbacks.hasKrelzoxRemote()) callbacks.onKrelzoxRemote else null,
                             ),
                             metrics = system.metrics,
                             performanceTile = performanceTile,

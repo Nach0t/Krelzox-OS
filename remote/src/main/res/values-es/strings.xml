@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_subtitle">Mira y controla esta tele desde un navegador de tu red local</string>
+    <string name="remote_switch_hint">Pulsa OK para activarlo. Android te pedirá permitir la captura de pantalla.</string>
+
+    <string name="remote_state_on">Activado</string>
+    <string name="remote_state_off">Desactivado</string>
+    <string name="state_allowed">Permitido</string>
+    <string name="state_blocked">Bloqueado</string>
+    <string name="state_active">Activo</string>
+    <string name="state_inactive">Sin activar</string>
+
+    <string name="setting_view">Ver la pantalla</string>
+    <string name="setting_view_hint">Los navegadores emparejados pueden ver la pantalla</string>
+    <string name="setting_control">Control remoto</string>
+    <string name="setting_control_hint">Cada navegador debe aprobarse además en esta tele</string>
+    <string name="setting_accessibility">Servicio de control</string>
+    <string name="setting_accessibility_hint">Necesario para controlar. Abre Ajustes › Accesibilidad › Krelzox Remote.</string>
+    <string name="setting_quality">Calidad de la transmisión</string>
+    <string name="setting_quality_hint">Pulsa OK para cambiarla. Menos calidad usa menos Wi-Fi.</string>
+    <string name="quality_low">Baja · 960×540 · 15 fps</string>
+    <string name="quality_medium">Media · 1280×720 · 24 fps</string>
+    <string name="quality_high">Alta · 1920×1080 · 30 fps</string>
+
+    <string name="devices_title">Dispositivos conectados</string>
+    <string name="devices_none">No hay ningún navegador emparejado.</string>
+    <string name="devices_stop_all">Detener todas las sesiones</string>
+    <string name="devices_stop_all_hint">Desconecta todos los navegadores y cambia el PIN</string>
+    <string name="client_disconnect">Desconectar</string>
+    <string name="client_connected">Conectado</string>
+    <string name="client_idle">Emparejado, sin conexión</string>
+    <string name="client_view_only">solo ver</string>
+    <string name="client_control_requested">pide el control</string>
+    <string name="client_control_granted">puede controlar</string>
+    <string name="client_control_denied">control denegado</string>
+
+    <string name="address_off">Activa Krelzox Remote para obtener una dirección.</string>
+    <string name="address_open">ÁBRELA EN TU TELÉFONO O PC</string>
+    <string name="address_pin">PIN</string>
+    <string name="address_lan_only">Solo pueden conectarse dispositivos de esta red local. No se expone nada a internet.</string>
+
+    <string name="error_no_lan">Esta tele no está conectada a una red local.</string>
+    <string name="error_port">No hay ningún puerto libre entre 8080 y 8089.</string>
+    <string name="error_capture_denied">No se permitió la captura de pantalla.</string>
+    <string name="error_capture_ended">La captura de pantalla terminó. Vuelve a activarlo.</string>
+    <string name="error_lan_denied">No se permitió el acceso a dispositivos de la red local: los navegadores no podrían conectarse.</string>
+
+    <string name="overlay_pin_title">Krelzox Remote · PIN</string>
+    <string name="overlay_pin_from">Solicitado desde %1$s</string>
+    <string name="overlay_control_title">¿Permitir el control remoto?</string>
+    <string name="overlay_control_body">%1$s (%2$s) quiere controlar esta tele.</string>
+    <string name="overlay_allow">Permitir</string>
+    <string name="overlay_deny">Denegar</string>
+    <string name="toast_pin">PIN de Krelzox Remote: %1$s</string>
+
+    <string name="notification_channel">Krelzox Remote</string>
+    <string name="notification_text">Compartiendo la pantalla en la red local</string>
+
+    <string name="accessibility_label">Control de Krelzox Remote</string>
+    <string name="accessibility_description">Permite que los navegadores que apruebes en esta tele la controlen por tu red local: toques, D-pad, Atrás, Inicio, escribir y abrir apps. No hace nada mientras Krelzox Remote está desactivado o ningún navegador está aprobado, y no registra lo que haces.</string>
+</resources>

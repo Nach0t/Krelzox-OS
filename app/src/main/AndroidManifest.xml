@@ -14,6 +14,8 @@
         <!-- KonstaKANG's Raspberry Pi settings: only checked for, never opened directly
              (not exported). See ADR-005. -->
         <package android:name="com.konstakang.settings.device" />
+        <!-- Krelzox Remote panel, opened from Settings when installed (ADR-007). -->
+        <package android:name="dev.krelzox.remote" />
     </queries>
 
     <application

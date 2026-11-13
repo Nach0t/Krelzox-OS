@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0B0D12">
+<meta name="referrer" content="no-referrer">
+<title>Krelzox Remote</title>
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><img src="/icon.svg" alt="" width="22" height="22"><span>Krelzox Remote</span></div>
+  <div class="conn" id="conn"><span class="dot"></span><span id="conn-text" data-i18n="connecting">Connecting…</span></div>
+  <nav class="top-actions" id="top-actions" hidden>
+    <button class="icon-btn" id="btn-full" type="button" data-i18n-title="fullscreen" title="Full screen">⤢</button>
+    <button class="icon-btn" id="btn-logout" type="button" data-i18n-title="logout" title="Disconnect">⏻</button>
+  </nav>
+</header>
+
+<main>
+  <!-- Pairing -->
+  <section id="pair" class="card pair" hidden>
+    <h1 data-i18n="pair_title">Connect to your TV</h1>
+    <p data-i18n="pair_text">Type the PIN shown on the TV. It appears in a corner of the screen and in Settings › Krelzox Remote.</p>
+    <form id="pair-form" autocomplete="off">
+      <input id="pin" name="pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="••••••" aria-label="PIN" required>
+      <button class="primary" type="submit" data-i18n="pair_button">Connect</button>
+    </form>
+    <p class="error" id="pair-error" role="alert"></p>
+    <p class="muted small" data-i18n="lan_only">Local network only. Nothing leaves your home network.</p>
+  </section>
+
+  <!-- Remote -->
+  <section id="remote" hidden>
+    <div class="screen-wrap" id="screen-wrap">
+      <img id="screen" alt="" draggable="false">
+      <div class="cursor" id="cursor" hidden></div>
+      <div class="screen-msg" id="screen-msg" data-i18n="waiting_image">Waiting for the image…</div>
+    </div>
+
+    <div class="banner" id="control-banner" hidden>
+      <span id="control-text"></span>
+      <button class="primary" id="btn-request" type="button" data-i18n="request_control">Request control</button>
+    </div>
+
+    <div class="controls" id="controls" hidden>
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" data-mode="touch" class="tab active" data-i18n="mode_touch">Touch</button>
+        <button type="button" role="tab" data-mode="trackpad" class="tab" data-i18n="mode_trackpad">Trackpad</button>
+        <button type="button" role="tab" data-mode="dpad" class="tab" data-i18n="mode_dpad">Remote</button>
+      </div>
+
+      <p class="hint" id="hint-touch" data-i18n="hint_touch">Tap the image to tap the TV. Drag to swipe, hold for a long press. With a mouse: click, double-click, right-click and wheel.</p>
+
+      <div class="mode" id="mode-trackpad" hidden>
+        <div class="pad" id="pad"><span data-i18n="pad_text">Move one finger to move the cursor · tap to click · two fingers to scroll</span></div>
+        <div class="row">
+          <button type="button" data-click="tap" data-i18n="left_click">Left click</button>
+          <button type="button" data-click="doubletap" data-i18n="double_click">Double click</button>
+          <button type="button" data-click="longpress" data-i18n="right_click">Right click</button>
+        </div>
+      </div>
+
+      <div class="mode" id="mode-dpad" hidden>
+        <div class="dpad">
+          <button type="button" class="d up" data-key="up" aria-label="Up">▲</button>
+          <button type="button" class="d left" data-key="left" aria-label="Left">◀</button>
+          <button type="button" class="d ok" data-key="center">OK</button>
+          <button type="button" class="d right" data-key="right" aria-label="Right">▶</button>
+          <button type="button" class="d down" data-key="down" aria-label="Down">▼</button>
+        </div>
+      </div>
+
+      <div class="quick">
+        <button type="button" data-key="back" data-i18n="back">Back</button>
+        <button type="button" data-key="home" data-i18n="home">Home</button>
+        <button type="button" data-key="recents" data-i18n="recents">Recents</button>
+        <button type="button" data-key="play_pause" aria-label="Play/Pause">⏯</button>
+        <button type="button" data-key="volume_down" aria-label="Volume down">🔉</button>
+        <button type="button" data-key="volume_up" aria-label="Volume up">🔊</button>
+        <button type="button" data-key="mute" aria-label="Mute">🔇</button>
+        <button type="button" id="btn-apps" data-i18n="apps">Apps</button>
+      </div>
+
+      <div class="keyboard">
+        <input id="typer" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-placeholder="type_here" placeholder="Type here to write on the TV">
+        <button type="button" id="btn-enter" data-i18n="enter">Enter</button>
+      </div>
+      <p class="hint small" data-i18n="hint_keyboard">On a PC you can also use the arrow keys, Enter and Esc directly.</p>
+    </div>
+  </section>
+
+  <!-- Apps sheet -->
+  <section id="apps" class="sheet" hidden>
+    <div class="sheet-head">
+      <h2 data-i18n="apps">Apps</h2>
+      <button type="button" class="icon-btn" id="btn-apps-close" aria-label="Close">✕</button>
+    </div>
+    <div class="apps-grid" id="apps-grid"></div>
+  </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

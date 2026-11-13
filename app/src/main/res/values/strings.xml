@@ -186,6 +186,8 @@
     <string name="settings_appearance_desc">%1$s theme · screensaver</string>
     <string name="settings_raspberry">Raspberry Pi</string>
     <string name="settings_raspberry_desc">KonstaKANG</string>
+    <string name="settings_remote" translatable="false">Krelzox Remote</string>
+    <string name="settings_remote_desc">View and control from your phone</string>
     <string name="raspberry_title">Raspberry Pi settings</string>
     <string name="raspberry_body">Android TV only opens them from its own Settings. You will find them in:</string>
     <string name="raspberry_path">System › Raspberry Pi settings</string>

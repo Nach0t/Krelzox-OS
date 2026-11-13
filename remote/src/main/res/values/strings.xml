@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remote_name" translatable="false">Krelzox Remote</string>
+    <string name="remote_subtitle">See and control this TV from a browser on your local network</string>
+    <string name="remote_switch_hint">Press OK to switch on. Android will ask you to allow screen capture.</string>
+
+    <string name="remote_state_on">On</string>
+    <string name="remote_state_off">Off</string>
+    <string name="state_allowed">Allowed</string>
+    <string name="state_blocked">Blocked</string>
+    <string name="state_active">Active</string>
+    <string name="state_inactive">Not enabled</string>
+
+    <string name="setting_view">Screen viewing</string>
+    <string name="setting_view_hint">Paired browsers can watch the screen</string>
+    <string name="setting_control">Remote control</string>
+    <string name="setting_control_hint">Each browser must still be approved on this TV</string>
+    <string name="setting_accessibility">Control service</string>
+    <string name="setting_accessibility_hint">Needed for remote input. Opens Settings › Accessibility › Krelzox Remote.</string>
+    <string name="setting_quality">Stream quality</string>
+    <string name="setting_quality_hint">Press OK to change. Lower quality uses less Wi-Fi.</string>
+    <string name="quality_low">Low · 960×540 · 15 fps</string>
+    <string name="quality_medium">Medium · 1280×720 · 24 fps</string>
+    <string name="quality_high">High · 1920×1080 · 30 fps</string>
+
+    <string name="devices_title">Connected devices</string>
+    <string name="devices_none">No browser is paired.</string>
+    <string name="devices_stop_all">Stop all sessions</string>
+    <string name="devices_stop_all_hint">Disconnects every browser and changes the PIN</string>
+    <string name="client_disconnect">Disconnect</string>
+    <string name="client_connected">Connected</string>
+    <string name="client_idle">Paired, not connected</string>
+    <string name="client_view_only">view only</string>
+    <string name="client_control_requested">asks for control</string>
+    <string name="client_control_granted">can control</string>
+    <string name="client_control_denied">control denied</string>
+
+    <string name="address_off">Switch Krelzox Remote on to get an address.</string>
+    <string name="address_open">OPEN ON YOUR PHONE OR PC</string>
+    <string name="address_pin">PIN</string>
+    <string name="address_lan_only">Only devices on this local network can connect. Nothing is exposed to the internet.</string>
+
+    <string name="error_no_lan">This TV is not connected to a local network.</string>
+    <string name="error_port">No free port between 8080 and 8089.</string>
+    <string name="error_capture_denied">Screen capture was not allowed.</string>
+    <string name="error_capture_ended">Screen capture ended. Switch it on again.</string>
+    <string name="error_lan_denied">Access to devices on the local network was not allowed: browsers could not connect.</string>
+
+    <string name="overlay_pin_title">Krelzox Remote · PIN</string>
+    <string name="overlay_pin_from">Requested from %1$s</string>
+    <string name="overlay_control_title">Allow remote control?</string>
+    <string name="overlay_control_body">%1$s (%2$s) wants to control this TV.</string>
+    <string name="overlay_allow">Allow</string>
+    <string name="overlay_deny">Deny</string>
+    <string name="toast_pin">Krelzox Remote PIN: %1$s</string>
+
+    <string name="notification_channel">Krelzox Remote</string>
+    <string name="notification_text">Sharing the screen on the local network</string>
+
+    <string name="accessibility_label">Krelzox Remote control</string>
+    <string name="accessibility_description">Lets browsers you approve on this TV control it over your local network: taps, the D-pad, Back, Home, typing and opening apps. It does nothing while Krelzox Remote is off or no browser has been approved, and it does not record what you do.</string>
+</resources>

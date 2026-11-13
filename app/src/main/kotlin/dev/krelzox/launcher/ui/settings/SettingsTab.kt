@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,6 +73,8 @@ data class SettingsActions(
     val onHomeApp: () -> Unit,
     val onSystemSettings: () -> Unit,
     val onAbout: () -> Unit,
+    /** Null when Krelzox Remote is not installed: the tile is hidden. */
+    val onRemote: (() -> Unit)? = null,
 )
 
 @Composable
@@ -80,7 +84,8 @@ fun SettingsTab(
     performanceTile: FocusRequester,
     appearanceTile: FocusRequester,
 ) {
-    Column(Modifier.fillMaxSize().padding(top = KrelzoxSpacing.Small)) {
+    // Scrolls with focus when a third row of tiles is present.
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(top = KrelzoxSpacing.Small)) {
         Text(
             stringResource(R.string.tab_settings),
             style = MaterialTheme.typography.headlineMedium,
@@ -110,6 +115,11 @@ fun SettingsTab(
                     }
                     SettingsTile(tile, KrelzoxIcons.Settings, R.string.settings_android, R.string.settings_system_desc, actions.onSystemSettings)
                     SettingsTile(tile, KrelzoxIcons.Info, R.string.settings_about, R.string.settings_about_desc, actions.onAbout)
+                }
+                actions.onRemote?.let { onRemote ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(KrelzoxGrid.Gap)) {
+                        SettingsTile(tile, KrelzoxIcons.Remote, R.string.settings_remote, R.string.settings_remote_desc, onRemote)
+                    }
                 }
             }
         }
