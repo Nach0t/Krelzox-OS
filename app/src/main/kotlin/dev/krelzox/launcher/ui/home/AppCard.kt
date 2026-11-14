@@ -52,6 +52,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxIcons
 import dev.krelzox.launcher.core.designsystem.KrelzoxMotion
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import dev.krelzox.launcher.ui.AppArtLoader
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 internal val CardShape = RoundedCornerShape(KrelzoxDimens.CardCorner)
 private val FavoriteDotSize = 8.dp
@@ -117,7 +118,7 @@ fun AppCard(
             onClick = onClick,
             onLongClick = onShowActions,
             interactionSource = interaction,
-            modifier = Modifier
+            modifier = Modifier.touchClick(onClick, onShowActions)
                 .fillMaxWidth()
                 .aspectRatio(16f / 9f)
                 .onPreviewKeyEvent { event ->

@@ -38,6 +38,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxGrid
 import dev.krelzox.launcher.core.designsystem.KrelzoxIcons
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import dev.krelzox.store.R
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 @Composable
 fun SettingsScreen(viewModel: StoreViewModel, actions: StoreActions) {
@@ -127,7 +128,7 @@ private fun Title(text: String) {
 private fun SettingRow(title: String, lines: List<String>, value: String, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        modifier = Modifier.width(1000.dp),
+        modifier = Modifier.touchClick(onClick).width(1000.dp),
         shape = ClickableSurfaceDefaults.shape(TileShape),
         colors = ClickableSurfaceDefaults.colors(containerColor = KrelzoxColors.Surface, focusedContainerColor = KrelzoxColors.SurfaceRaised),
         border = ClickableSurfaceDefaults.border(

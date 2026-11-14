@@ -32,6 +32,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import dev.krelzox.launcher.ui.AppArtLoader
 import dev.krelzox.launcher.ui.home.AppActions
 import dev.krelzox.launcher.ui.home.AppCard
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 
 /** Full-catalog grid used by Biblioteca and Multimedia. */
@@ -109,6 +110,7 @@ private fun EmptyState(
         Spacer(Modifier.height(KrelzoxSpacing.Large))
         Button(
             onClick = onAction,
+            modifier = Modifier.touchClick(onAction),
             colors = KrelzoxButtonDefaults.colors(),
             border = KrelzoxButtonDefaults.border(),
             shape = KrelzoxButtonDefaults.shape(),

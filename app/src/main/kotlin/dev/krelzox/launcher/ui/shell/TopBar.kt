@@ -56,6 +56,7 @@ import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 enum class KrelzoxTab(val label: Int, val icon: ImageVector) {
     Home(R.string.tab_home, KrelzoxIcons.Home),
@@ -159,7 +160,7 @@ private fun NavPill(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.onFocusChanged { if (it.isFocused) onFocused() },
+        modifier = modifier.touchClick(onClick).onFocusChanged { if (it.isFocused) onFocused() },
         shape = ClickableSurfaceDefaults.shape(PillShape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = if (selected) KrelzoxColors.Surface else KrelzoxColors.Background.copy(alpha = 0f),

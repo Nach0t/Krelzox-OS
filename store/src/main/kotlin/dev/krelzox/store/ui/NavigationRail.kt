@@ -33,6 +33,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxColors
 import dev.krelzox.launcher.core.designsystem.KrelzoxIcons
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import dev.krelzox.store.R
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 private data class RailEntry(val section: Section, val label: Int, val icon: ImageVector)
 
@@ -99,7 +100,7 @@ private fun RailItem(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.touchClick(onClick).fillMaxWidth(),
         shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(12.dp)),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = if (selected) KrelzoxColors.SurfaceRaised else androidx.compose.ui.graphics.Color.Transparent,

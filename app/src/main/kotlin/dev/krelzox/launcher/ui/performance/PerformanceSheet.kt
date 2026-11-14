@@ -56,6 +56,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxLineChart
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import dev.krelzox.launcher.core.designsystem.KrelzoxSparkline
 import kotlinx.coroutines.flow.Flow
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 private val SheetWidth = 600.dp
 private val ChipShape = RoundedCornerShape(14.dp)
@@ -123,7 +124,7 @@ fun PerformanceSheet(metrics: Flow<SystemMetrics>, onOpenCenter: () -> Unit, onD
 
             Button(
                 onClick = onOpenCenter,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.touchClick(onOpenCenter).fillMaxWidth(),
                 colors = KrelzoxButtonDefaults.colors(),
                 border = KrelzoxButtonDefaults.border(),
                 shape = KrelzoxButtonDefaults.shape(),
@@ -153,7 +154,7 @@ private fun MetricChip(
 ) {
     Surface(
         onClick = onFocused,
-        modifier = modifier
+        modifier = modifier.touchClick(onFocused)
             .height(76.dp)
             .onFocusChanged { if (it.isFocused) onFocused() },
         shape = ClickableSurfaceDefaults.shape(ChipShape),

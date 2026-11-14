@@ -60,6 +60,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxGrid
 import dev.krelzox.launcher.core.designsystem.KrelzoxIcons
 import dev.krelzox.launcher.core.designsystem.KrelzoxMotion
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 private val TileShape = RoundedCornerShape(KrelzoxDimens.CardCorner)
 
@@ -242,7 +243,7 @@ private fun SettingsTile(width: Dp, icon: ImageVector, title: Int, subtitle: Int
 private fun SettingsSurface(width: Dp, onClick: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Surface(
         onClick = onClick,
-        modifier = modifier.width(width).height(138.dp),
+        modifier = modifier.touchClick(onClick).width(width).height(138.dp),
         shape = ClickableSurfaceDefaults.shape(TileShape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = KrelzoxColors.Surface,
@@ -288,7 +289,7 @@ fun AboutDialog(appCount: Int, onDismiss: () -> Unit) {
             )
             Button(
                 onClick = onDismiss,
-                modifier = Modifier.fillMaxWidth().padding(top = KrelzoxSpacing.Small).focusRequester(close),
+                modifier = Modifier.touchClick(onDismiss).fillMaxWidth().padding(top = KrelzoxSpacing.Small).focusRequester(close),
                 colors = KrelzoxButtonDefaults.colors(),
                 border = KrelzoxButtonDefaults.border(),
                 shape = KrelzoxButtonDefaults.shape(),
@@ -342,14 +343,14 @@ fun RaspberrySettingsDialog(onOpenSettings: () -> Unit, onDismiss: () -> Unit) {
             ) {
                 Button(
                     onClick = onOpenSettings,
-                    modifier = Modifier.weight(1f).focusRequester(open),
+                    modifier = Modifier.touchClick(onOpenSettings).weight(1f).focusRequester(open),
                     colors = KrelzoxButtonDefaults.colors(),
                     border = KrelzoxButtonDefaults.border(),
                     shape = KrelzoxButtonDefaults.shape(),
                 ) { Text(stringResource(R.string.action_open_settings)) }
                 Button(
                     onClick = onDismiss,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.touchClick(onDismiss).weight(1f),
                     colors = KrelzoxButtonDefaults.colors(),
                     border = KrelzoxButtonDefaults.border(),
                     shape = KrelzoxButtonDefaults.shape(),

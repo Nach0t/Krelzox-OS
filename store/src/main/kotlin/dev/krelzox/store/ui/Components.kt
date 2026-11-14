@@ -64,6 +64,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxMotion
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import dev.krelzox.store.install.Task
 import dev.krelzox.store.model.CatalogApp
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 internal val TileShape = RoundedCornerShape(KrelzoxDimens.CardCorner)
 
@@ -125,7 +126,7 @@ fun AppTile(
         Card(
             onClick = onClick,
             interactionSource = interaction,
-            modifier = Modifier.fillMaxWidth().aspectRatio(16f / 9f),
+            modifier = Modifier.touchClick(onClick).fillMaxWidth().aspectRatio(16f / 9f),
             shape = CardDefaults.shape(TileShape),
             colors = CardDefaults.colors(containerColor = KrelzoxColors.Surface, focusedContainerColor = KrelzoxColors.SurfaceRaised),
             scale = CardDefaults.scale(focusedScale = KrelzoxMotion.FOCUS_SCALE),
@@ -261,7 +262,7 @@ fun StoreButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.touchClick(onClick),
         shape = KrelzoxButtonDefaults.shape(),
         colors = if (primary) {
             androidx.tv.material3.ButtonDefaults.colors(

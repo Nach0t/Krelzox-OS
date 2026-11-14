@@ -58,6 +58,7 @@ import dev.krelzox.store.data.Operation
 import dev.krelzox.store.data.Outcome
 import dev.krelzox.store.install.Task
 import dev.krelzox.store.model.CatalogApp
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 private const val ROW_LIMIT = 20
 private val RowTileWidth = 196.dp
@@ -168,7 +169,7 @@ fun CategoriesScreen(viewModel: StoreViewModel) = WithCatalog(viewModel) { state
         items(state.catalog.categories, key = { it.first }) { (name, count) ->
             Card(
                 onClick = { viewModel.open(Route.Category(name)) },
-                modifier = Modifier.fillMaxWidth().aspectRatio(2.6f),
+                modifier = Modifier.touchClick({ viewModel.open(Route.Category(name)) }).fillMaxWidth().aspectRatio(2.6f),
                 shape = CardDefaults.shape(TileShape),
                 colors = CardDefaults.colors(containerColor = KrelzoxColors.Surface, focusedContainerColor = KrelzoxColors.SurfaceRaised),
                 scale = CardDefaults.scale(focusedScale = KrelzoxMotion.FOCUS_SCALE),
@@ -312,7 +313,7 @@ fun UpdatesScreen(viewModel: StoreViewModel) = WithCatalog(viewModel) { _ ->
 private fun ListRow(viewModel: StoreViewModel, app: CatalogApp, line: String, task: Task?) {
     Surface(
         onClick = { viewModel.open(Route.App(app.packageName)) },
-        modifier = Modifier.fillMaxWidth().padding(horizontal = KrelzoxGrid.FocusInset),
+        modifier = Modifier.touchClick({ viewModel.open(Route.App(app.packageName)) }).fillMaxWidth().padding(horizontal = KrelzoxGrid.FocusInset),
         shape = androidx.tv.material3.ClickableSurfaceDefaults.shape(TileShape),
         colors = androidx.tv.material3.ClickableSurfaceDefaults.colors(
             containerColor = KrelzoxColors.Surface,

@@ -57,6 +57,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxLineChart
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import kotlinx.coroutines.flow.Flow
 import java.util.Locale
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 private enum class Category(val label: Int, val icon: ImageVector) {
     Processor(R.string.cat_processor, KrelzoxIcons.Cpu),
@@ -139,7 +140,7 @@ private fun railValue(c: Category, m: SystemMetrics?, net: NetworkDetails?, loca
 private fun RailItem(icon: ImageVector, label: String, value: String, selected: Boolean, onFocused: () -> Unit, modifier: Modifier) {
     Surface(
         onClick = onFocused,
-        modifier = modifier.fillMaxWidth().height(52.dp).onFocusChanged { if (it.isFocused) onFocused() },
+        modifier = modifier.touchClick(onFocused).fillMaxWidth().height(52.dp).onFocusChanged { if (it.isFocused) onFocused() },
         shape = ClickableSurfaceDefaults.shape(CardShape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = if (selected) KrelzoxColors.Surface else KrelzoxColors.Background.copy(alpha = 0f),

@@ -51,6 +51,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxDimens
 import dev.krelzox.launcher.core.designsystem.KrelzoxIcons
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import dev.krelzox.launcher.ui.screensaver.KrelzoxScreensaver
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 private val CardShape = RoundedCornerShape(KrelzoxDimens.CardCorner)
 private val PreviewShape = RoundedCornerShape(12.dp)
@@ -142,7 +143,7 @@ private fun SectionLabel(@StringRes text: Int) {
 private fun RowScope.ThemeCard(accent: KrelzoxAccent, selected: Boolean, onClick: () -> Unit, modifier: Modifier) {
     Surface(
         onClick = onClick,
-        modifier = modifier.weight(1f).height(132.dp),
+        modifier = modifier.touchClick(onClick).weight(1f).height(132.dp),
         shape = ClickableSurfaceDefaults.shape(CardShape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = KrelzoxColors.Surface,
@@ -244,7 +245,7 @@ private fun ScreensaverCard(onPreview: () -> Unit, onOpenSystemSettings: () -> U
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Button(
                 onClick = onPreview,
-                modifier = Modifier.focusRequester(previewButton),
+                modifier = Modifier.touchClick(onPreview).focusRequester(previewButton),
                 colors = KrelzoxButtonDefaults.colors(),
                 border = KrelzoxButtonDefaults.border(),
                 shape = KrelzoxButtonDefaults.shape(),
@@ -255,6 +256,7 @@ private fun ScreensaverCard(onPreview: () -> Unit, onOpenSystemSettings: () -> U
             }
             Button(
                 onClick = onOpenSystemSettings,
+                modifier = Modifier.touchClick(onOpenSystemSettings),
                 colors = KrelzoxButtonDefaults.colors(),
                 border = KrelzoxButtonDefaults.border(),
                 shape = KrelzoxButtonDefaults.shape(),

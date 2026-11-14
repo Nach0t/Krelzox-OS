@@ -29,6 +29,7 @@ import dev.krelzox.launcher.ui.performance.SystemSources
 import dev.krelzox.launcher.ui.shell.KrelzoxShell
 import dev.krelzox.launcher.ui.shell.ShellCallbacks
 import kotlinx.coroutines.flow.Flow
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 /**
  * Entry point of the home UI. Loading, error and empty states keep the minimal
@@ -75,7 +76,7 @@ private fun MessageWithSettings(text: String, onOpenSettings: () -> Unit) {
         Spacer(Modifier.height(KrelzoxSpacing.Medium))
         Button(
             onClick = onOpenSettings,
-            modifier = Modifier.focusRequester(button),
+            modifier = Modifier.touchClick(onOpenSettings).focusRequester(button),
             colors = KrelzoxButtonDefaults.colors(),
             border = KrelzoxButtonDefaults.border(),
             shape = KrelzoxButtonDefaults.shape(),

@@ -62,6 +62,7 @@ import dev.krelzox.remote.RemoteService
 import dev.krelzox.remote.RemoteStatus
 import dev.krelzox.remote.capture.Quality
 import dev.krelzox.remote.security.ControlState
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 /** Krelzox Remote panel on the TV: switch, address + QR + PIN, permissions, quality, devices. */
 class RemoteActivity : ComponentActivity() {
@@ -301,7 +302,7 @@ private fun Row_(
     val shape = RoundedCornerShape(KrelzoxDimens.CardCorner)
     Surface(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.touchClick(onClick).fillMaxWidth(),
         shape = ClickableSurfaceDefaults.shape(shape),
         colors = ClickableSurfaceDefaults.colors(
             containerColor = if (highlight) KrelzoxColors.SurfaceRaised else KrelzoxColors.Surface,

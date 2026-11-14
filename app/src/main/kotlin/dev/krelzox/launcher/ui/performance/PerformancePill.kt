@@ -35,6 +35,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxColors
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import kotlinx.coroutines.flow.Flow
 import java.util.Locale
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 private val PillShape = RoundedCornerShape(14.dp)
 
@@ -68,7 +69,7 @@ fun PerformancePill(metrics: Flow<SystemMetrics>, onOpen: () -> Unit, modifier: 
 
     Surface(
         onClick = onOpen,
-        modifier = modifier
+        modifier = modifier.touchClick(onOpen)
             .height(48.dp)
             .semantics { contentDescription = description },
         shape = ClickableSurfaceDefaults.shape(PillShape),

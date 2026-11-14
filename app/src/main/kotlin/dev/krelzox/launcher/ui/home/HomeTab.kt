@@ -59,6 +59,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxMotion
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import dev.krelzox.launcher.ui.AppArtLoader
 import kotlinx.coroutines.delay
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 private const val HOME_ROW_LIMIT = 12
 private const val ROW_SHIFT_DURATION_MS = 260
@@ -336,7 +337,7 @@ internal fun ActionCard(icon: androidx.compose.ui.graphics.vector.ImageVector, l
     Column(Modifier.width(width)) {
         Card(
             onClick = onClick,
-            modifier = Modifier
+            modifier = Modifier.touchClick(onClick)
                 .fillMaxWidth()
                 .aspectRatio(16f / 9f),
             shape = CardDefaults.shape(CardShape),

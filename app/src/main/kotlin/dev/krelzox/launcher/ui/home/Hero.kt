@@ -57,6 +57,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxMotion
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import dev.krelzox.launcher.ui.AppArt
 import dev.krelzox.launcher.ui.AppArtLoader
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 private val HeroShape = RoundedCornerShape(24.dp)
 private val ArtWidth = 264.dp
@@ -262,7 +263,7 @@ private fun HeroButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.touchClick(onClick),
         shape = ButtonDefaults.shape(RoundedCornerShape(KrelzoxDimens.ButtonCorner)),
         colors = ButtonDefaults.colors(
             containerColor = if (primary) KrelzoxColors.Electric.copy(alpha = 0.22f) else KrelzoxColors.SurfaceRaised,

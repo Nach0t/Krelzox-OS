@@ -43,6 +43,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxDimens
 import dev.krelzox.launcher.core.designsystem.KrelzoxIcons
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
 import dev.krelzox.launcher.ui.AppArtLoader
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 private val PickerWidth = 520.dp
 private val RowShape = RoundedCornerShape(KrelzoxDimens.ButtonCorner)
@@ -91,7 +92,7 @@ fun FavoritesPickerDialog(
             }
             Button(
                 onClick = onDismiss,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.touchClick(onDismiss).fillMaxWidth(),
                 colors = KrelzoxButtonDefaults.colors(),
                 border = KrelzoxButtonDefaults.border(),
                 shape = KrelzoxButtonDefaults.shape(),
@@ -118,7 +119,7 @@ private fun PickerRow(
     ListItem(
         selected = false,
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.touchClick(onClick).fillMaxWidth(),
         headlineContent = {
             Text(entry.label, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.labelLarge)
         },

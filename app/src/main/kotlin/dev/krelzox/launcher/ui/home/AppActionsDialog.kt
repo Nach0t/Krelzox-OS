@@ -34,6 +34,7 @@ import dev.krelzox.launcher.core.designsystem.KrelzoxColors
 import dev.krelzox.launcher.core.designsystem.KrelzoxDimens
 import dev.krelzox.launcher.core.designsystem.KrelzoxIcons
 import dev.krelzox.launcher.core.designsystem.KrelzoxSpacing
+import dev.krelzox.launcher.core.designsystem.touchClick
 
 private val DialogWidth = 420.dp
 private val DialogShape = RoundedCornerShape(20.dp)
@@ -117,7 +118,7 @@ fun AppActionsDialog(
 private fun ActionButton(text: String, icon: ImageVector?, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.touchClick(onClick).fillMaxWidth(),
         shape = ButtonDefaults.shape(RoundedCornerShape(KrelzoxDimens.ButtonCorner)),
         colors = ButtonDefaults.colors(
             containerColor = KrelzoxColors.Surface,
