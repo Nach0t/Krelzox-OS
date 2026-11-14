@@ -93,19 +93,27 @@ Riesgos que quedan:
   red local, PIN (un solo uso, bloqueo, rotación), tokens y caducidad, flujo de
   aprobación del control, protocolo de órdenes y el servidor real en loopback
   (rechazo de `Host`/`Origin`, emparejamiento, WebSocket).
-- **En la Raspberry Pi** (2026-11-14): activar el servicio y aceptar la
-  captura de pantalla; emparejar con el PIN desde el PC; pedir el control; el
-  diálogo aparece con «Denegar» seleccionado; izquierda/derecha cambian la
-  opción y OK concede el control; sin respuesta, se deniega a los 60 s; tras
-  cerrarse, el D-pad vuelve a mover el foco con normalidad.
-  Las teclas se probaron con un teclado virtual (`uinput`): `adb shell input
-  keyevent` inyecta los eventos por detrás del filtro de accesibilidad y no
-  sirve para probar el diálogo.
-- **No probado en el dispositivo:** Atrás para denegar y las órdenes de control
-  (toques, texto, abrir apps, volumen) desde un navegador real.
+- **En la Raspberry Pi** (2026-11-14), con un cliente de prueba que hace de
+  navegador (emparejamiento y WebSocket reales):
+  - activar el servicio y aceptar la captura; emparejar con el PIN;
+  - el diálogo de control aparece con «Denegar» seleccionado; izquierda/derecha
+    cambian la opción, OK concede, Atrás deniega y sin respuesta se deniega a
+    los 60 s; al cerrarse, el D-pad vuelve a mover el foco con normalidad;
+  - órdenes: Inicio, Atrás, D-pad y OK, abrir apps, subir y bajar volumen,
+    escribir y borrar en el buscador de Krelzox Store (con el teclado en
+    pantalla abierto) y toques en los Ajustes de Android.
+
+  Las teclas del diálogo se probaron con un teclado virtual (`uinput`):
+  `adb shell input keyevent` inyecta los eventos por detrás del filtro de
+  accesibilidad y no sirve para probarlo.
+- **Limitación conocida:** los toques no hacen nada en el launcher ni en la
+  tienda (tampoco con `adb shell input tap`): sus superficies de Compose for TV
+  solo responden al D-pad. En esas apps hay que usar el modo **Mando**.
+- **No probado:** la página desde un navegador real en el móvil.
 
 ## Pendiente
 
+- Que el launcher y la tienda respondan a toques (modos Táctil y Trackpad).
 - Vídeo H.264/VP8 en lugar de JPEG si el hardware lo permite (menos ancho de
   banda).
 - Audio de la tele en el navegador.
