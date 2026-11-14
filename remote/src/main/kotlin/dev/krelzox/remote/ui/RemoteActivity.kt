@@ -317,7 +317,14 @@ private fun Row_(
                 Text(title, style = MaterialTheme.typography.titleMedium, color = KrelzoxColors.OnBackground)
                 if (detail.isNotBlank()) Text(detail, style = MaterialTheme.typography.bodyMedium, color = KrelzoxColors.OnSurfaceMuted)
             }
-            if (value.isNotBlank()) Text(value, style = MaterialTheme.typography.labelLarge, color = KrelzoxColors.Cyan)
+            if (value.isNotBlank()) {
+                Text(
+                    value,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = KrelzoxColors.Cyan,
+                    modifier = Modifier.padding(start = KrelzoxSpacing.Medium),
+                )
+            }
         }
     }
 }
