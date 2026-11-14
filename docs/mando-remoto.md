@@ -93,7 +93,16 @@ Riesgos que quedan:
   red local, PIN (un solo uso, bloqueo, rotación), tokens y caducidad, flujo de
   aprobación del control, protocolo de órdenes y el servidor real en loopback
   (rechazo de `Host`/`Origin`, emparejamiento, WebSocket).
-- **En la Raspberry Pi:** ver más abajo.
+- **En la Raspberry Pi** (2026-11-14): activar el servicio y aceptar la
+  captura de pantalla; emparejar con el PIN desde el PC; pedir el control; el
+  diálogo aparece con «Denegar» seleccionado; izquierda/derecha cambian la
+  opción y OK concede el control; sin respuesta, se deniega a los 60 s; tras
+  cerrarse, el D-pad vuelve a mover el foco con normalidad.
+  Las teclas se probaron con un teclado virtual (`uinput`): `adb shell input
+  keyevent` inyecta los eventos por detrás del filtro de accesibilidad y no
+  sirve para probar el diálogo.
+- **No probado en el dispositivo:** Atrás para denegar y las órdenes de control
+  (toques, texto, abrir apps, volumen) desde un navegador real.
 
 ## Pendiente
 
