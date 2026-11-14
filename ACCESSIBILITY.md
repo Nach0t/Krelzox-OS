@@ -21,6 +21,10 @@ Android TV 17, 1920×1080):
 - Full D-pad navigation with hierarchical Back. Automated UI tests
   (`KrelzoxShellFocusTest`) drive the interface with real key events and check
   focus on key screens — see [docs/rendimiento.md](docs/rendimiento.md).
+- Touch: every button, card, tab and list item also responds to a tap (focus
+  moves there, as with the D-pad) and to a long press (like holding OK), so
+  Krelzox Remote's Touch and Trackpad modes work in Krelzox. A USB mouse
+  click goes through the same path but has not been tested.
 - The user interface is available in English and Spanish.
 
 **Implemented, not yet tested with assistive technology:**

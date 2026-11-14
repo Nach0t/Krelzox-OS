@@ -106,14 +106,16 @@ Riesgos que quedan:
   Las teclas del diálogo se probaron con un teclado virtual (`uinput`):
   `adb shell input keyevent` inyecta los eventos por detrás del filtro de
   accesibilidad y no sirve para probarlo.
-- **Limitación conocida:** los toques no hacen nada en el launcher ni en la
-  tienda (tampoco con `adb shell input tap`): sus superficies de Compose for TV
-  solo responden al D-pad. En esas apps hay que usar el modo **Mando**.
+- **Toques en Krelzox** (2026-11-14): las superficies de Compose for TV solo
+  responden al D-pad, así que el launcher y la tienda ignoraban los toques.
+  Ahora todas usan `Modifier.touchClick` (`core:designsystem`): un toque mueve
+  el foco y equivale a OK, y una pulsación larga a mantener OK. Probado en la
+  Pi: pestañas, botón «Abrir» del destacado, tarjetas de la Biblioteca, menú
+  de acciones (pulsación larga) y menú lateral de la tienda.
 - **No probado:** la página desde un navegador real en el móvil.
 
 ## Pendiente
 
-- Que el launcher y la tienda respondan a toques (modos Táctil y Trackpad).
 - Vídeo H.264/VP8 en lugar de JPEG si el hardware lo permite (menos ancho de
   banda).
 - Audio de la tele en el navegador.
