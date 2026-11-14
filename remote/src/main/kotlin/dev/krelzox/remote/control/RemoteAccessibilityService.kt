@@ -18,6 +18,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -163,8 +164,29 @@ class RemoteAccessibilityService : AccessibilityService() {
         dispatchGesture(builder.build(), null, null)
     }
 
-    private fun focusedInput(): AccessibilityNodeInfo? =
-        findFocus(AccessibilityNodeInfo.FOCUS_INPUT)?.takeIf { it.isEditable }
+    /**
+     * The text field being typed into. On TV the on-screen keyboard takes D-pad focus, so
+     * the global input focus is a key of the keyboard; the field keeps its focus inside the
+     * app's own window, so look there too (skipping the keyboard's window).
+     */
+    private fun focusedInput(): AccessibilityNodeInfo? {
+        findFocus(AccessibilityNodeInfo.FOCUS_INPUT)?.takeIf { it.isEditable }?.let { return it }
+        return super.getWindows()
+            .filter { it.type != AccessibilityWindowInfo.TYPE_INPUT_METHOD }
+            .firstNotNullOfOrNull { window -> window.root?.let(::focusedEditable) }
+    }
+
+    /** Depth-first search for a focused editable node (bounded: TV screens are small trees). */
+    private fun focusedEditable(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        val stack = ArrayDeque(listOf(root))
+        var visited = 0
+        while (stack.isNotEmpty() && visited++ < 2_000) {
+            val node = stack.removeLast()
+            if (node.isEditable && node.isFocused) return node
+            for (i in node.childCount - 1 downTo 0) node.getChild(i)?.let(stack::addLast)
+        }
+        return null
+    }
 
     /** Replaces the focused field's text with [change] applied to its current text. */
     private fun editFocused(change: (String) -> String) {
