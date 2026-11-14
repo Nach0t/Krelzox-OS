@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -176,13 +177,18 @@ fun CategoriesScreen(viewModel: StoreViewModel) = WithCatalog(viewModel) { state
                 border = tileBorder(),
                 glow = tileGlow(),
             ) {
-                Column(Modifier.fillMaxSize().padding(KrelzoxSpacing.Medium), verticalArrangement = Arrangement.SpaceBetween) {
+                // Icon beside the text: the tile is too short (~62 dp) to stack both.
+                Row(
+                    Modifier.fillMaxSize().padding(horizontal = KrelzoxSpacing.Medium, vertical = KrelzoxSpacing.Small),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Icon(
                         if (CatalogApp.isGameCategory(name)) StoreIcons.Gamepad else StoreIcons.Category,
                         contentDescription = null,
                         tint = KrelzoxColors.Cyan,
                         modifier = Modifier.size(22.dp),
                     )
+                    Spacer(Modifier.width(KrelzoxSpacing.Small))
                     Column {
                         Text(name, style = MaterialTheme.typography.titleMedium, color = KrelzoxColors.OnBackground, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         Text(pluralStringResource(R.plurals.section_apps_count, count, count), style = MaterialTheme.typography.bodyMedium, color = KrelzoxColors.OnSurfaceMuted)
