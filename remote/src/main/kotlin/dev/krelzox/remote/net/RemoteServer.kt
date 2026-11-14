@@ -126,10 +126,16 @@ class RemoteServer(
         connections.filterValues { it.sessionId == sessionId }.keys.forEach { runCatching { it.close() } }
     }
 
-    /** Pushes the current permissions to every browser (after a TV-side change). */
+    /**
+     * Pushes the current permissions to every browser (after a TV-side change). Called
+     * from the main thread (panel, approval prompt, its timeout), so the socket writes
+     * happen on a worker thread: Android forbids network I/O on the main thread.
+     */
     fun broadcastState() {
-        connections.values.forEach { it.sendState() }
-        hub.wake()
+        thread("krx-state") {
+            connections.values.forEach { it.sendState() }
+            hub.wake()
+        }
     }
 
     private fun acceptLoop(server: ServerSocket) {
